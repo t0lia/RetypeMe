@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Page</title>
+    <!-- Bootstrap CSS from CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container">
+
+<h1 class="mt-4">Game Page</h1>
+
+<div id="sessionIdInfo" class="mt-4">
+    <p class="lead">Session ID: <span id="sessionId"></span></p>
+    <p class="lead">Game URL: <span id="gameUrl"></span></p>
+    <p class="lead"><span id="copyBtn"></span></p>
+</div>
+
+<script>
+    // Get sessionId from URL
+    let urlParams = new URLSearchParams(window.location.search);
+    let sessionId = urlParams.get("sessionId");
+
+    // Display sessionId
+    let sessionIdElement = document.getElementById("sessionId");
+    sessionIdElement.textContent = sessionId;
+
+    // Show URL as a link
+    let gameUrlElement = document.getElementById("gameUrl");
+
+    let link = document.createElement('a');
+    link.href = window.location.href;
+    link.textContent = window.location.href;
+    link.className = "text-primary"; // Bootstrap text color class
+
+    // Append link to the DOM
+    gameUrlElement.appendChild(link);
+
+    let copyBtnElement = document.getElementById("copyBtn");
+
+    // Add button to copy link to the clipboard
+    let copyButton = document.createElement('button');
+    copyButton.textContent = "Copy to Clipboard";
+    copyButton.className = "btn btn-primary mt-3"; // Bootstrap button styles
+    copyButton.onclick = function () {
+        navigator.clipboard.writeText(window.location.href);
+    }
+    copyBtnElement.appendChild(copyButton);
+</script>
+
+<!-- Bootstrap JS and Popper.js (required for Bootstrap) from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

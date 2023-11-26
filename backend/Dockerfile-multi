@@ -1,0 +1,12 @@
+# multistage spring kotlin build for java 21
+FROM gradle:8.4.0-jdk21 AS GRADLE_TOOL_CHAIN
+COPY . /tmp/
+WORKDIR /tmp/
+RUN ./gradlew build --no-daemon
+
+# production
+#FROM amazoncorretto:21-alpine3.16
+FROM amazoncorretto:21
+EXPOSE 8080
+COPY --from=GRADLE_TOOL_CHAIN /tmp/build/libs/backend-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]

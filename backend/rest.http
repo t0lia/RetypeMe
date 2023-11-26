@@ -1,0 +1,12 @@
+### GET All Sessions
+GET http://localhost:8080/
+Accept: application/json
+
+### GET Session by ID
+GET http://localhost:8080/{id}
+Accept: application/json
+
+### POST Create Session
+POST http://localhost:8080/
+Content-Type: application/json
+
