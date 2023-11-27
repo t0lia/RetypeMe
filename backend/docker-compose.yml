@@ -1,0 +1,11 @@
+version: '2'
+services:
+
+  app:
+    image: t0lia/retypeme-backend:latest
+    restart: always
+    ports:
+      - "8080:8080"
+    build:
+      dockerfile: Dockerfile-multi
+      context: .
