@@ -6,7 +6,7 @@ COPY src /app/src
 RUN gradle clean build
 
 FROM amazoncorretto:17
-COPY --from=GRADLE_TOOL_CHAIN /tmp/build/libs/backend-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=GRADLE_TOOL_CHAIN /app/build/libs/backend-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
 CMD ["java", "-jar", "app.jar"]
 
