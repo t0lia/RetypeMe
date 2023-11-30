@@ -1,5 +1,11 @@
 # RetypeMe - A platform to compete and show off how fast you can type on a keyboard
 
+## Useful links
+- Swagger UI: http://localhost:8080/api/swagger-ui/index.html#
+- Metrics: http://localhost:8080/api/actuator/prometheus
+- Health: http://localhost:8080/api/actuator/health
+- Info: http://localhost:8080/api/actuator/info
+
 ## How to start the project locally
 
 1. Install Docker and Docker Compose.

@@ -1,30 +1,33 @@
 package com.retypeme.backend
 
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RestController
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-class RootController {
+@RequestMapping("/api/sessions")
+class SessionController {
 
     private val sessionList = mutableListOf<SessionResponse>()
 
-    @CrossOrigin(origins = ["*"])
     @GetMapping("")
+    @Operation(summary = "Get all sessions")
     fun getAllSessions(): List<SessionResponse> {
         return sessionList
     }
 
-    @CrossOrigin(origins = ["*"])
     @GetMapping("/{id}")
-    fun getSessionById(id: String): SessionResponse? {
+    @Operation(summary = "Get session by ID")
+    fun getSessionById(
+            @Parameter(description = "Session ID")
+            @RequestParam id: String
+    ): SessionResponse? {
         return sessionList.find { it.id == id }
     }
 
-    @CrossOrigin(origins = ["*"])
     @PostMapping("")
+    @Operation(summary = "Create a new session")
     fun createSession(): SessionResponse {
         val session = SessionResponse(id = UUID.randomUUID().toString())
         sessionList.add(session)
