@@ -1,0 +1,95 @@
+openapi: 3.0.0
+info:
+  title: Session API
+  version: 1.0.0
+paths:
+  /sessions:
+    get:
+      summary: Get all sessions
+      operationId: getAllSessions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SessionResponse'
+    post:
+      summary: Create a new session
+      operationId: createSession
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+  /sessions/{id}:
+    parameters: # Add parameters at the path level
+      - name: id
+        in: path
+        required: true
+        description: Session ID
+        schema:
+          type: string
+    get:
+      summary: Get session by ID
+      operationId: getSessionById
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionResponse'
+        '404':
+          description: Not Found
+
+  /sessions/{id}/join:
+    parameters: # Add parameters at the path level
+      - name: id
+        in: path
+        required: true
+        description: Session ID
+        schema:
+          type: string
+    post:
+      summary: Join a session
+      operationId: joinSession
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JoinSessionResponse'
+        '404':
+          description: Not Found
+components:
+  schemas:
+    JoinSessionRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+    JoinSessionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+    SessionRequest:
+      type: object
+      properties:
+        id:
+          type: string
+    SessionResponse:
+      type: object
+      properties:
+        id:
+          type: string

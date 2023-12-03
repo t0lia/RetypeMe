@@ -1,17 +1,18 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id 'org.springframework.boot' version '3.2.0'
-    id 'io.spring.dependency-management' version '1.1.4'
-    id 'org.jetbrains.kotlin.jvm' version '1.9.20'
-    id 'org.jetbrains.kotlin.plugin.spring' version '1.9.20'
+    id "org.springframework.boot" version "3.2.0"
+    id "io.spring.dependency-management" version "1.1.4"
+    id "org.jetbrains.kotlin.jvm" version "1.9.21"
+    id "org.jetbrains.kotlin.plugin.spring" version "1.9.21"
+    id "org.openapi.generator" version "7.1.0"
 }
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+group = "com.retypeme"
+version = "0.0.1-SNAPSHOT"
 
 java {
-    sourceCompatibility = '21'
+    sourceCompatibility = "21"
 }
 
 repositories {
@@ -19,22 +20,55 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
-    implementation 'org.jetbrains.kotlin:kotlin-reflect'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
-    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin"
+    implementation "org.jetbrains.kotlin:kotlin-reflect"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0"
+    implementation "org.openapitools:openapi-generator:7.1.0"
+    implementation "javax.xml.bind:jaxb-api:2.2.4"
+    runtimeOnly "io.micrometer:micrometer-registry-prometheus"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+}
+
+configurations.configureEach {
+    exclude group: "org.slf4j", module: "slf4j-simple"
+    exclude group: "ch.qos.logback", module: "logback-classic"
 }
 
 tasks.withType(KotlinCompile) {
     kotlinOptions {
-        freeCompilerArgs += '-Xjsr305=strict'
-        jvmTarget = '21'
+        freeCompilerArgs += "-Xjsr305=strict"
+        jvmTarget = "21"
     }
 }
 
-tasks.named('test') {
+sourceSets {
+    main.kotlin.srcDirs += "src/kotlin"
+    main.kotlin.srcDirs += "build/generated"
+}
+
+compileKotlin.dependsOn tasks.named("openApiGenerate")
+
+openApiGenerate {
+    generatorName = "kotlin-spring"
+    inputSpec.set("$rootDir/src/main/resources/api-spec.yml")
+    outputDir.set("$buildDir/generated")
+    apiPackage.set("com.retypeme.backend.api")
+    modelPackage.set("com.retypeme.backend.model")
+    generateApiTests.set(false)
+    generateModelTests.set(true)
+    configOptions.set([
+            useSpringBoot3      : "true",
+            useJakartaEe        : "true",
+            interfaceOnly       : "true",
+            serviceInterface    : "false",
+            serializableModel   : "true",
+            skipDefaultInterface: "true"
+    ])
+}
+
+
+tasks.named("test") {
     useJUnitPlatform()
 }
