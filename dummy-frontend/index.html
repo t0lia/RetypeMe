@@ -25,7 +25,7 @@
 <script>
     function createSession() {
         // Use Axios for the HTTP request
-        axios.post("http://localhost:8080/")
+        axios.post("http://localhost:8080/api/sessions")
             .then(function (response) {
                 // Display session ID
                 let sessionIdElement = document.getElementById("sessionId");

@@ -4,43 +4,39 @@ import com.retypeme.backend.api.SessionsApi
 import com.retypeme.backend.model.JoinSessionResponse
 import com.retypeme.backend.model.SessionResponse
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.Parameter
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.*
 
 @RestController
-@RequestMapping("/api/sessions")
-class SessionController : SessionsApi {
-
-    private val sessionList = mutableListOf<SessionResponse>()
+@RequestMapping("/sessions")
+@CrossOrigin(origins = ["*"])
+class SessionController(val sessionService: SessionService) : SessionsApi {
 
     @GetMapping("")
     @Operation(summary = "Get all sessions")
     override fun getAllSessions(): ResponseEntity<List<SessionResponse>> {
-        return ResponseEntity.ok(sessionList)
+        val res = ResponseEntity.ok(sessionService.getAllSessions())
+        return res
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get session by ID")
-    override fun getSessionById(@Parameter(description = "Session ID") @RequestParam id: String): ResponseEntity<SessionResponse> {
-        val session = sessionList.find { it.id == id } ?: return ResponseEntity.notFound().build()
-        return ResponseEntity.ok(session)
+    override fun getSessionById(@RequestParam id: String): ResponseEntity<SessionResponse> {
+        val res = ResponseEntity.ok(sessionService.getSessionById(id))
+        return res
     }
 
     @PostMapping("")
     @Operation(summary = "Create a new session")
     override fun createSession(): ResponseEntity<SessionResponse> {
-        val session = SessionResponse(id = UUID.randomUUID().toString())
-        sessionList.add(session)
-        return ResponseEntity.ok(session)
+        val res = ResponseEntity.ok(sessionService.createSession())
+        return res
     }
 
     @PostMapping("{id}/join")
     @Operation(summary = "Join a session")
     override fun joinSession(@PathVariable id: String): ResponseEntity<JoinSessionResponse> {
-        sessionList.find { it.id == id } ?: return ResponseEntity.notFound().build()
-        val result = JoinSessionResponse(id, userId = UUID.randomUUID().toString())
-        return ResponseEntity.ok(result)
+        val res = ResponseEntity.ok(sessionService.joinSession(id))
+        return res
     }
 }
