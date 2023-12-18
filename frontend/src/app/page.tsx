@@ -1,12 +1,12 @@
 "use client";
-import { POST } from "./api/route";
+import { CREATE } from "./api/route";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
   async function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    const response = await POST();
+    const response = await CREATE();
     const data = await response.json();
     console.log(data);
 
