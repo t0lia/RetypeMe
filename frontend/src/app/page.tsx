@@ -6,7 +6,7 @@ export default function Home() {
   const router = useRouter();
   async function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    const response = await CREATE();
+    const response = await CREATE({"players": 1});
     const data = await response.json();
     console.log(data);
 

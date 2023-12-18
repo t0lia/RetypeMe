@@ -7,8 +7,8 @@ import java.util.UUID.randomUUID
 @Component
 class SessionRepository(private val openSessions: MutableMap<String, Session> = mutableMapOf()) {
 
-    fun createSession(): Session {
-        val session = Session(randomUUID().toString())
+    fun createSession(players: Int): Session {
+        val session = Session(randomUUID().toString(), players)
         openSessions[session.id] = session
         return session
     }

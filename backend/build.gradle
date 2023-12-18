@@ -26,15 +26,13 @@ dependencies {
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin"
     implementation "org.jetbrains.kotlin:kotlin-reflect"
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0"
-    implementation "org.openapitools:openapi-generator:7.1.0"
+    implementation("org.openapitools:openapi-generator:7.1.0") {
+        exclude group: "org.slf4j", module: "slf4j-simple"
+        exclude group: "ch.qos.logback", module: "logback-classic"
+    }
     implementation "javax.xml.bind:jaxb-api:2.2.4"
     runtimeOnly "io.micrometer:micrometer-registry-prometheus"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-}
-
-configurations.configureEach {
-    exclude group: "org.slf4j", module: "slf4j-simple"
-    exclude group: "ch.qos.logback", module: "logback-classic"
 }
 
 tasks.withType(KotlinCompile) {

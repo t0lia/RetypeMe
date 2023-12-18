@@ -14,15 +14,15 @@ class SessionService(private val simpMessagingTemplate: SimpMessagingTemplate,
                      private val repository: SessionRepository,
                      private val countDownService: CountDownService) {
 
-    fun createSession(): SessionResponse {
-        return SessionResponse(repository.createSession().id)
+    fun createSession(players:Int): SessionResponse {
+        return SessionResponse(repository.createSession(players).id)
     }
 
     fun joinSession(sessionId: String): JoinSessionResponse {
         val result = repository.joinSession(sessionId)
         val session = repository.getSessionById(sessionId)
 
-        if (session.users.count() >= 2) {
+        if (session.users.count() >= session.players) {
             countDownService.submit(sessionId)
         }
 

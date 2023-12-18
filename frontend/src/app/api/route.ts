@@ -1,9 +1,10 @@
-export async function CREATE() {
-  const res = await fetch("http://localhost:8080/", {
+export async function CREATE(players:any) {
+  const res = await fetch("http://localhost:8080/api/sessions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-    },
+    } ,
+    body: JSON.stringify(players),
   });
 
   const data = await res.json();
@@ -12,7 +13,7 @@ export async function CREATE() {
 }
 
 export async function JOIN(id: string) {
-  const res = await fetch(`http://localhost:8080/${id}/join`, {
+  const res = await fetch(`http://localhost:8080/api/sessions/${id}/join`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

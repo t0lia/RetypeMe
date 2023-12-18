@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useParams } from "next/navigation";
+import {useEffect, useRef, useState} from "react";
+import {useParams} from "next/navigation";
 
-import { JOIN } from "@/app/api/route";
+import {JOIN} from "@/app/api/route";
+import WsApiService, {CountDown, SessionStat} from "@/app/api/WsApiService";
 
 const DUMMY_TEXT = "lorem ipsum";
 
@@ -17,6 +18,7 @@ const GamePage = () => {
 
   const params = useParams();
   const id = params.id;
+  const apiServiceRef = useRef<WsApiService | null>(null);
 
   const formattedText = DUMMY_TEXT.split("").map((char, index) => (
     <span key={index}>{char}</span>
@@ -31,6 +33,22 @@ const GamePage = () => {
     inputText = document.getElementById("result");
   }
 
+  function onProgressReceived(stat: SessionStat) {
+    const progress = stat.users[0].progress;
+    document.getElementById('progress').style.width = progress + '%';
+  }
+
+  function onCountDownReceived(response: CountDown) {
+    let count = response.count;
+    if (count > 0) {
+      document.getElementById('start_btn').innerText = count;
+    }
+    if (count <= 0) {
+      document.getElementById('start_btn').innerText = 'Game started!';
+      setTextVisible(true);
+    }
+  }
+
   const handleCopy = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
@@ -38,12 +56,11 @@ const GamePage = () => {
   };
 
   const handleStartGame = async (id: string) => {
-    setTextVisible(true);
     console.log("Starting the game...");
     // sending a request to the server to start the game
     const response = await JOIN(id);
     const data = await response.json();
-    console.log(data);
+    localStorage.setItem('userId', data.userId);
   };
 
   function checkEqualHandler(e) {
@@ -58,6 +75,14 @@ const GamePage = () => {
         text.childNodes[i].style.background = "pink";
       } else {
         if (inputText) {
+          if (!apiServiceRef.current) {
+            console.error("apiService is not defined");
+            return;
+          } else {
+            const progress = Math.round((i / formattedText.length) * 100);
+            const userId = localStorage.getItem('userId');
+            apiServiceRef.current.sendStat(userId, progress);
+          }
           inputText.style.background = "white";
           text.childNodes[i].style.background = "lightgreen";
         }
@@ -83,6 +108,11 @@ const GamePage = () => {
   }
 
   useEffect(() => {
+    const sessionId: string = window.location.href.split('/').pop() as string;
+    apiServiceRef.current = new WsApiService(sessionId, onCountDownReceived, onProgressReceived);
+  }, []);
+
+  useEffect(() => {
     if (textVisible && inputRef.current) {
       // Delaying the focus operation slightly
       const timeoutId = setTimeout(() => {
@@ -97,16 +127,16 @@ const GamePage = () => {
     <div className="flex flex-col items-center  min-h-screen py-2">
       <div className="flex flex-col gap-2 mb-3">
         <p>Progress</p>
-        <div className="w-[1000px] bg-slate-400 border-2 border-gray-500  rounded-sm">
+        <div className="w-[1000px] bg-slate-400 border-2 border-gray-500  rounded-sm" id="progress">
           Guest (you)
         </div>
         <div className="w-[1000px] bg-slate-400 border-2 border-gray-500  rounded-sm">
           Guest
         </div>
       </div>
-      <button
-        className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
-        onClick={() => handleStartGame(id as string)}
+      <button id="start_btn"
+              className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
+              onClick={() => handleStartGame(id as string)}
       >
         Start the game
       </button>
@@ -122,9 +152,9 @@ const GamePage = () => {
         style={
           youWon
             ? {
-                backgroundColor: "lightgreen",
-              }
-            : { color: "black" }
+              backgroundColor: "lightgreen",
+            }
+            : {color: "black"}
         }
         // value={!youWon ? "" : null}
         onChange={checkEqualHandler}
