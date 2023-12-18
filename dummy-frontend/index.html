@@ -46,7 +46,7 @@
                     countdownElement.textContent = countdown;
                     if (countdown > 0) {
                         countdown--;
-                        setTimeout(updateCountdown, 1000); // Update every second
+                        setTimeout(updateCountdown, 10); // Update every second
                     } else {
                         // Redirect to session id after countdown
                         window.location.href = "./game.html?sessionId=" + response.data.id;
