@@ -23,7 +23,7 @@ export interface UserStat {
 
 
 export default class WsApiService {
-  private static readonly API_URL: string = 'ws://localhost:8080/api/gs-guide-websocket';
+  private static readonly API_URL: string = 'ws://localhost:8080/api/ws';
 
   private readonly stompClient: Client;
   private readonly sessionId: string;

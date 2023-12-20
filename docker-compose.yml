@@ -9,3 +9,5 @@ services:
     build:
       dockerfile: ./Dockerfile-multi
       context: ./backend
+    environment:
+      APPLICATION_CORS_ALLOWED_ORIGINS: "http://localhost:3000/"
