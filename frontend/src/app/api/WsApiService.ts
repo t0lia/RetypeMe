@@ -23,7 +23,6 @@ export interface UserStat {
 
 
 export default class WsApiService {
-  private static readonly API_URL: string = 'ws://localhost:8080/api/ws';
 
   private readonly stompClient: Client;
   private readonly sessionId: string;
@@ -32,8 +31,10 @@ export default class WsApiService {
               countDownHandler: (countDown: CountDown) => void,
               progressHandler: (stat: SessionStat) => void) {
 
+    const API_URL: string = `ws://${(process.env.API_HOST)}:${(process.env.API_PORT)}/api/ws`;
+    console.log("api url: " + API_URL);
     this.sessionId = sessionId;
-    this.stompClient = new Client({brokerURL: WsApiService.API_URL});
+    this.stompClient = new Client({brokerURL: API_URL});
 
     this.stompClient.onConnect = (frame) => {
       console.log('Connected: ' + frame);
