@@ -1,10 +1,10 @@
 "use client";
 
-import {useEffect, useRef, useState} from "react";
-import {useParams} from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "next/navigation";
 
-import {JOIN} from "@/app/api/route";
-import WsApiService, {CountDown, SessionStat} from "@/app/api/WsApiService";
+import { JOIN } from "@/app/api/route";
+import WsApiService, { CountDown, SessionStat } from "@/app/api/WsApiService";
 
 const DUMMY_TEXT = "lorem ipsum";
 
@@ -12,6 +12,8 @@ const GamePage = () => {
   const [copied, setCopied] = useState(false);
   const [youWon, setYouWon] = useState(false);
   const [textVisible, setTextVisible] = useState(false);
+  const [startBtnText, setStartBtnText] = useState("Start the game");
+  const [isDisabled, setIsDisabled] = useState(false);
   // const [progress, setProgress] = useState(0);
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,16 +37,17 @@ const GamePage = () => {
 
   function onProgressReceived(stat: SessionStat) {
     const progress = stat.users[0].progress;
-    document.getElementById('progress').style.width = progress + '%';
+    document.getElementById("progress").style.width = progress + "%";
   }
 
   function onCountDownReceived(response: CountDown) {
     let count = response.count;
     if (count > 0) {
-      document.getElementById('start_btn').innerText = count;
+      setStartBtnText(count.toString());
     }
     if (count <= 0) {
-      document.getElementById('start_btn').innerText = 'Game started!';
+      setStartBtnText("Game started");
+      setIsDisabled(true);
       setTextVisible(true);
     }
   }
@@ -60,7 +63,7 @@ const GamePage = () => {
     // sending a request to the server to start the game
     const response = await JOIN(id);
     const data = await response.json();
-    localStorage.setItem('userId', data.userId);
+    localStorage.setItem("userId", data.userId);
   };
 
   function checkEqualHandler(e) {
@@ -80,7 +83,7 @@ const GamePage = () => {
             return;
           } else {
             const progress = Math.round((i / formattedText.length) * 100);
-            const userId = localStorage.getItem('userId');
+            const userId = localStorage.getItem("userId");
             apiServiceRef.current.sendStat(userId, progress);
           }
           inputText.style.background = "white";
@@ -108,8 +111,12 @@ const GamePage = () => {
   }
 
   useEffect(() => {
-    const sessionId: string = window.location.href.split('/').pop() as string;
-    apiServiceRef.current = new WsApiService(sessionId, onCountDownReceived, onProgressReceived);
+    const sessionId: string = window.location.href.split("/").pop() as string;
+    apiServiceRef.current = new WsApiService(
+      sessionId,
+      onCountDownReceived,
+      onProgressReceived
+    );
   }, []);
 
   useEffect(() => {
@@ -127,18 +134,25 @@ const GamePage = () => {
     <div className="flex flex-col items-center  min-h-screen py-2">
       <div className="flex flex-col gap-2 mb-3">
         <p>Progress</p>
-        <div className="w-[1000px] bg-slate-400 border-2 border-gray-500  rounded-sm" id="progress">
+        <div
+          className="w-[1000px] bg-slate-400 border-2 border-gray-500  rounded-sm"
+          id="progress"
+        >
           Guest (you)
         </div>
         <div className="w-[1000px] bg-slate-400 border-2 border-gray-500  rounded-sm">
           Guest
         </div>
       </div>
-      <button id="start_btn"
-              className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
-              onClick={() => handleStartGame(id as string)}
+      <button
+        id="start_btn"
+        className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
+          isDisabled ? "opacity-50 cursor-not-allowed" : ""
+        }`}
+        onClick={() => handleStartGame(id as string)}
+        disabled={isDisabled}
       >
-        Start the game
+        {startBtnText}
       </button>
       {textVisible && (
         <div id="text" className="w-[1000px] mt-5 mb-5">
@@ -152,9 +166,9 @@ const GamePage = () => {
         style={
           youWon
             ? {
-              backgroundColor: "lightgreen",
-            }
-            : {color: "black"}
+                backgroundColor: "lightgreen",
+              }
+            : { color: "black" }
         }
         // value={!youWon ? "" : null}
         onChange={checkEqualHandler}
