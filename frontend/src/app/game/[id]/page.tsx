@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { JOIN } from "@/app/api/route";
 import WsApiService, { CountDown, SessionStat } from "@/app/api/WsApiService";
 
-const DUMMY_TEXT = "lorem ipsum";
+const DUMMY_TEXT = "loremipsum";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
@@ -14,7 +14,7 @@ const GamePage = () => {
   const [textVisible, setTextVisible] = useState(false);
   const [startBtnText, setStartBtnText] = useState("Start the game");
   const [isDisabled, setIsDisabled] = useState(false);
-  // const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -36,8 +36,11 @@ const GamePage = () => {
   }
 
   function onProgressReceived(stat: SessionStat) {
-    const progress = stat.users[0].progress;
-    document.getElementById("progress").style.width = progress + "%";
+    setProgress((prevProgress) => {
+      const newProgress = stat.users[0].progress;
+      console.log(stat, newProgress);
+      return newProgress;
+    });
   }
 
   function onCountDownReceived(response: CountDown) {
@@ -82,7 +85,8 @@ const GamePage = () => {
             console.error("apiService is not defined");
             return;
           } else {
-            const progress = Math.round((i / formattedText.length) * 100);
+            const progress = Math.round(((i + 1) / formattedText.length) * 100);
+            console.log("Progress:", i, formattedText.length, progress);
             const userId = localStorage.getItem("userId");
             apiServiceRef.current.sendStat(userId, progress);
           }
@@ -135,10 +139,16 @@ const GamePage = () => {
       <div className="flex flex-col gap-2 mb-3">
         <p>Progress</p>
         <div
-          className="w-[1000px] bg-slate-400 border-2 border-gray-500  rounded-sm"
+          className="relative bg-gray-300 border-2 border-gray-500 rounded-md h-8 overflow-hidden"
           id="progress"
         >
-          Guest (you)
+          <div
+            className={`bg-blue-300 h-full`}
+            style={{ width: `${progress}%` }}
+          ></div>
+          <div className="absolute top-0 left-0 bottom-0 right-0 text-white">
+            Guest (you)
+          </div>
         </div>
         <div className="w-[1000px] bg-slate-400 border-2 border-gray-500  rounded-sm">
           Guest
