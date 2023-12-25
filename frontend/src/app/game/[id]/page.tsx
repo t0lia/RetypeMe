@@ -13,8 +13,9 @@ const GamePage = () => {
   const [youWon, setYouWon] = useState(false);
   const [textVisible, setTextVisible] = useState(false);
   const [startBtnText, setStartBtnText] = useState("Start the game");
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [textIsBlurred, setTextIsBlurred] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -35,6 +36,19 @@ const GamePage = () => {
     inputText = document.getElementById("result");
   }
 
+  function handleClickFormattedText() {
+    if (inputRef.current) {
+      inputRef.current.focus();
+      setTextIsBlurred(false);
+    }
+  }
+
+  function handleBlurChanger() {
+    if (inputRef.current) {
+      setTextIsBlurred(true);
+    }
+  }
+
   function onProgressReceived(stat: SessionStat) {
     setProgress((prevProgress) => {
       const newProgress = stat.users[0].progress;
@@ -50,7 +64,7 @@ const GamePage = () => {
     }
     if (count <= 0) {
       setStartBtnText("Game started");
-      setIsDisabled(true);
+      setIsButtonDisabled(true);
       setTextVisible(true);
     }
   }
@@ -157,15 +171,21 @@ const GamePage = () => {
       <button
         id="start_btn"
         className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-          isDisabled ? "opacity-50 cursor-not-allowed" : ""
+          isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
         }`}
         onClick={() => handleStartGame(id as string)}
-        disabled={isDisabled}
+        disabled={isButtonDisabled}
       >
         {startBtnText}
       </button>
       {textVisible && (
-        <div id="text" className="w-[1000px] mt-5 mb-5">
+        <div
+          id="text"
+          className={`w-[1000px] mt-5 mb-5 filter ${
+            textIsBlurred ? "blur-[2px]" : ""
+          }`}
+          onClick={handleClickFormattedText}
+        >
           {formattedText}
         </div>
       )}
@@ -182,6 +202,7 @@ const GamePage = () => {
         }
         // value={!youWon ? "" : null}
         onChange={checkEqualHandler}
+        onBlur={handleBlurChanger}
         // autoFocus
       ></input>
       <div className="absolute left-3 bottom-3 ">
