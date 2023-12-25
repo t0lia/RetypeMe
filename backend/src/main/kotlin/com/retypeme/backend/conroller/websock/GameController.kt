@@ -22,6 +22,7 @@ class GameController(
     @MessageMapping("/stat")
     fun receiveStat(userStat: UserStat) {
         val response = sessionService.updateProgress(userStat)
+        logger.info("progress: ${userStat.progress}")
         simpMessagingTemplate.convertAndSend("/topic/" + userStat.sessionId + "/progress", response)
     }
 
