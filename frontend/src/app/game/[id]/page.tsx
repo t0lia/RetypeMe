@@ -50,9 +50,11 @@ const GamePage = () => {
   }
 
   function onProgressReceived(stat: SessionStat) {
+    const newProgress = stat.users[0].progress;
+    // TODO: fix multiple update
+    console.log("1. onProgressReceived inside handler: ", newProgress);
     setProgress((prevProgress) => {
-      const newProgress = stat.users[0].progress;
-      console.log(stat, newProgress);
+      console.log("2. onProgressReceived state update: ", newProgress);
       return newProgress;
     });
   }
@@ -89,25 +91,26 @@ const GamePage = () => {
       setYouWon(false);
     }
 
-    for (let i = 0; i < e.target.value.length; i++) {
+    let length = e.target.value.length;
+    for (let i = 0; i < length; i++) {
       if (e.target.value[i] !== formattedText[i].props.children) {
         if (inputText) inputText.style.background = "pink";
         text.childNodes[i].style.background = "pink";
       } else {
         if (inputText) {
-          if (!apiServiceRef.current) {
-            console.error("apiService is not defined");
-            return;
-          } else {
-            const progress = Math.round(((i + 1) / formattedText.length) * 100);
-            console.log("Progress:", i, formattedText.length, progress);
-            const userId = localStorage.getItem("userId");
-            apiServiceRef.current.sendStat(userId, progress);
-          }
           inputText.style.background = "white";
           text.childNodes[i].style.background = "lightgreen";
         }
       }
+    }
+    if (!apiServiceRef.current) {
+      console.error("apiService is not defined");
+      return;
+    } else {
+      const progress = Math.round(((length + 1) / formattedText.length) * 100);
+      console.log("Progress:", progress, formattedText.length, progress);
+      const userId = localStorage.getItem("userId");
+      apiServiceRef.current.sendStat(userId, progress);
     }
 
     if (e.target.value === realTextFromFormattedText) {
