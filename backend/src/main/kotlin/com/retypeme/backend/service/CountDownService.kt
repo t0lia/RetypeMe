@@ -9,7 +9,6 @@ private const val COUNTDOWN_INITIAL = 3
 @Service
 class CountDownService {
 
-    // concurrent hash map
     private val countMap: MutableMap<String, Int> = ConcurrentHashMap<String, Int>()
 
     fun submit(sessionId: String) {
