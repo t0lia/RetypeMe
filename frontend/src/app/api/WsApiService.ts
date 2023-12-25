@@ -31,7 +31,7 @@ export default class WsApiService {
               countDownHandler: (countDown: CountDown) => void,
               progressHandler: (stat: SessionStat) => void) {
 
-    const API_URL: string = `ws://${(process.env.API_HOST)}:${(process.env.API_PORT)}/api/ws`;
+    const API_URL: string = `${(process.env.API_WS)}/api/ws`;
     console.log("api url: " + API_URL);
     this.sessionId = sessionId;
     this.stompClient = new Client({brokerURL: API_URL});

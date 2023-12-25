@@ -1,5 +1,5 @@
 
-const API_URL: string = `http://${(process.env.API_HOST)}:${(process.env.API_PORT)}/api`;
+const API_URL: string = `${(process.env.API_REST)}/api`;
 
 export async function CREATE(players:any) {
   const res = await fetch(`${API_URL}/sessions`, {
