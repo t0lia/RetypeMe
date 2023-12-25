@@ -37,26 +37,19 @@ const GamePage = () => {
   }
 
   function handleClickFormattedText() {
-    if (inputRef.current) {
-      inputRef.current.focus();
-      setTextIsBlurred(false);
-    }
+    inputRef.current?.focus();
+    setTextIsBlurred(false);
   }
 
   function handleBlurChanger() {
-    if (inputRef.current) {
-      setTextIsBlurred(true);
-    }
+    setTextIsBlurred(true);
   }
 
   function onProgressReceived(stat: SessionStat) {
     const newProgress = stat.users[0].progress;
     // TODO: fix multiple update
     console.log("1. onProgressReceived inside handler: ", newProgress);
-    setProgress((prevProgress) => {
-      console.log("2. onProgressReceived state update: ", newProgress);
-      return newProgress;
-    });
+    setProgress(newProgress);
   }
 
   function onCountDownReceived(response: CountDown) {
@@ -91,7 +84,7 @@ const GamePage = () => {
       setYouWon(false);
     }
 
-    let length = e.target.value.length;
+    const length = e.target.value.length;
     for (let i = 0; i < length; i++) {
       if (e.target.value[i] !== formattedText[i].props.children) {
         if (inputText) inputText.style.background = "pink";
@@ -107,7 +100,7 @@ const GamePage = () => {
       console.error("apiService is not defined");
       return;
     } else {
-      const progress = Math.round(((length + 1) / formattedText.length) * 100);
+      const progress = Math.round((length / formattedText.length) * 100);
       console.log("Progress:", progress, formattedText.length, progress);
       const userId = localStorage.getItem("userId");
       apiServiceRef.current.sendStat(userId, progress);
