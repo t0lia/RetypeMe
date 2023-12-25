@@ -1,18 +1,21 @@
 "use client";
 
-import {useEffect, useRef, useState} from "react";
-import {useParams} from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "next/navigation";
 
-import {JOIN} from "@/app/api/route";
-import WsApiService, {CountDown, SessionStat} from "@/app/api/WsApiService";
+import { JOIN } from "@/app/api/route";
+import WsApiService, { CountDown, SessionStat } from "@/app/api/WsApiService";
 
-const DUMMY_TEXT = "lorem ipsum";
+const DUMMY_TEXT = "loremipsum";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
   const [youWon, setYouWon] = useState(false);
   const [textVisible, setTextVisible] = useState(false);
-  // const [progress, setProgress] = useState(0);
+  const [startBtnText, setStartBtnText] = useState("Start the game");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [textIsBlurred, setTextIsBlurred] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -33,18 +36,35 @@ const GamePage = () => {
     inputText = document.getElementById("result");
   }
 
+  function handleClickFormattedText() {
+    if (inputRef.current) {
+      inputRef.current.focus();
+      setTextIsBlurred(false);
+    }
+  }
+
+  function handleBlurChanger() {
+    if (inputRef.current) {
+      setTextIsBlurred(true);
+    }
+  }
+
   function onProgressReceived(stat: SessionStat) {
-    const progress = stat.users[0].progress;
-    document.getElementById('progress').style.width = progress + '%';
+    setProgress((prevProgress) => {
+      const newProgress = stat.users[0].progress;
+      console.log(stat, newProgress);
+      return newProgress;
+    });
   }
 
   function onCountDownReceived(response: CountDown) {
     let count = response.count;
     if (count > 0) {
-      document.getElementById('start_btn').innerText = count;
+      setStartBtnText(count.toString());
     }
     if (count <= 0) {
-      document.getElementById('start_btn').innerText = 'Game started!';
+      setStartBtnText("Game started");
+      setIsButtonDisabled(true);
       setTextVisible(true);
     }
   }
@@ -60,7 +80,7 @@ const GamePage = () => {
     // sending a request to the server to start the game
     const response = await JOIN(id);
     const data = await response.json();
-    localStorage.setItem('userId', data.userId);
+    localStorage.setItem("userId", data.userId);
   };
 
   function checkEqualHandler(e) {
@@ -79,8 +99,9 @@ const GamePage = () => {
             console.error("apiService is not defined");
             return;
           } else {
-            const progress = Math.round((i / formattedText.length) * 100);
-            const userId = localStorage.getItem('userId');
+            const progress = Math.round(((i + 1) / formattedText.length) * 100);
+            console.log("Progress:", i, formattedText.length, progress);
+            const userId = localStorage.getItem("userId");
             apiServiceRef.current.sendStat(userId, progress);
           }
           inputText.style.background = "white";
@@ -108,8 +129,12 @@ const GamePage = () => {
   }
 
   useEffect(() => {
-    const sessionId: string = window.location.href.split('/').pop() as string;
-    apiServiceRef.current = new WsApiService(sessionId, onCountDownReceived, onProgressReceived);
+    const sessionId: string = window.location.href.split("/").pop() as string;
+    apiServiceRef.current = new WsApiService(
+      sessionId,
+      onCountDownReceived,
+      onProgressReceived
+    );
   }, []);
 
   useEffect(() => {
@@ -127,21 +152,40 @@ const GamePage = () => {
     <div className="flex flex-col items-center  min-h-screen py-2">
       <div className="flex flex-col gap-2 mb-3">
         <p>Progress</p>
-        <div className="w-[1000px] bg-slate-400 border-2 border-gray-500  rounded-sm" id="progress">
-          Guest (you)
+        <div
+          className="relative bg-gray-300 border-2 border-gray-500 rounded-md h-8 overflow-hidden"
+          id="progress"
+        >
+          <div
+            className={`bg-blue-300 h-full`}
+            style={{ width: `${progress}%` }}
+          ></div>
+          <div className="absolute top-0 left-0 bottom-0 right-0 text-white">
+            Guest (you)
+          </div>
         </div>
         <div className="w-[1000px] bg-slate-400 border-2 border-gray-500  rounded-sm">
           Guest
         </div>
       </div>
-      <button id="start_btn"
-              className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
-              onClick={() => handleStartGame(id as string)}
+      <button
+        id="start_btn"
+        className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
+          isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
+        }`}
+        onClick={() => handleStartGame(id as string)}
+        disabled={isButtonDisabled}
       >
-        Start the game
+        {startBtnText}
       </button>
       {textVisible && (
-        <div id="text" className="w-[1000px] mt-5 mb-5">
+        <div
+          id="text"
+          className={`w-[1000px] mt-5 mb-5 filter ${
+            textIsBlurred ? "blur-[2px]" : ""
+          }`}
+          onClick={handleClickFormattedText}
+        >
           {formattedText}
         </div>
       )}
@@ -152,12 +196,13 @@ const GamePage = () => {
         style={
           youWon
             ? {
-              backgroundColor: "lightgreen",
-            }
-            : {color: "black"}
+                backgroundColor: "lightgreen",
+              }
+            : { color: "black" }
         }
         // value={!youWon ? "" : null}
         onChange={checkEqualHandler}
+        onBlur={handleBlurChanger}
         // autoFocus
       ></input>
       <div className="absolute left-3 bottom-3 ">
