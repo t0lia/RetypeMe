@@ -38,9 +38,10 @@ const GamePage = () => {
   }
 
   function onProgressReceived(stat: SessionStat) {
-    const newProgress = stat.users[0].progress;
-    console.log("1. onProgressReceived inside handler: ", newProgress);
-    setProgress(newProgress);
+    const newProgress = stat.users.find((user) => user.id === localStorage.getItem("userId"))?.progress;
+    console.log("Progress received:");
+    stat.users.forEach((user) => {console.log(user.id, user.progress)});
+    setProgress(newProgress ? newProgress : 0);
   }
 
   function onCountDownReceived(response: CountDown) {
