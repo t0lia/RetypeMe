@@ -16,6 +16,7 @@ const GamePage = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [progress, setProgress] = useState(0);
   const [textIsBlurred, setTextIsBlurred] = useState(false);
+  const [textInputStyles, setTextInputStyles] = useState<Array<string>>([]);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -26,15 +27,6 @@ const GamePage = () => {
   const formattedText = DUMMY_TEXT.split("").map((char, index) => (
     <span key={index}>{char}</span>
   ));
-
-  const realTextFromFormattedText = formattedText
-    .map((symb) => symb.props.children)
-    .join("");
-
-  let inputText;
-  if (typeof document !== "undefined") {
-    inputText = document.getElementById("result");
-  }
 
   function handleClickFormattedText() {
     inputRef.current?.focus();
@@ -47,7 +39,6 @@ const GamePage = () => {
 
   function onProgressReceived(stat: SessionStat) {
     const newProgress = stat.users[0].progress;
-    // TODO: fix multiple update
     console.log("1. onProgressReceived inside handler: ", newProgress);
     setProgress(newProgress);
   }
@@ -61,6 +52,7 @@ const GamePage = () => {
       setStartBtnText("Game started");
       setIsButtonDisabled(true);
       setTextVisible(true);
+      inputRef.current?.focus();
     }
   }
 
@@ -80,22 +72,21 @@ const GamePage = () => {
 
   function checkEqualHandler(e) {
     // setRunning(true);
-    if (e.target.value !== realTextFromFormattedText) {
+    if (e.target.value !== DUMMY_TEXT) {
       setYouWon(false);
     }
 
     const length = e.target.value.length;
+    const newTextStyles = Array.from({ length }, (_, i) => "black");
+
     for (let i = 0; i < length; i++) {
       if (e.target.value[i] !== formattedText[i].props.children) {
-        if (inputText) inputText.style.background = "pink";
-        text.childNodes[i].style.background = "pink";
-      } else {
-        if (inputText) {
-          inputText.style.background = "white";
-          text.childNodes[i].style.background = "lightgreen";
-        }
+        newTextStyles[i] = "orangered";
       }
     }
+
+    setTextInputStyles(newTextStyles);
+
     if (!apiServiceRef.current) {
       console.error("apiService is not defined");
       return;
@@ -106,23 +97,23 @@ const GamePage = () => {
       apiServiceRef.current.sendStat(userId, progress);
     }
 
-    if (e.target.value === realTextFromFormattedText) {
+    if (e.target.value === DUMMY_TEXT) {
       setYouWon(true);
       // setRunning(false);
     }
   }
 
-  function clearInput() {
-    // setRunning(false);
-    setYouWon(false);
-    if (inputText) {
-      inputText.style.background = "green";
-      inputText.value = "";
-      text.childNodes.forEach((i) => (i.style.background = "white"));
-    }
-    console.log("youwon:", youWon);
-    // console.log("running:", running);
-  }
+  // function clearInput() {
+  //   // setRunning(false);
+  //   setYouWon(false);
+  //   if (inputTextEl) {
+  //     inputTextEl.style.background = "green";
+  //     inputTextEl.value = "";
+  //     text.childNodes.forEach((i) => (i.style.background = "white"));
+  //   }
+  //   console.log("youwon:", youWon);
+  //   // console.log("running:", running);
+  // }
 
   useEffect(() => {
     const sessionId: string = window.location.href.split("/").pop() as string;
@@ -133,34 +124,23 @@ const GamePage = () => {
     );
   }, []);
 
-  useEffect(() => {
-    if (textVisible && inputRef.current) {
-      // Delaying the focus operation slightly
-      const timeoutId = setTimeout(() => {
-        inputRef.current?.focus();
-      }, 100);
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [textVisible]);
-
   return (
     <div className="flex flex-col items-center  min-h-screen py-2">
       <div className="flex flex-col gap-2 mb-3">
         <p>Progress</p>
         <div
-          className="relative bg-gray-300 border-2 border-gray-500 rounded-md h-8 overflow-hidden"
+          className="relative bg-gray-300 border-2 border-gray-500 rounded-sm h-8 overflow-hidden"
           id="progress"
         >
           <div
             className={`bg-blue-300 h-full`}
             style={{ width: `${progress}%` }}
           ></div>
-          <div className="absolute top-0 left-0 bottom-0 right-0 text-white">
+          <div className="absolute top-0 left-0 bottom-0 right-0 ">
             Guest (you)
           </div>
         </div>
-        <div className="w-[1000px] bg-slate-400 border-2 border-gray-500  rounded-sm">
+        <div className="w-[1000px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8">
           Guest
         </div>
       </div>
@@ -177,29 +157,25 @@ const GamePage = () => {
       {textVisible && (
         <div
           id="text"
-          className={`w-[1000px] mt-5 mb-5 filter ${
+          className={`w-[1000px] mt-5 mb-5 filter text-gray-500 text-xl font-medium ${
             textIsBlurred ? "blur-[2px]" : ""
           }`}
           onClick={handleClickFormattedText}
         >
-          {formattedText}
+          {formattedText.map((char, index) => (
+            <span key={index} style={{ color: textInputStyles[index] }}>
+              {char}
+            </span>
+          ))}
         </div>
       )}
       <input
         ref={inputRef}
         className="opacity-0 cursor-default"
         id="result"
-        style={
-          youWon
-            ? {
-                backgroundColor: "lightgreen",
-              }
-            : { color: "black" }
-        }
         // value={!youWon ? "" : null}
         onChange={checkEqualHandler}
         onBlur={handleBlurChanger}
-        // autoFocus
       ></input>
       <div className="absolute left-3 bottom-3 ">
         <button
@@ -214,28 +190,3 @@ const GamePage = () => {
 };
 
 export default GamePage;
-
-// return (
-//   <div className={styles.main}>
-//     <Stopwatch startTimer={running} clearText={clearInput} youWon={youWon} />
-//     <p id='text'>{formattedText}</p>
-//     {cpm && youWon ? (
-//       <p>🎉 Your CPM is {cpm} 🎉</p>
-//     ) : (
-//       <input
-//         id='result'
-//         style={
-//           youWon
-//             ? {
-//                 backgroundColor: 'lightgreen',
-//               }
-//             : { color: 'black' }
-//         }
-//         value={!youWon && !running ? '' : null}
-//         onChange={checkEqualHandler}
-//         autoFocus
-//       ></input>
-//     )}
-//   </div>
-// );
-// }
