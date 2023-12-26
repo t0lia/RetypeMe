@@ -6,15 +6,17 @@ import { useParams } from "next/navigation";
 import { JOIN } from "@/app/api/route";
 import WsApiService, { CountDown, SessionStat } from "@/app/api/WsApiService";
 
-const DUMMY_TEXT = "loremipsum";
+const DUMMY_TEXT =
+  "loremipsumloremipsumloremipsumloremipsumloremipsumloremipsum";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
-  const [youWon, setYouWon] = useState(false);
   const [textVisible, setTextVisible] = useState(false);
   const [startBtnText, setStartBtnText] = useState("Start the game");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [userProgress, setUserProgress] = useState<{ [key: string]: number }>(
+    {}
+  );
   const [textIsBlurred, setTextIsBlurred] = useState(false);
   const [textInputStyles, setTextInputStyles] = useState<Array<string>>([]);
 
@@ -38,10 +40,14 @@ const GamePage = () => {
   }
 
   function onProgressReceived(stat: SessionStat) {
-    const newProgress = stat.users.find((user) => user.id === localStorage.getItem("userId"))?.progress;
-    console.log("Progress received:");
-    stat.users.forEach((user) => {console.log(user.id, user.progress)});
-    setProgress(newProgress ? newProgress : 0);
+    const newProgress = {};
+    stat.users.forEach((user) => {
+      newProgress[user.id] = user.progress;
+    });
+
+    console.log("New progress:", newProgress);
+
+    setUserProgress(newProgress);
   }
 
   function onCountDownReceived(response: CountDown) {
@@ -65,18 +71,12 @@ const GamePage = () => {
 
   const handleStartGame = async (id: string) => {
     console.log("Starting the game...");
-    // sending a request to the server to start the game
     const response = await JOIN(id);
     const data = await response.json();
     localStorage.setItem("userId", data.userId);
   };
 
   function checkEqualHandler(e) {
-    // setRunning(true);
-    if (e.target.value !== DUMMY_TEXT) {
-      setYouWon(false);
-    }
-
     const length = e.target.value.length;
     const newTextStyles = Array.from({ length }, (_, i) => "black");
 
@@ -93,28 +93,11 @@ const GamePage = () => {
       return;
     } else {
       const progress = Math.round((length / formattedText.length) * 100);
-      console.log("Progress:", progress, formattedText.length, progress);
+      console.log("Progress:", progress);
       const userId = localStorage.getItem("userId");
       apiServiceRef.current.sendStat(userId, progress);
     }
-
-    if (e.target.value === DUMMY_TEXT) {
-      setYouWon(true);
-      // setRunning(false);
-    }
   }
-
-  // function clearInput() {
-  //   // setRunning(false);
-  //   setYouWon(false);
-  //   if (inputTextEl) {
-  //     inputTextEl.style.background = "green";
-  //     inputTextEl.value = "";
-  //     text.childNodes.forEach((i) => (i.style.background = "white"));
-  //   }
-  //   console.log("youwon:", youWon);
-  //   // console.log("running:", running);
-  // }
 
   useEffect(() => {
     const sessionId: string = window.location.href.split("/").pop() as string;
@@ -126,24 +109,40 @@ const GamePage = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center  min-h-screen py-2">
+    <div className="flex flex-col items-center min-h-screen py-2">
       <div className="flex flex-col gap-2 mb-3">
         <p>Progress</p>
-        <div
-          className="relative bg-gray-300 border-2 border-gray-500 rounded-sm h-8 overflow-hidden"
-          id="progress"
-        >
-          <div
-            className={`bg-blue-300 h-full`}
-            style={{ width: `${progress}%` }}
-          ></div>
-          <div className="absolute top-0 left-0 bottom-0 right-0 ">
-            Guest (you)
-          </div>
-        </div>
-        <div className="w-[1000px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8">
-          Guest
-        </div>
+
+        {Object.keys(userProgress).length > 0 ? (
+          Object.entries(userProgress).map(([userId, userProgress]) => (
+            <div
+              key={userId}
+              className="w-[700px] relative bg-gray-300 border-2 border-gray-500 rounded-sm h-8 overflow-hidden"
+              id="progress"
+            >
+              <div
+                key={userId}
+                className="bg-blue-300 h-full"
+                style={{ width: `${userProgress}%` }}
+              >
+                {userId.slice(-5)}
+                {userId === localStorage.getItem("userId") ? "(you)" : ""}
+              </div>
+            </div>
+          ))
+        ) : (
+          <>
+            <div
+              className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8"
+              id="progress"
+            >
+              Guest (you)
+            </div>
+            <div className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8">
+              Guest
+            </div>
+          </>
+        )}
       </div>
       <button
         id="start_btn"
@@ -174,7 +173,6 @@ const GamePage = () => {
         ref={inputRef}
         className="opacity-0 cursor-default"
         id="result"
-        // value={!youWon ? "" : null}
         onChange={checkEqualHandler}
         onBlur={handleBlurChanger}
       ></input>
