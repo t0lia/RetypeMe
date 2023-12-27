@@ -6,8 +6,7 @@ import { useParams } from "next/navigation";
 import { JOIN } from "@/app/api/route";
 import WsApiService, { CountDown, SessionStat } from "@/app/api/WsApiService";
 
-const DUMMY_TEXT =
-  "loremipsumloremipsumloremipsumloremipsumloremipsumloremipsum";
+const DUMMY_TEXT = "loremipsum";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
@@ -19,6 +18,7 @@ const GamePage = () => {
   );
   const [textIsBlurred, setTextIsBlurred] = useState(false);
   const [textInputStyles, setTextInputStyles] = useState<Array<string>>([]);
+  const [isGameEnded, setIsGameEnded] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -48,6 +48,10 @@ const GamePage = () => {
     console.log("New progress:", newProgress);
 
     setUserProgress(newProgress);
+
+    if (newProgress[localStorage.getItem("userId")] === 100) {
+      setIsGameEnded(true);
+    }
   }
 
   function onCountDownReceived(response: CountDown) {
@@ -70,6 +74,7 @@ const GamePage = () => {
   };
 
   const handleStartGame = async (id: string) => {
+    setIsButtonDisabled(true);
     console.log("Starting the game...");
     const response = await JOIN(id);
     const data = await response.json();
@@ -81,7 +86,7 @@ const GamePage = () => {
     const newTextStyles = Array.from({ length }, (_, i) => "black");
 
     for (let i = 0; i < length; i++) {
-      if (e.target.value[i] !== formattedText[i].props.children) {
+      if (e.target.value[i] !== formattedText[i]?.props.children) {
         newTextStyles[i] = "orangered";
       }
     }
@@ -96,6 +101,10 @@ const GamePage = () => {
       console.log("Progress:", progress);
       const userId = localStorage.getItem("userId");
       apiServiceRef.current.sendStat(userId, progress);
+
+      if (e.target.value === DUMMY_TEXT && isGameEnded) {
+        inputRef.current.disabled = true;
+      }
     }
   }
 
@@ -128,6 +137,9 @@ const GamePage = () => {
                 {userId.slice(-5)}
                 {userId === localStorage.getItem("userId") ? "(you)" : ""}
               </div>
+              <span className="absolute right-0 top-0">
+                {userProgress === 100 ? "🥇" : ""}
+              </span>
             </div>
           ))
         ) : (
@@ -175,6 +187,7 @@ const GamePage = () => {
         id="result"
         onChange={checkEqualHandler}
         onBlur={handleBlurChanger}
+        disabled={isGameEnded}
       ></input>
       <div className="absolute left-3 bottom-3 ">
         <button
