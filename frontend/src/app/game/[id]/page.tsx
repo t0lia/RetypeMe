@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { JOIN } from "@/app/api/route";
 import WsApiService, { CountDown, SessionStat } from "@/app/api/WsApiService";
 
-const DUMMY_TEXT = "loremipsum";
+const DUMMY_TEXT = "lorem ipsum";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
@@ -19,6 +19,8 @@ const GamePage = () => {
   const [textIsBlurred, setTextIsBlurred] = useState(false);
   const [textInputStyles, setTextInputStyles] = useState<Array<string>>([]);
   const [isGameEnded, setIsGameEnded] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState(0);
+  const [cursorIsVisible, setCursorIsVisible] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -83,6 +85,9 @@ const GamePage = () => {
 
   function checkEqualHandler(e) {
     const enteredTextLength = e.target.value.length;
+
+    setCursorPosition(enteredTextLength - 1);
+
     const newTextStyles = Array.from(
       { length: enteredTextLength },
       (_, i) => "black"
@@ -115,6 +120,15 @@ const GamePage = () => {
       }
     }
   }
+
+  useEffect(() => {
+    const cursorInterval = setInterval(
+      () => setCursorIsVisible((prev) => !prev),
+      500
+    );
+
+    return () => clearInterval(cursorInterval);
+  }, []);
 
   useEffect(() => {
     const sessionId: string = window.location.href.split("/").pop() as string;
@@ -183,7 +197,16 @@ const GamePage = () => {
           onClick={handleClickFormattedText}
         >
           {formattedText.map((char, index) => (
-            <span key={index} style={{ color: textInputStyles[index] }}>
+            <span
+              key={index}
+              style={{
+                color: textInputStyles[index],
+                borderRight:
+                  cursorPosition === index && cursorIsVisible
+                    ? "2px solid black"
+                    : "none",
+              }}
+            >
               {char}
             </span>
           ))}
