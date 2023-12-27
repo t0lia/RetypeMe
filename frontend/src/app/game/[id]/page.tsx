@@ -82,10 +82,13 @@ const GamePage = () => {
   };
 
   function checkEqualHandler(e) {
-    const length = e.target.value.length;
-    const newTextStyles = Array.from({ length }, (_, i) => "black");
+    const enteredTextLength = e.target.value.length;
+    const newTextStyles = Array.from(
+      { length: enteredTextLength },
+      (_, i) => "black"
+    );
 
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < enteredTextLength; i++) {
       if (e.target.value[i] !== formattedText[i]?.props.children) {
         newTextStyles[i] = "orangered";
       }
@@ -96,8 +99,13 @@ const GamePage = () => {
     if (!apiServiceRef.current) {
       console.error("apiService is not defined");
       return;
-    } else {
-      const progress = Math.round((length / formattedText.length) * 100);
+    } else if (
+      e.target.value.slice(0, enteredTextLength) ===
+      DUMMY_TEXT.slice(0, enteredTextLength)
+    ) {
+      const progress = Math.round(
+        (enteredTextLength / formattedText.length) * 100
+      );
       console.log("Progress:", progress);
       const userId = localStorage.getItem("userId");
       apiServiceRef.current.sendStat(userId, progress);
