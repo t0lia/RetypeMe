@@ -17,7 +17,7 @@ const GamePage = () => {
     {}
   );
   const [textIsBlurred, setTextIsBlurred] = useState(false);
-  const [textInputStyles, setTextInputStyles] = useState<Array<string>>([]);
+  const [textInputStyles, setTextInputStyles] = useState<string[]>([]);
   const [isGameEnded, setIsGameEnded] = useState(false);
   const [cursorPosition, setCursorPosition] = useState(0);
   const [cursorIsVisible, setCursorIsVisible] = useState(false);
@@ -32,12 +32,20 @@ const GamePage = () => {
     <span key={index}>{char}</span>
   ));
 
-  function handleClickFormattedText() {
-    inputRef.current?.focus();
+  function returnFocusOnClick(e: MouseEvent) {
+    e.stopPropagation();
     setTextIsBlurred(false);
+    inputRef.current?.focus();
+    console.log("MODAL", textIsBlurred);
   }
 
-  function handleBlurChanger() {
+  function handleClickFormattedText(e) {
+    setTextIsBlurred(false);
+    inputRef.current?.focus();
+    console.log("TEXT", textIsBlurred, e.target);
+  }
+
+  function handleBlurChanger(e) {
     setTextIsBlurred(true);
   }
 
@@ -189,27 +197,36 @@ const GamePage = () => {
         {startBtnText}
       </button>
       {textVisible && (
-        <div
-          id="text"
-          className={`w-[1000px] mt-5 mb-5 filter text-gray-500 text-xl font-medium ${
-            textIsBlurred ? "blur-[2px]" : ""
-          }`}
-          onClick={handleClickFormattedText}
-        >
-          {formattedText.map((char, index) => (
-            <span
-              key={index}
-              style={{
-                color: textInputStyles[index],
-                borderRight:
-                  cursorPosition === index && cursorIsVisible
-                    ? "2px solid black"
-                    : "none",
-              }}
+        <div className="relative" onClick={handleClickFormattedText}>
+          <div
+            id="text"
+            className={`w-[1000px] mt-5 mb-5 filter text-gray-500 text-xl font-medium ${
+              textIsBlurred ? "blur-[2px]" : ""
+            }`}
+          >
+            {formattedText.map((char, index) => (
+              <span
+                key={index}
+                style={{
+                  color: textInputStyles[index],
+                  borderRight:
+                    cursorPosition === index && cursorIsVisible
+                      ? "2px solid black"
+                      : "none",
+                }}
+              >
+                {char}
+              </span>
+            ))}
+          </div>
+          {textIsBlurred && (
+            <div
+              onClick={returnFocusOnClick}
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-full h-full flex justify-center items-center cursor-pointer"
             >
-              {char}
-            </span>
-          ))}
+              <p>👉 Click here to focus 👈</p>
+            </div>
+          )}
         </div>
       )}
       <input
