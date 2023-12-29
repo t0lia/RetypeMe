@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { JOIN } from "@/app/api/route";
 import WsApiService, { CountDown, SessionStat } from "@/app/api/WsApiService";
 
-const DUMMY_TEXT = "lorem ipsum";
+const DUMMY_TEXT = "lorem ipsumd sd";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
@@ -21,6 +21,7 @@ const GamePage = () => {
   const [isGameEnded, setIsGameEnded] = useState(false);
   const [cursorPosition, setCursorPosition] = useState(0);
   const [cursorIsVisible, setCursorIsVisible] = useState(false);
+  const [completedWords, setCompletedWords] = useState<string[]>([]);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -55,7 +56,7 @@ const GamePage = () => {
       newProgress[user.id] = user.progress;
     });
 
-    console.log("New progress:", newProgress);
+    // console.log("New progress:", newProgress);
 
     setUserProgress(newProgress);
 
@@ -92,7 +93,9 @@ const GamePage = () => {
   };
 
   function checkEqualHandler(e) {
-    const enteredTextLength = e.target.value.length;
+    const enteredText = e.target.value.trim();
+
+    const enteredTextLength = enteredText.length;
 
     setCursorPosition(enteredTextLength - 1);
 
@@ -100,31 +103,35 @@ const GamePage = () => {
       { length: enteredTextLength },
       (_, i) => "black"
     );
+    let hasMistake = false;
 
     for (let i = 0; i < enteredTextLength; i++) {
-      if (e.target.value[i] !== formattedText[i]?.props.children) {
+      if (enteredText[i] !== formattedText[i]?.props.children) {
         newTextStyles[i] = "orangered";
+        hasMistake = true;
       }
     }
 
     setTextInputStyles(newTextStyles);
 
-    if (!apiServiceRef.current) {
-      console.error("apiService is not defined");
-      return;
-    } else if (
-      e.target.value.slice(0, enteredTextLength) ===
-      DUMMY_TEXT.slice(0, enteredTextLength)
-    ) {
-      const progress = Math.round(
-        (enteredTextLength / formattedText.length) * 100
-      );
-      console.log("Progress:", progress);
-      const userId = localStorage.getItem("userId");
-      apiServiceRef.current.sendStat(userId, progress);
+    if (!hasMistake) {
+      if (
+        (DUMMY_TEXT.startsWith(enteredText) &&
+          DUMMY_TEXT[enteredTextLength] === " ") ||
+        DUMMY_TEXT === enteredText
+      ) {
+        const progress = Math.round(
+          (enteredTextLength / formattedText.length) * 100
+        );
 
-      if (e.target.value === DUMMY_TEXT && isGameEnded) {
-        inputRef.current.disabled = true;
+        console.log("Progress:", progress);
+
+        const userId = localStorage.getItem("userId");
+        apiServiceRef.current.sendStat(userId, progress);
+
+        if (enteredText === DUMMY_TEXT && isGameEnded) {
+          inputRef.current.disabled = true;
+        }
       }
     }
   }
