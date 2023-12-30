@@ -37,4 +37,4 @@ jobs:
 
       - name: Call server endpoint
         run: |
-          curl  -X POST -u username:${{ secrets.WEBHOOK_PASSWORD }} http://65.109.132.132:8082/restart_script
+          curl -X POST -u username:${{ secrets.WEBHOOK_PASSWORD }} http://65.109.132.132:8082/restart_script
