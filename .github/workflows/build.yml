@@ -34,3 +34,7 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: retypeme/retypeme-frontend:latest
+
+      - name: Call server endpoint
+        run: |
+          curl  -X POST -u username:${{ secrets.WEBHOOK_PASSWORD }} http://65.109.132.132:8082/restart_script
