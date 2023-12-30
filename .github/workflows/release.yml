@@ -3,6 +3,7 @@ name: Build Kotlin Project
 on:
   push:
     branches:
+      - '**'
       - 'main'
 
 jobs:
