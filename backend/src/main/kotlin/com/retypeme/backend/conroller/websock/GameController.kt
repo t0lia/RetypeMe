@@ -33,7 +33,7 @@ class GameController(
     }
 
     private fun send(it: CountDown) {
-        logger.info("Sending countdown for session ${it.id} with value ${it.count}")
+        logger.info("Sending countdown for session ${it.id} with value ${it.count} and text ${it.text}")
         simpMessagingTemplate.convertAndSend("/topic/${it.id}/countdown", it)
     }
 }
