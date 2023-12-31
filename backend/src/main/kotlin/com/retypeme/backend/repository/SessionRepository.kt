@@ -14,7 +14,7 @@ class SessionRepository(private val openSessions: MutableMap<String, Session> = 
     }
 
     fun joinSession(sessionId: String): SessionUser {
-        val user = User(randomUUID().toString(), 0)
+        val user = User(randomUUID().toString(), 0, 0)
         getSessionById(sessionId).users.add(user)
         return SessionUser(sessionId, user.id)
     }
@@ -28,8 +28,17 @@ class SessionRepository(private val openSessions: MutableMap<String, Session> = 
     }
 
     fun updateProgress(sessionId: String, userId: String, progress: Int): Unit {
-        val session = getSessionById(sessionId)
+        val session: Session = getSessionById(sessionId)
         val user: User = session.users.find { u -> u.id == userId } ?: throw Exception("User not found")
+        if (user.progress < 100) {
+            updateUser(user, progress, session)
+        }
+    }
+
+    private fun updateUser(user: User, progress: Int, session: Session) {
         user.progress = progress
+        if (progress == 100) {
+            user.place = session.users.count { u -> u.progress == 100 }
+        }
     }
 }

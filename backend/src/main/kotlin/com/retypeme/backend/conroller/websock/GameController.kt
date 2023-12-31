@@ -1,6 +1,7 @@
 package com.retypeme.backend.conroller.websock
 
 import com.retypeme.backend.conroller.websock.model.CountDown
+import com.retypeme.backend.conroller.websock.model.SessionStat
 import com.retypeme.backend.conroller.websock.model.UserStat
 import com.retypeme.backend.service.CountDownService
 import com.retypeme.backend.service.SessionService
@@ -21,8 +22,11 @@ class GameController(
 
     @MessageMapping("/stat")
     fun receiveStat(userStat: UserStat) {
-        val response = sessionService.updateProgress(userStat)
-        logger.info("progress: ${userStat.progress}")
+        val response: SessionStat = sessionService.updateProgress(userStat)
+        logger.info("receive progress: ${userStat.progress} for user ${userStat.userId} in session ${userStat.sessionId}")
+
+        logger.info("sending stat for session ${userStat.sessionId}")
+        response.users.forEach { user -> logger.info("user ${user.id} progress: ${user.progress} place: ${user.place}") }
         simpMessagingTemplate.convertAndSend("/topic/" + userStat.sessionId + "/progress", response)
     }
 
