@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap
 private const val COUNTDOWN_INITIAL = 3
 
 @Service
-class CountDownService {
+class CountDownService(private val textGenerator: TextGenerator) {
 
     private val countMap: MutableMap<String, Int> = ConcurrentHashMap<String, Int>()
 
@@ -16,7 +16,7 @@ class CountDownService {
     }
 
     fun countDown(): List<CountDown> {
-        if(countMap.isEmpty()) {
+        if (countMap.isEmpty()) {
             return emptyList()
         }
         val sessions: MutableSet<String> = countMap.keys
@@ -26,9 +26,10 @@ class CountDownService {
     private fun handleSession(sessionId: String): CountDown {
         val count: Int = countMap[sessionId] ?: 0
         countMap[sessionId] = count - 1
-        if (count < 0) {
+        if (count <= 0) {
             countMap.remove(sessionId)
+            return CountDown(sessionId, textGenerator.generateText(), 0)
         }
-        return CountDown(sessionId, count)
+        return CountDown(sessionId, "", count)
     }
 }
