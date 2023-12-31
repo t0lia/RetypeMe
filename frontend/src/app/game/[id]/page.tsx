@@ -56,8 +56,6 @@ const GamePage = () => {
       newProgress[user.id] = user.progress;
     });
 
-    // console.log("New progress:", newProgress);
-
     setUserProgress(newProgress);
 
     if (newProgress[localStorage.getItem("userId")] === 100) {
@@ -86,14 +84,13 @@ const GamePage = () => {
 
   const handleStartGame = async (id: string) => {
     setIsButtonDisabled(true);
-    console.log("Starting the game...");
     const response = await JOIN(id);
     const data = await response.json();
     localStorage.setItem("userId", data.userId);
   };
 
   function checkEqualHandler(e) {
-    const enteredText = e.target.value.trim();
+    const enteredText = e.target.value;
 
     const enteredTextLength = enteredText.length;
 
@@ -132,8 +129,25 @@ const GamePage = () => {
         if (enteredText === DUMMY_TEXT && isGameEnded) {
           inputRef.current.disabled = true;
         }
+
+        setCompletedWords((prevCompletedWords) => [
+          ...prevCompletedWords,
+          enteredText.split(" ").pop(),
+        ]);
       }
     }
+  }
+
+  function handleKeyDown(e) {
+    if (e.key === "Backspace" && lastEnteredWordIsCorrect()) {
+      e.preventDefault();
+    }
+  }
+
+  function lastEnteredWordIsCorrect() {
+    const enteredWords = inputRef.current.value.trim().split(" ");
+    const lastEnteredWord = enteredWords[enteredWords.length - 1];
+    return completedWords[completedWords.length - 1] === lastEnteredWord;
   }
 
   useEffect(() => {
@@ -243,6 +257,7 @@ const GamePage = () => {
         onChange={checkEqualHandler}
         onBlur={handleBlurChanger}
         disabled={isGameEnded}
+        onKeyDown={handleKeyDown}
       ></input>
       <div className="absolute left-3 bottom-3 ">
         <button
