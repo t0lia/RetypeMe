@@ -4,24 +4,25 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 
 import { JOIN } from "@/app/api/route";
-import WsApiService, { CountDown, SessionStat } from "@/app/api/WsApiService";
-
-const DUMMY_TEXT = "lorem ipsumd sd";
+import WsApiService, {
+  CountDown,
+  SessionStat,
+  User,
+} from "@/app/api/WsApiService";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
   const [textVisible, setTextVisible] = useState(false);
   const [startBtnText, setStartBtnText] = useState("Start the game");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [userProgress, setUserProgress] = useState<{ [key: string]: number }>(
-    {}
-  );
+  const [userStats, setUserStats] = useState<User[]>([]);
   const [textIsBlurred, setTextIsBlurred] = useState(false);
   const [textInputStyles, setTextInputStyles] = useState<string[]>([]);
   const [isGameEnded, setIsGameEnded] = useState(false);
   const [cursorPosition, setCursorPosition] = useState(0);
   const [cursorIsVisible, setCursorIsVisible] = useState(false);
   const [completedWords, setCompletedWords] = useState<string[]>([]);
+  const [gameText, setGameText] = useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -29,9 +30,9 @@ const GamePage = () => {
   const id = params.id;
   const apiServiceRef = useRef<WsApiService | null>(null);
 
-  const formattedText = DUMMY_TEXT.split("").map((char, index) => (
-    <span key={index}>{char}</span>
-  ));
+  const formattedText = gameText
+    .split("")
+    .map((char, index) => <span key={index}>{char}</span>);
 
   function returnFocusOnClick(e: MouseEvent) {
     e.stopPropagation();
@@ -40,27 +41,28 @@ const GamePage = () => {
     console.log("MODAL", textIsBlurred);
   }
 
-  function handleClickFormattedText(e) {
+  function handleClickFormattedText() {
     setTextIsBlurred(false);
     inputRef.current?.focus();
-    console.log("TEXT", textIsBlurred, e.target);
   }
 
-  function handleBlurChanger(e) {
+  function handleBlurChanger() {
     setTextIsBlurred(true);
   }
 
   function onProgressReceived(stat: SessionStat) {
-    const newProgress = {};
-    stat.users.forEach((user) => {
-      newProgress[user.id] = user.progress;
-    });
+    setUserStats(
+      stat.users.map((user) => ({
+        id: user.id,
+        progress: user.progress,
+        place: user.place,
+      }))
+    );
 
-    // console.log("New progress:", newProgress);
-
-    setUserProgress(newProgress);
-
-    if (newProgress[localStorage.getItem("userId")] === 100) {
+    if (
+      stat.users.find((user) => user.id === localStorage.getItem("userId"))
+        ?.progress === 100
+    ) {
       setIsGameEnded(true);
     }
   }
@@ -75,8 +77,11 @@ const GamePage = () => {
       setIsButtonDisabled(true);
       setTextVisible(true);
       inputRef.current?.focus();
+      setGameText(response.text);
     }
   }
+
+  console.log(gameText);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -86,14 +91,13 @@ const GamePage = () => {
 
   const handleStartGame = async (id: string) => {
     setIsButtonDisabled(true);
-    console.log("Starting the game...");
     const response = await JOIN(id);
     const data = await response.json();
     localStorage.setItem("userId", data.userId);
   };
 
   function checkEqualHandler(e) {
-    const enteredText = e.target.value.trim();
+    const enteredText = e.target.value;
 
     const enteredTextLength = enteredText.length;
 
@@ -116,9 +120,9 @@ const GamePage = () => {
 
     if (!hasMistake) {
       if (
-        (DUMMY_TEXT.startsWith(enteredText) &&
-          DUMMY_TEXT[enteredTextLength] === " ") ||
-        DUMMY_TEXT === enteredText
+        (gameText.startsWith(enteredText) &&
+          gameText[enteredTextLength] === " ") ||
+        gameText === enteredText
       ) {
         const progress = Math.round(
           (enteredTextLength / formattedText.length) * 100
@@ -129,11 +133,28 @@ const GamePage = () => {
         const userId = localStorage.getItem("userId");
         apiServiceRef.current.sendStat(userId, progress);
 
-        if (enteredText === DUMMY_TEXT && isGameEnded) {
+        if (enteredText === gameText && isGameEnded) {
           inputRef.current.disabled = true;
         }
+
+        setCompletedWords((prevCompletedWords) => [
+          ...prevCompletedWords,
+          enteredText.split(" ").pop(),
+        ]);
       }
     }
+  }
+
+  function handleKeyDown(e) {
+    if (e.key === "Backspace" && lastEnteredWordIsCorrect()) {
+      e.preventDefault();
+    }
+  }
+
+  function lastEnteredWordIsCorrect() {
+    const enteredWords = inputRef.current.value.trim().split(" ");
+    const lastEnteredWord = enteredWords[enteredWords.length - 1];
+    return completedWords[completedWords.length - 1] === lastEnteredWord;
   }
 
   useEffect(() => {
@@ -158,24 +179,26 @@ const GamePage = () => {
     <div className="flex flex-col items-center min-h-screen py-2">
       <div className="flex flex-col gap-2 mb-3">
         <p>Progress</p>
-
-        {Object.keys(userProgress).length > 0 ? (
-          Object.entries(userProgress).map(([userId, userProgress]) => (
+        {userStats.length > 0 ? (
+          userStats.map((user) => (
             <div
-              key={userId}
+              key={user.id}
               className="w-[700px] relative bg-gray-300 border-2 border-gray-500 rounded-sm h-8 overflow-hidden"
               id="progress"
             >
               <div
-                key={userId}
+                key={user.id}
                 className="bg-blue-300 h-full"
-                style={{ width: `${userProgress}%` }}
+                style={{ width: `${user.progress}%` }}
               >
-                {userId.slice(-5)}
-                {userId === localStorage.getItem("userId") ? "(you)" : ""}
+                {user.id.slice(-5)}
+                {user.id === localStorage.getItem("userId") ? "(you)" : ""}
               </div>
-              <span className="absolute right-0 top-0">
-                {userProgress === 100 ? "🥇" : ""}
+              <span className="absolute right-0 top-0 mr-1">
+                {user.progress === 100 && user.place === 1 ? "🥇" : ""}
+                {user.progress === 100 && user.place === 2 ? "🥈" : ""}
+                {user.progress === 100 && user.place === 3 ? "🥉" : ""}
+                {user.progress === 100 && user.place > 3 ? `${user.place}` : ""}
               </span>
             </div>
           ))
@@ -243,6 +266,7 @@ const GamePage = () => {
         onChange={checkEqualHandler}
         onBlur={handleBlurChanger}
         disabled={isGameEnded}
+        onKeyDown={handleKeyDown}
       ></input>
       <div className="absolute left-3 bottom-3 ">
         <button
