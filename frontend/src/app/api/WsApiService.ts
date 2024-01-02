@@ -3,6 +3,7 @@ import { Client } from "@stomp/stompjs";
 export interface CountDown {
   id: string;
   count: number;
+  text: string;
 }
 
 export interface User {

@@ -10,8 +10,6 @@ import WsApiService, {
   User,
 } from "@/app/api/WsApiService";
 
-const DUMMY_TEXT = "lorem ipsumd sd";
-
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
   const [textVisible, setTextVisible] = useState(false);
@@ -24,6 +22,7 @@ const GamePage = () => {
   const [cursorPosition, setCursorPosition] = useState(0);
   const [cursorIsVisible, setCursorIsVisible] = useState(false);
   const [completedWords, setCompletedWords] = useState<string[]>([]);
+  const [gameText, setGameText] = useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -31,9 +30,9 @@ const GamePage = () => {
   const id = params.id;
   const apiServiceRef = useRef<WsApiService | null>(null);
 
-  const formattedText = DUMMY_TEXT.split("").map((char, index) => (
-    <span key={index}>{char}</span>
-  ));
+  const formattedText = gameText
+    .split("")
+    .map((char, index) => <span key={index}>{char}</span>);
 
   function returnFocusOnClick(e: MouseEvent) {
     e.stopPropagation();
@@ -68,8 +67,6 @@ const GamePage = () => {
     }
   }
 
-  console.log(userStats);
-
   function onCountDownReceived(response: CountDown) {
     let count = response.count;
     if (count > 0) {
@@ -80,8 +77,11 @@ const GamePage = () => {
       setIsButtonDisabled(true);
       setTextVisible(true);
       inputRef.current?.focus();
+      setGameText(response.text);
     }
   }
+
+  console.log(gameText);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -120,9 +120,9 @@ const GamePage = () => {
 
     if (!hasMistake) {
       if (
-        (DUMMY_TEXT.startsWith(enteredText) &&
-          DUMMY_TEXT[enteredTextLength] === " ") ||
-        DUMMY_TEXT === enteredText
+        (gameText.startsWith(enteredText) &&
+          gameText[enteredTextLength] === " ") ||
+        gameText === enteredText
       ) {
         const progress = Math.round(
           (enteredTextLength / formattedText.length) * 100
@@ -133,7 +133,7 @@ const GamePage = () => {
         const userId = localStorage.getItem("userId");
         apiServiceRef.current.sendStat(userId, progress);
 
-        if (enteredText === DUMMY_TEXT && isGameEnded) {
+        if (enteredText === gameText && isGameEnded) {
           inputRef.current.disabled = true;
         }
 
