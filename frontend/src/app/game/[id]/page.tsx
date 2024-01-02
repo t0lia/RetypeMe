@@ -4,7 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 
 import { JOIN } from "@/app/api/route";
-import WsApiService, { CountDown, SessionStat } from "@/app/api/WsApiService";
+import WsApiService, {
+  CountDown,
+  SessionStat,
+  User,
+} from "@/app/api/WsApiService";
 
 const DUMMY_TEXT = "lorem ipsumd sd";
 
@@ -13,9 +17,7 @@ const GamePage = () => {
   const [textVisible, setTextVisible] = useState(false);
   const [startBtnText, setStartBtnText] = useState("Start the game");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [userProgress, setUserProgress] = useState<{ [key: string]: number }>(
-    {}
-  );
+  const [userStats, setUserStats] = useState<User[]>([]);
   const [textIsBlurred, setTextIsBlurred] = useState(false);
   const [textInputStyles, setTextInputStyles] = useState<string[]>([]);
   const [isGameEnded, setIsGameEnded] = useState(false);
@@ -40,28 +42,33 @@ const GamePage = () => {
     console.log("MODAL", textIsBlurred);
   }
 
-  function handleClickFormattedText(e) {
+  function handleClickFormattedText() {
     setTextIsBlurred(false);
     inputRef.current?.focus();
-    console.log("TEXT", textIsBlurred, e.target);
   }
 
-  function handleBlurChanger(e) {
+  function handleBlurChanger() {
     setTextIsBlurred(true);
   }
 
   function onProgressReceived(stat: SessionStat) {
-    const newProgress = {};
-    stat.users.forEach((user) => {
-      newProgress[user.id] = user.progress;
-    });
+    setUserStats(
+      stat.users.map((user) => ({
+        id: user.id,
+        progress: user.progress,
+        place: user.place,
+      }))
+    );
 
-    setUserProgress(newProgress);
-
-    if (newProgress[localStorage.getItem("userId")] === 100) {
+    if (
+      stat.users.find((user) => user.id === localStorage.getItem("userId"))
+        ?.progress === 100
+    ) {
       setIsGameEnded(true);
     }
   }
+
+  console.log(userStats);
 
   function onCountDownReceived(response: CountDown) {
     let count = response.count;
@@ -172,24 +179,26 @@ const GamePage = () => {
     <div className="flex flex-col items-center min-h-screen py-2">
       <div className="flex flex-col gap-2 mb-3">
         <p>Progress</p>
-
-        {Object.keys(userProgress).length > 0 ? (
-          Object.entries(userProgress).map(([userId, userProgress]) => (
+        {userStats.length > 0 ? (
+          userStats.map((user) => (
             <div
-              key={userId}
+              key={user.id}
               className="w-[700px] relative bg-gray-300 border-2 border-gray-500 rounded-sm h-8 overflow-hidden"
               id="progress"
             >
               <div
-                key={userId}
+                key={user.id}
                 className="bg-blue-300 h-full"
-                style={{ width: `${userProgress}%` }}
+                style={{ width: `${user.progress}%` }}
               >
-                {userId.slice(-5)}
-                {userId === localStorage.getItem("userId") ? "(you)" : ""}
+                {user.id.slice(-5)}
+                {user.id === localStorage.getItem("userId") ? "(you)" : ""}
               </div>
-              <span className="absolute right-0 top-0">
-                {userProgress === 100 ? "🥇" : ""}
+              <span className="absolute right-0 top-0 mr-1">
+                {user.progress === 100 && user.place === 1 ? "🥇" : ""}
+                {user.progress === 100 && user.place === 2 ? "🥈" : ""}
+                {user.progress === 100 && user.place === 3 ? "🥉" : ""}
+                {user.progress === 100 && user.place > 3 ? `${user.place}` : ""}
               </span>
             </div>
           ))
