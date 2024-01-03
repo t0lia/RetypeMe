@@ -64,9 +64,25 @@ const GamePage = () => {
         ?.progress === 100
     ) {
       setIsGameEnded(true);
+
+      // Start the New game
+      setStartBtnText("New game");
+    }
+
+    // if all users finishes typing
+    if (stat.users.every((user) => user.progress === 100)) {
+      console.log("all users ended");
+
+      setGameText("");
+      setCursorPosition(0);
+      setIsButtonDisabled(false);
+      setIsGameEnded(false);
+      setCompletedWords([]);
+      setTextInputStyles([]);
+      inputRef.current.value = "";
     }
   }
-
+  console.log(completedWords);
   function onCountDownReceived(response: CountDown) {
     let count = response.count;
     if (count > 0) {
@@ -81,8 +97,6 @@ const GamePage = () => {
     }
   }
 
-  console.log(gameText);
-
   const handleCopy = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopied(true);
@@ -94,6 +108,7 @@ const GamePage = () => {
     const response = await JOIN(id);
     const data = await response.json();
     localStorage.setItem("userId", data.userId);
+    setUserStats([]); // shoul it be here?
   };
 
   function checkEqualHandler(e) {
