@@ -191,8 +191,10 @@ const GamePage = () => {
                 className="bg-blue-300 h-full"
                 style={{ width: `${user.progress}%` }}
               >
-                {user.id.slice(-5)}
-                {user.id === localStorage.getItem("userId") ? "(you)" : ""}
+                <span className="ml-1">
+                  {user.id.slice(-5)}
+                  {user.id === localStorage.getItem("userId") ? "(you)" : ""}
+                </span>
               </div>
               <span className="absolute right-0 top-0 mr-1">
                 {user.progress === 100 && user.place === 1 ? "🥇" : ""}
@@ -208,10 +210,10 @@ const GamePage = () => {
               className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8"
               id="progress"
             >
-              Guest (you)
+              <span className="ml-1">Guest (you)</span>
             </div>
             <div className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8">
-              Guest
+              <span className="ml-1">Guest</span>
             </div>
           </>
         )}
@@ -254,7 +256,7 @@ const GamePage = () => {
               onClick={returnFocusOnClick}
               className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-full h-full flex justify-center items-center cursor-pointer"
             >
-              <p>👉 Click here to focus 👈</p>
+              <p className="text-xl font-semibold">👉 Click here to focus 👈</p>
             </div>
           )}
         </div>
