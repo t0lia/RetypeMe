@@ -23,6 +23,7 @@ const GamePage = () => {
   const [cursorIsVisible, setCursorIsVisible] = useState(false);
   const [completedWords, setCompletedWords] = useState<string[]>([]);
   const [gameText, setGameText] = useState("");
+  const [initialGameText, setInitialGameText] = useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -82,7 +83,6 @@ const GamePage = () => {
       inputRef.current.value = "";
     }
   }
-
   function onCountDownReceived(response: CountDown) {
     let count = response.count;
     if (count > 0) {
@@ -94,6 +94,7 @@ const GamePage = () => {
       setTextVisible(true);
       inputRef.current?.focus();
       setGameText(response.text);
+      setInitialGameText(response.text);
     }
   }
 
@@ -128,6 +129,15 @@ const GamePage = () => {
       if (enteredText[i] !== formattedText[i]?.props.children) {
         newTextStyles[i] = "orangered";
         hasMistake = true;
+
+        if (gameText[i] === " " && enteredText[i] !== " ") {
+          // Replace gameText[i] with enteredText[i]
+          setGameText((prev) => {
+            const newGameText = prev.split("");
+            newGameText[i] = enteredText[i];
+            return newGameText.join("");
+          });
+        }
       }
     }
 
@@ -163,6 +173,9 @@ const GamePage = () => {
   function handleKeyDown(e) {
     if (e.key === "Backspace" && lastEnteredWordIsCorrect()) {
       e.preventDefault();
+    }
+    if (e.key === "Backspace" && gameText !== initialGameText) {
+      setGameText(initialGameText);
     }
   }
 
