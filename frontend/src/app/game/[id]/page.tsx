@@ -82,7 +82,7 @@ const GamePage = () => {
       inputRef.current.value = "";
     }
   }
-  console.log(completedWords);
+
   function onCountDownReceived(response: CountDown) {
     let count = response.count;
     if (count > 0) {
@@ -284,6 +284,7 @@ const GamePage = () => {
         onBlur={handleBlurChanger}
         disabled={isGameEnded}
         onKeyDown={handleKeyDown}
+        autoComplete="off"
       ></input>
       <div className="absolute left-3 bottom-3 ">
         <button
