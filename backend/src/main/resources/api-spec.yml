@@ -64,6 +64,12 @@ paths:
     post:
       summary: Join a session
       operationId: joinSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserJoinRequest'
       responses:
         '200':
           description: OK
@@ -110,3 +116,8 @@ components:
       properties:
         players:
           type: integer
+    UserJoinRequest:
+      type: object
+      properties:
+        userId:
+          type: string

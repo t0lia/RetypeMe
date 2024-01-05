@@ -4,6 +4,7 @@ import com.retypeme.backend.api.SessionsApi
 import com.retypeme.backend.model.JoinSessionResponse
 import com.retypeme.backend.model.Players
 import com.retypeme.backend.model.SessionResponse
+import com.retypeme.backend.model.UserJoinRequest
 import com.retypeme.backend.service.SessionService
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.ResponseEntity
@@ -37,8 +38,8 @@ class SessionController(val sessionService: SessionService) : SessionsApi {
 
     @PostMapping("{id}/join")
     @Operation(summary = "Join a session")
-    override fun joinSession(@PathVariable id: String): ResponseEntity<JoinSessionResponse> {
-        val response = sessionService.joinSession(id)
+    override fun joinSession(@PathVariable id: String, @RequestBody userJoinRequest: UserJoinRequest): ResponseEntity<JoinSessionResponse> {
+        val response = sessionService.joinSession(id, userJoinRequest.userId)
         return ok(response)
     }
 }

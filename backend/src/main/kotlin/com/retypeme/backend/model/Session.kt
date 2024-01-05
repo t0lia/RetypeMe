@@ -8,4 +8,9 @@ class Session(
     var startedAt: LocalDateTime?,
     var updatedAt: LocalDateTime,
     val players: Int,
-    val users: MutableList<User> = mutableListOf())
+    val users: MutableList<User> = mutableListOf()) {
+
+    fun isFinished(): Boolean {
+        return users.all { it.progress == 100 }
+    }
+}

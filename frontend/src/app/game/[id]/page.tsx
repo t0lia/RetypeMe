@@ -1,14 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import {useEffect, useRef, useState} from "react";
+import {useParams} from "next/navigation";
 
-import { JOIN } from "@/app/api/route";
-import WsApiService, {
-  CountDown,
-  SessionStat,
-  User,
-} from "@/app/api/WsApiService";
+import {JOIN} from "@/app/api/route";
+import WsApiService, {CountDown, SessionStat, User,} from "@/app/api/WsApiService";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
@@ -107,7 +103,7 @@ const GamePage = () => {
 
   const handleStartGame = async (id: string) => {
     setIsButtonDisabled(true);
-    const response = await JOIN(id);
+    const response = await JOIN(id, localStorage.getItem("userId"));
     const data = await response.json();
     localStorage.setItem("userId", data.userId);
     setUserStats([]); // shoul it be here?
