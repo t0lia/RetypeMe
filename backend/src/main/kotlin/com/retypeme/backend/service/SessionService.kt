@@ -24,8 +24,8 @@ class SessionService(
         return SessionResponse(repository.createSession(players).id)
     }
 
-    fun joinSession(sessionId: String): JoinSessionResponse {
-        val result = repository.joinSession(sessionId)
+    fun joinSession(sessionId: String, userId: String?): JoinSessionResponse {
+        val result = repository.joinSession(sessionId, userId)
         val session = repository.getSessionById(sessionId)
 
         if (session.users.count() >= session.players) {
@@ -51,7 +51,7 @@ class SessionService(
         return getStat(userStat.sessionId)
     }
 
-    fun start(sessionId: String, text:String): Unit {
+    fun start(sessionId: String, text: String): Unit {
         repository.start(sessionId, text)
 
     }

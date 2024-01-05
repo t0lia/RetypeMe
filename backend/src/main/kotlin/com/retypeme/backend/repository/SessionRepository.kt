@@ -19,10 +19,28 @@ class SessionRepository(private val dateTimeProvider: DateTimeProvider) {
         return session
     }
 
-    fun joinSession(sessionId: String): SessionUser {
-        val user = User(randomUUID().toString(), 0, 0, 0)
-        getSessionById(sessionId).users.add(user)
-        return SessionUser(sessionId, user.id)
+    fun joinSession(sessionId: String, userId: String?): SessionUser {
+        val session = getSessionById(sessionId)
+
+        if (session.isFinished()) {
+            removeUsers(sessionId)
+        }
+
+        val result = if (userId == null) {
+            createUser(session, randomUUID().toString())
+        } else if (session.users.none { u -> u.id == userId }) {
+            createUser(session, userId)
+        } else {
+            userId
+        }
+        return SessionUser(sessionId, result)
+
+    }
+
+    private fun createUser(session: Session, id: String): String {
+        val user = User(id, 0, 0, 0)
+        session.users.add(user)
+        return user.id
     }
 
     fun getAllSessions(): List<Session> {
@@ -61,5 +79,10 @@ class SessionRepository(private val dateTimeProvider: DateTimeProvider) {
         val typedChars: Int = (session.text.length * progress) / 100
         val time: Long = session.updatedAt.toEpochSecond(UTC) - session.startedAt!!.toEpochSecond(UTC)
         return ((typedChars * 60) / time).toInt()
+    }
+
+    private fun removeUsers(sessionId: String) {
+        val session: Session = getSessionById(sessionId)
+        session.users.clear()
     }
 }
