@@ -1,5 +1,11 @@
 package com.retypeme.backend.model
 
-class Session(val id: String,
-              val players: Int,
-              val users: MutableList<User> = mutableListOf())
+import java.time.LocalDateTime
+
+class Session(
+    val id: String,
+    var text: String,
+    var startedAt: LocalDateTime?,
+    var updatedAt: LocalDateTime,
+    val players: Int,
+    val users: MutableList<User> = mutableListOf())

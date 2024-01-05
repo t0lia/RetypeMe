@@ -8,6 +8,7 @@ export interface CountDown {
 
 export interface User {
   id: string;
+  cpm: number;
   progress: number;
   place: number;
 }

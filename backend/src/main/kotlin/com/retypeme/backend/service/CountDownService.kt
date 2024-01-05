@@ -1,13 +1,17 @@
 package com.retypeme.backend.service
 
 import com.retypeme.backend.conroller.websock.model.CountDown
+import com.retypeme.backend.repository.SessionRepository
 import org.springframework.stereotype.Service
 import java.util.concurrent.ConcurrentHashMap
 
 private const val COUNTDOWN_INITIAL = 3
 
 @Service
-class CountDownService(private val textGenerator: TextGenerator) {
+class CountDownService(
+    private val textGenerator: TextGenerator,
+    private val sessionRepository: SessionRepository
+) {
 
     private val countMap: MutableMap<String, Int> = ConcurrentHashMap<String, Int>()
 
@@ -20,15 +24,17 @@ class CountDownService(private val textGenerator: TextGenerator) {
             return emptyList()
         }
         val sessions: MutableSet<String> = countMap.keys
-        return sessions.map(::handleSession)
+        return sessions.map(::countDownSession)
     }
 
-    private fun handleSession(sessionId: String): CountDown {
+    private fun countDownSession(sessionId: String): CountDown {
         val count: Int = countMap[sessionId] ?: 0
         countMap[sessionId] = count - 1
         if (count <= 0) {
+            val text = textGenerator.generateText()
+            sessionRepository.start(sessionId, text)
             countMap.remove(sessionId)
-            return CountDown(sessionId, textGenerator.generateText(), 0)
+            return CountDown(sessionId, text, 0)
         }
         return CountDown(sessionId, "", count)
     }

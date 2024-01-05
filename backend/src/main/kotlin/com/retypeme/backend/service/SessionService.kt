@@ -10,11 +10,17 @@ import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
 
 @Service
-class SessionService(private val simpMessagingTemplate: SimpMessagingTemplate,
-                     private val repository: SessionRepository,
-                     private val countDownService: CountDownService) {
+class SessionService(
+    private val simpMessagingTemplate: SimpMessagingTemplate,
+    private val repository: SessionRepository,
+    private val countDownService: CountDownService
+) {
 
-    fun createSession(players:Int): SessionResponse {
+    fun getRepository(): SessionRepository {
+        return repository
+    }
+
+    fun createSession(players: Int): SessionResponse {
         return SessionResponse(repository.createSession(players).id)
     }
 
@@ -32,7 +38,7 @@ class SessionService(private val simpMessagingTemplate: SimpMessagingTemplate,
 
     fun getAllSessions(): List<SessionResponse> {
         return repository.getAllSessions()
-                .map { session -> SessionResponse(session.id, session.users.map { it.id }) }
+            .map { session -> SessionResponse(session.id, session.users.map { it.id }) }
     }
 
     fun getSessionById(id: String): SessionResponse {
@@ -40,9 +46,14 @@ class SessionService(private val simpMessagingTemplate: SimpMessagingTemplate,
         return SessionResponse(session.id, session.users.map { it.id })
     }
 
-    fun updateProgress(userStat: UserStat) : SessionStat{
+    fun updateProgress(userStat: UserStat): SessionStat {
         repository.updateProgress(userStat.sessionId, userStat.userId, userStat.progress)
         return getStat(userStat.sessionId)
+    }
+
+    fun start(sessionId: String, text:String): Unit {
+        repository.start(sessionId, text)
+
     }
 
     fun getStat(sessionId: String): SessionStat {
