@@ -39,7 +39,7 @@ const GamePage = () => {
     e.stopPropagation();
     setTextIsBlurred(false);
     inputRef.current?.focus();
-    console.log("MODAL", textIsBlurred);
+    // console.log("MODAL", textIsBlurred);
   }
 
   function handleClickFormattedText() {
@@ -61,11 +61,6 @@ const GamePage = () => {
       }))
     );
 
-    // print progress and cpm
-    stat.users.forEach((user) => {
-      console.log("user id:"+ user.id + " progress:" + user.progress + " cpm:" + user.cpm);
-    })
-
     if (
       stat.users.find((user) => user.id === localStorage.getItem("userId"))
         ?.progress === 100
@@ -78,7 +73,7 @@ const GamePage = () => {
 
     // if all users finishes typing
     if (stat.users.every((user) => user.progress === 100)) {
-      console.log("all users ended");
+      // console.log("all users ended");
 
       setGameText("");
       setCursorPosition(0);
@@ -159,7 +154,7 @@ const GamePage = () => {
           (enteredTextLength / formattedText.length) * 100
         );
 
-        console.log("Progress:", progress);
+        // console.log("Progress:", progress);
 
         const userId = localStorage.getItem("userId");
         apiServiceRef.current.sendStat(userId, progress);
@@ -177,7 +172,11 @@ const GamePage = () => {
   }
 
   function handleKeyDown(e) {
-    if (e.key === "Backspace" && lastEnteredWordIsCorrect()) {
+    if (
+      e.key === "Backspace" &&
+      lastEnteredWordIsCorrect() &&
+      initialGameText.startsWith(inputRef.current.value)
+    ) {
       e.preventDefault();
     }
     if (e.key === "Backspace" && gameText !== initialGameText) {
@@ -231,10 +230,37 @@ const GamePage = () => {
                 </span>
               </div>
               <span className="absolute right-0 top-0 mr-1">
-                {user.progress === 100 && user.place === 1 ? "🥇" : ""}
-                {user.progress === 100 && user.place === 2 ? "🥈" : ""}
-                {user.progress === 100 && user.place === 3 ? "🥉" : ""}
-                {user.progress === 100 && user.place > 3 ? `${user.place}` : ""}
+                {user.progress === 100 && user.place === 1 && (
+                  <>
+                    <span>🎉 CPM: </span>
+                    <b className="font-semibold">{user.cpm}</b>
+                    <span> Place: 🥇</span>
+                  </>
+                )}
+                {user.progress === 100 && user.place === 2 && (
+                  <>
+                    <span>🎉 CPM: </span>
+                    <b className="font-semibold">{user.cpm}</b>
+                    <span> Place: 🥈</span>
+                  </>
+                )}
+                {user.progress === 100 && user.place === 3 && (
+                  <>
+                    <span>🎉 CPM: </span>
+                    <b className="font-semibold">{user.cpm}</b>
+                    <span> Place: 🥉</span>
+                  </>
+                )}
+                {user.progress === 100 && user.place > 3 && (
+                  <>
+                    <span>CPM: </span>
+                    <b className="font-semibold">{user.cpm}</b>
+                    <span>
+                      {" "}
+                      Place: <b>{user.place} 😭</b>
+                    </span>
+                  </>
+                )}
               </span>
             </div>
           ))
