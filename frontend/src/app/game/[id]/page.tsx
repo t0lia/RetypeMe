@@ -172,7 +172,11 @@ const GamePage = () => {
   }
 
   function handleKeyDown(e) {
-    if (e.key === "Backspace" && lastEnteredWordIsCorrect()) {
+    if (
+      e.key === "Backspace" &&
+      lastEnteredWordIsCorrect() &&
+      initialGameText.startsWith(inputRef.current.value)
+    ) {
       e.preventDefault();
     }
     if (e.key === "Backspace" && gameText !== initialGameText) {
