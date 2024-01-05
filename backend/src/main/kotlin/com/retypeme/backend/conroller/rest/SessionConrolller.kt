@@ -7,6 +7,7 @@ import com.retypeme.backend.model.SessionResponse
 import com.retypeme.backend.service.SessionService
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.ResponseEntity
+import org.springframework.http.ResponseEntity.ok
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -16,24 +17,28 @@ class SessionController(val sessionService: SessionService) : SessionsApi {
     @GetMapping("")
     @Operation(summary = "Get all sessions")
     override fun getAllSessions(): ResponseEntity<List<SessionResponse>> {
-        return ResponseEntity.ok(sessionService.getAllSessions())
+        val response = sessionService.getAllSessions()
+        return ok(response)
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get session by ID")
     override fun getSessionById(@RequestParam id: String): ResponseEntity<SessionResponse> {
-        return ResponseEntity.ok(sessionService.getSessionById(id))
+        val response = sessionService.getSessionById(id)
+        return ok(response)
     }
 
     @PostMapping("")
     @Operation(summary = "Create a new session")
     override fun createSession(@RequestBody players: Players): ResponseEntity<SessionResponse> {
-        return ResponseEntity.ok(sessionService.createSession(players.players))
+        val response = sessionService.createSession(players.players)
+        return ok(response)
     }
 
     @PostMapping("{id}/join")
     @Operation(summary = "Join a session")
     override fun joinSession(@PathVariable id: String): ResponseEntity<JoinSessionResponse> {
-        return ResponseEntity.ok(sessionService.joinSession(id))
+        val response = sessionService.joinSession(id)
+        return ok(response)
     }
 }

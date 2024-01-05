@@ -56,9 +56,15 @@ const GamePage = () => {
       stat.users.map((user) => ({
         id: user.id,
         progress: user.progress,
+        cpm: user.cpm,
         place: user.place,
       }))
     );
+
+    // print progress and cpm
+    stat.users.forEach((user) => {
+      console.log("user id:"+ user.id + " progress:" + user.progress + " cpm:" + user.cpm);
+    })
 
     if (
       stat.users.find((user) => user.id === localStorage.getItem("userId"))
