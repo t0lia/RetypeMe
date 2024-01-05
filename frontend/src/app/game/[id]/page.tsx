@@ -23,6 +23,7 @@ const GamePage = () => {
   const [cursorIsVisible, setCursorIsVisible] = useState(false);
   const [completedWords, setCompletedWords] = useState<string[]>([]);
   const [gameText, setGameText] = useState("");
+  const [initialGameText, setInitialGameText] = useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -64,9 +65,24 @@ const GamePage = () => {
         ?.progress === 100
     ) {
       setIsGameEnded(true);
+
+      // Start the New game
+      setStartBtnText("New game");
+    }
+
+    // if all users finishes typing
+    if (stat.users.every((user) => user.progress === 100)) {
+      console.log("all users ended");
+
+      setGameText("");
+      setCursorPosition(0);
+      setIsButtonDisabled(false);
+      setIsGameEnded(false);
+      setCompletedWords([]);
+      setTextInputStyles([]);
+      inputRef.current.value = "";
     }
   }
-
   function onCountDownReceived(response: CountDown) {
     let count = response.count;
     if (count > 0) {
@@ -78,10 +94,9 @@ const GamePage = () => {
       setTextVisible(true);
       inputRef.current?.focus();
       setGameText(response.text);
+      setInitialGameText(response.text);
     }
   }
-
-  console.log(gameText);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -94,6 +109,7 @@ const GamePage = () => {
     const response = await JOIN(id);
     const data = await response.json();
     localStorage.setItem("userId", data.userId);
+    setUserStats([]); // shoul it be here?
   };
 
   function checkEqualHandler(e) {
@@ -113,6 +129,15 @@ const GamePage = () => {
       if (enteredText[i] !== formattedText[i]?.props.children) {
         newTextStyles[i] = "orangered";
         hasMistake = true;
+
+        if (gameText[i] === " " && enteredText[i] !== " ") {
+          // Replace gameText[i] with enteredText[i]
+          setGameText((prev) => {
+            const newGameText = prev.split("");
+            newGameText[i] = enteredText[i];
+            return newGameText.join("");
+          });
+        }
       }
     }
 
@@ -148,6 +173,9 @@ const GamePage = () => {
   function handleKeyDown(e) {
     if (e.key === "Backspace" && lastEnteredWordIsCorrect()) {
       e.preventDefault();
+    }
+    if (e.key === "Backspace" && gameText !== initialGameText) {
+      setGameText(initialGameText);
     }
   }
 
@@ -191,8 +219,10 @@ const GamePage = () => {
                 className="bg-blue-300 h-full"
                 style={{ width: `${user.progress}%` }}
               >
-                {user.id.slice(-5)}
-                {user.id === localStorage.getItem("userId") ? "(you)" : ""}
+                <span className="ml-1">
+                  {user.id.slice(-5)}
+                  {user.id === localStorage.getItem("userId") ? "(you)" : ""}
+                </span>
               </div>
               <span className="absolute right-0 top-0 mr-1">
                 {user.progress === 100 && user.place === 1 ? "🥇" : ""}
@@ -208,10 +238,10 @@ const GamePage = () => {
               className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8"
               id="progress"
             >
-              Guest (you)
+              <span className="ml-1">Guest (you)</span>
             </div>
             <div className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8">
-              Guest
+              <span className="ml-1">Guest</span>
             </div>
           </>
         )}
@@ -254,7 +284,7 @@ const GamePage = () => {
               onClick={returnFocusOnClick}
               className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-full h-full flex justify-center items-center cursor-pointer"
             >
-              <p>👉 Click here to focus 👈</p>
+              <p className="text-xl font-semibold">👉 Click here to focus 👈</p>
             </div>
           )}
         </div>
@@ -267,6 +297,7 @@ const GamePage = () => {
         onBlur={handleBlurChanger}
         disabled={isGameEnded}
         onKeyDown={handleKeyDown}
+        autoComplete="off"
       ></input>
       <div className="absolute left-3 bottom-3 ">
         <button
