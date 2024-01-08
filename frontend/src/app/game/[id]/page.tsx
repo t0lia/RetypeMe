@@ -1,10 +1,15 @@
 "use client";
 
-import {useEffect, useRef, useState} from "react";
-import {useParams} from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "next/navigation";
 
-import {JOIN} from "@/app/api/route";
-import WsApiService, {CountDown, SessionStat, User,} from "@/app/api/WsApiService";
+import { JOIN } from "@/app/api/route";
+import WsApiService, {
+  CountDown,
+  SessionStat,
+  User,
+} from "@/app/api/WsApiService";
+import { handleConnectWallet, shortWalletName } from "@/app/helpers/helpers";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
@@ -101,13 +106,21 @@ const GamePage = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleStartGame = async (id: string) => {
+  const [ingameUserId, setIngameUserId] = useState("");
+
+  useEffect(() => {
+    if (localStorage !== null) {
+      setIngameUserId(localStorage.getItem("userId"));
+    }
+  }, []);
+
+  async function handleStartGame(id: string) {
     setIsButtonDisabled(true);
     const response = await JOIN(id, localStorage.getItem("userId"));
     const data = await response.json();
     localStorage.setItem("userId", data.userId);
     setUserStats([]); // shoul it be here?
-  };
+  }
 
   function checkEqualHandler(e) {
     const enteredText = e.target.value;
@@ -204,8 +217,34 @@ const GamePage = () => {
     );
   }, []);
 
+  async function onClickConnectButton() {
+    const walletAddress = await handleConnectWallet();
+    setIngameUserId(shortWalletName(walletAddress));
+    localStorage.setItem("userId", walletAddress);
+  }
+
   return (
     <div className="flex flex-col items-center min-h-screen py-2">
+      {ingameUserId?.startsWith("0x") ? (
+        <button
+          disabled={isButtonDisabled}
+          className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
+            isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          {shortWalletName(ingameUserId)}
+        </button>
+      ) : (
+        <button
+          disabled={isButtonDisabled}
+          onClick={onClickConnectButton}
+          className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
+            isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          Connect wallet
+        </button>
+      )}
       <div className="flex flex-col gap-2 mb-3">
         <p>Progress</p>
         {userStats.length > 0 ? (
@@ -221,7 +260,7 @@ const GamePage = () => {
                 style={{ width: `${user.progress}%` }}
               >
                 <span className="ml-1">
-                  {user.id.slice(-5)}
+                  {shortWalletName(user.id)}
                   {user.id === localStorage.getItem("userId") ? "(you)" : ""}
                 </span>
               </div>
