@@ -5,8 +5,9 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "RetypeMe | Type hard or go home",
-  description: "Not your keys, not your coins.",
+  title: "RetypeMe - Learn | Play | Own",
+  description:
+    "Master blind typing skills, race against friends, and own your achievements as NFTs on RetypeMe. Elevate your typing experience with engaging competitions and a community-driven platform. Start your journey to faster, more accurate typing today!",
 };
 
 export default function RootLayout({
