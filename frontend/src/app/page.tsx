@@ -21,22 +21,6 @@ export default function Home() {
     }
   }
 
-  // async function handleConnectWallet() {
-  //   console.log("wallet connected");
-  //   const { ethereum } = window;
-
-  //   try {
-  //     const accounts = await ethereum.request({
-  //       method: "eth_requestAccounts",
-  //     });
-  //     const walletAddress = accounts[0];
-  //     setWallet(shortWalletName(walletAddress));
-  //     localStorage.setItem("userId", walletAddress);
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // }
-
   async function onClickConnectButton() {
     const walletAddress = await handleConnectWallet();
     setWallet(shortWalletName(walletAddress));
@@ -44,16 +28,24 @@ export default function Home() {
   }
 
   return (
-    <main>
-      <nav className="flex justify-end">
+    <main className="h-screen flex flex-col">
+      <nav className="flex justify-between h-16 items-center">
+        {/* <div className="ml-8 mt-7">We Are In Beta</div> */}
+        <div className="relative ml-8">
+          <div className="absolute w-36 h-9 -top-1 -left-3 bg-gradient-to-br from-pink-300 via-pink-500 to-purple-700 rounded-full p-4 filter blur-sm rotate-[-3deg]"></div>
+          <div className="relative z-10 font-semibold text-white">
+            We are in Beta!
+          </div>
+        </div>
+
         <button
-          className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 mr-8 mt-7"
+          className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 mr-8"
           onClick={onClickConnectButton}
         >
           {wallet ? wallet : "Connect wallet"}
         </button>
       </nav>
-      <div className="flex items-center justify-center min-h-screen py-2">
+      <div className="flex-1 flex items-center justify-center">
         <button
           className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
           onClick={handleClick}
