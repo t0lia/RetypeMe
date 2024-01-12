@@ -9,7 +9,8 @@ import WsApiService, {
   SessionStat,
   User,
 } from "@/app/api/WsApiService";
-import { handleConnectWallet, shortWalletName } from "@/app/helpers/helpers";
+import { shortWalletName } from "@/app/helpers";
+import { connectWallet } from "@/app/helpers";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
@@ -218,9 +219,11 @@ const GamePage = () => {
   }, []);
 
   async function onClickConnectButton() {
-    const walletAddress = await handleConnectWallet();
-    setIngameUserId(shortWalletName(walletAddress));
-    localStorage.setItem("userId", walletAddress);
+    const walletAddress = await connectWallet();
+    if (walletAddress) {
+      setIngameUserId(shortWalletName(walletAddress));
+      localStorage.setItem("userId", walletAddress);
+    }
   }
 
   return (
