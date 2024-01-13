@@ -18,3 +18,7 @@ management:
 application:
   cors:
     allowed-origins: "http://localhost:3000/"
+
+contract:
+  address: "0x.."
+  private-key: "0x.."
