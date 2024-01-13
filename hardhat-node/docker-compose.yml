@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  hardhat-node:
+    image: retypeme/retypeme-hardhat:latest
+    restart: always
+    ports:
+      - "8545:8545"
+    build:
+      dockerfile: ./Dockerfile
+      context: .
