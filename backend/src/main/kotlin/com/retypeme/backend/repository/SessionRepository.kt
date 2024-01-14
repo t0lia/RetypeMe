@@ -2,13 +2,17 @@ package com.retypeme.backend.repository
 
 import com.retypeme.backend.model.*
 import com.retypeme.backend.service.DateTimeProvider
+import com.retypeme.backend.service.SmartContractService
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.time.ZoneOffset.UTC
 import java.util.UUID.randomUUID
 
 @Component
-class SessionRepository(private val dateTimeProvider: DateTimeProvider) {
+class SessionRepository(
+    private val dateTimeProvider: DateTimeProvider,
+    private val smartContractService: SmartContractService
+) {
 
     private val openSessions: MutableMap<String, Session> = mutableMapOf()
 
@@ -72,6 +76,9 @@ class SessionRepository(private val dateTimeProvider: DateTimeProvider) {
 
         if (progress == 100) {
             user.place = session.users.count { u -> u.progress == 100 }
+            if (user.place == 1) {
+                smartContractService.endGame(session.id, user.id)
+            }
         }
     }
 
