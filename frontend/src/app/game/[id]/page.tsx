@@ -218,6 +218,7 @@ const GamePage = () => {
       onCountDownReceived,
       onProgressReceived
     );
+    sessionStorage.setItem("sessionId", sessionId);
   }, []);
 
   async function onClickConnectButton() {
@@ -229,14 +230,16 @@ const GamePage = () => {
   }
 
   async function handleUserDeposit() {
-    await userDeposit("123");
+    await userDeposit();
   }
 
   return (
     <div className="flex flex-col items-center min-h-screen py-2">
       {ingameUserId?.startsWith("0x") ? (
         <>
-          <button onClick={handleUserDeposit}>Make deposit</button>
+          <button onClick={handleUserDeposit}>
+            Click to deposit 0.1 Matic
+          </button>
           <button
             disabled={isButtonDisabled}
             className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${

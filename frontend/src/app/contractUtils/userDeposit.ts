@@ -1,18 +1,25 @@
 import { gameContract, provider } from "../contracts/GameContract";
-import { parseEther } from "ethers";
+import { parseEther, id } from "ethers";
 
-export async function userDeposit(sessionId: string) {
+export async function userDeposit() {
   try {
     const signer = await provider.getSigner();
     const connectedContract = gameContract.connect(signer);
     const amountInWei = parseEther("0.1");
+    const sessionId = sessionStorage.getItem("sessionId");
 
-    // Call the deposit function with sessionId and specify msg.value
-    const depositTx = await connectedContract.deposit(sessionId, {
+    if (!sessionId) {
+      console.error("Session ID not found.");
+      return;
+    }
+    const hashSessionId = id(sessionId);
+
+    const depositTx = await connectedContract.deposit(hashSessionId, {
       value: amountInWei,
     });
 
-    await depositTx.wait();
+    const response = await depositTx.wait();
+    console.log(response);
   } catch (error) {
     console.error(error);
   }
