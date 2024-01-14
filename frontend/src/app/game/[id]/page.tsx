@@ -236,7 +236,7 @@ const GamePage = () => {
 
   async function handleUserDeposit() {
     const response = await userDeposit();
-    if (response.status === 1) {
+    if (response && response.status === 1) {
       setTxSuccessful(true);
     }
   }
