@@ -38,17 +38,5 @@ out/
 
 */node_modules
 
-# Hardhat files
-*/cache
-*/artifacts
-
-# TypeChain files
-*/typechain
-*/typechain-types
-
-# solidity-coverage files
-*/coverage
-*/coverage.json
-
 # Environment variables in subdirectories are ignored by default
 **/.env
