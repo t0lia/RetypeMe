@@ -19,7 +19,7 @@ export async function userDeposit() {
     });
 
     const response = await depositTx.wait();
-    console.log(response);
+    return response;
   } catch (error) {
     console.error(error);
   }

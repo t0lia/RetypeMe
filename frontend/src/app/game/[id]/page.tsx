@@ -71,6 +71,8 @@ const GamePage = () => {
     ) {
       setIsGameEnded(true);
 
+      setTxSuccessful(false); // check if it is in the right place?
+
       // Start the New game
       setStartBtnText("New game");
     }
@@ -229,26 +231,26 @@ const GamePage = () => {
     }
   }
 
+  const [txSuccessful, setTxSuccessful] = useState(false);
+
   async function handleUserDeposit() {
-    await userDeposit();
+    const response = await userDeposit();
+    if (response.status === 1) {
+      setTxSuccessful(true);
+    }
   }
 
   return (
     <div className="flex flex-col items-center min-h-screen py-2">
       {ingameUserId?.startsWith("0x") ? (
-        <>
-          <button onClick={handleUserDeposit}>
-            Click to deposit 0.1 Matic
-          </button>
-          <button
-            disabled={isButtonDisabled}
-            className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-              isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-          >
-            {shortWalletName(ingameUserId)}
-          </button>
-        </>
+        <button
+          disabled={isButtonDisabled}
+          className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
+            isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          {shortWalletName(ingameUserId)}
+        </button>
       ) : (
         <button
           disabled={isButtonDisabled}
@@ -328,16 +330,25 @@ const GamePage = () => {
           </>
         )}
       </div>
-      <button
-        id="start_btn"
-        className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-          isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-        onClick={() => handleStartGame(id as string)}
-        disabled={isButtonDisabled}
-      >
-        {startBtnText}
-      </button>
+      {ingameUserId?.startsWith("0x") && !txSuccessful ? (
+        <button
+          className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
+          onClick={handleUserDeposit}
+        >
+          Click to deposit 0.1 Matic
+        </button>
+      ) : (
+        <button
+          id="start_btn"
+          className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
+            isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          onClick={() => handleStartGame(id as string)}
+          disabled={isButtonDisabled}
+        >
+          {startBtnText}
+        </button>
+      )}
       {textVisible && (
         <div className="relative" onClick={handleClickFormattedText}>
           <div
