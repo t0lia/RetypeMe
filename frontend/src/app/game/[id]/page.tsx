@@ -11,6 +11,9 @@ import WsApiService, {
 } from "@/app/api/WsApiService";
 import { shortWalletName } from "@/app/helpers";
 import { connectWallet } from "@/app/helpers";
+import { userDeposit } from "@/app/contractUtils/userDeposit";
+import { parseEther } from "ethers";
+import { withdrawWinnings } from "@/app/contractUtils/claimWinnings";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
@@ -68,6 +71,8 @@ const GamePage = () => {
         ?.progress === 100
     ) {
       setIsGameEnded(true);
+
+      // setTxSuccessful(false); // check if it is in the right place?
 
       // Start the New game
       setStartBtnText("New game");
@@ -216,6 +221,7 @@ const GamePage = () => {
       onCountDownReceived,
       onProgressReceived
     );
+    sessionStorage.setItem("sessionId", sessionId);
   }, []);
 
   async function onClickConnectButton() {
@@ -224,6 +230,20 @@ const GamePage = () => {
       setIngameUserId(shortWalletName(walletAddress));
       localStorage.setItem("userId", walletAddress);
     }
+  }
+
+  const [txSuccessful, setTxSuccessful] = useState(false);
+
+  async function handleUserDeposit() {
+    const response = await userDeposit();
+    if (response.status === 1) {
+      setTxSuccessful(true);
+    }
+  }
+
+  async function handleClaimWinnings() {
+    const response = await withdrawWinnings();
+    console.log(response);
   }
 
   return (
@@ -316,16 +336,25 @@ const GamePage = () => {
           </>
         )}
       </div>
-      <button
-        id="start_btn"
-        className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-          isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-        onClick={() => handleStartGame(id as string)}
-        disabled={isButtonDisabled}
-      >
-        {startBtnText}
-      </button>
+      {ingameUserId?.startsWith("0x") && !txSuccessful ? (
+        <button
+          className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
+          onClick={handleUserDeposit}
+        >
+          Click to deposit 0.1 Matic
+        </button>
+      ) : (
+        <button
+          id="start_btn"
+          className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
+            isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          onClick={() => handleStartGame(id as string)}
+          disabled={isButtonDisabled}
+        >
+          {startBtnText}
+        </button>
+      )}
       {textVisible && (
         <div className="relative" onClick={handleClickFormattedText}>
           <div
@@ -369,6 +398,14 @@ const GamePage = () => {
         onKeyDown={handleKeyDown}
         autoComplete="off"
       ></input>
+      {ingameUserId?.startsWith("0x") &&
+        userStats.map((user) => {
+          if (user.place === 1 && user.id === ingameUserId) {
+            return (
+              <button onClick={handleClaimWinnings}>Claim winnings 🏆</button>
+            );
+          }
+        })}
       <div className="absolute left-3 bottom-3 ">
         <button
           className="ml-5 mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
