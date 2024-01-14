@@ -12,7 +12,6 @@ import org.web3j.tx.Contract.GAS_LIMIT
 import org.web3j.tx.Contract.GAS_PRICE
 import java.math.BigInteger
 
-@Component
 class Runner : CommandLineRunner {
 
     @Value("\${contract.address}")
