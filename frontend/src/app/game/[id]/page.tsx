@@ -11,6 +11,8 @@ import WsApiService, {
 } from "@/app/api/WsApiService";
 import { shortWalletName } from "@/app/helpers";
 import { connectWallet } from "@/app/helpers";
+import { userDeposit } from "@/app/contractUtils/userDeposit";
+import { parseEther } from "ethers";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
@@ -226,17 +228,24 @@ const GamePage = () => {
     }
   }
 
+  async function handleUserDeposit() {
+    await userDeposit("123");
+  }
+
   return (
     <div className="flex flex-col items-center min-h-screen py-2">
       {ingameUserId?.startsWith("0x") ? (
-        <button
-          disabled={isButtonDisabled}
-          className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-            isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-        >
-          {shortWalletName(ingameUserId)}
-        </button>
+        <>
+          <button onClick={handleUserDeposit}>Make deposit</button>
+          <button
+            disabled={isButtonDisabled}
+            className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
+              isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            {shortWalletName(ingameUserId)}
+          </button>
+        </>
       ) : (
         <button
           disabled={isButtonDisabled}
