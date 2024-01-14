@@ -13,6 +13,7 @@ import { shortWalletName } from "@/app/helpers";
 import { connectWallet } from "@/app/helpers";
 import { userDeposit } from "@/app/contractUtils/userDeposit";
 import { parseEther } from "ethers";
+import { withdrawWinnings } from "@/app/contractUtils/claimWinnings";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
@@ -71,7 +72,7 @@ const GamePage = () => {
     ) {
       setIsGameEnded(true);
 
-      setTxSuccessful(false); // check if it is in the right place?
+      // setTxSuccessful(false); // check if it is in the right place?
 
       // Start the New game
       setStartBtnText("New game");
@@ -240,6 +241,11 @@ const GamePage = () => {
     }
   }
 
+  async function handleClaimWinnings() {
+    const response = await withdrawWinnings();
+    console.log(response);
+  }
+
   return (
     <div className="flex flex-col items-center min-h-screen py-2">
       {ingameUserId?.startsWith("0x") ? (
@@ -392,6 +398,14 @@ const GamePage = () => {
         onKeyDown={handleKeyDown}
         autoComplete="off"
       ></input>
+      {ingameUserId?.startsWith("0x") &&
+        userStats.map((user) => {
+          if (user.place === 1 && user.id === ingameUserId) {
+            return (
+              <button onClick={handleClaimWinnings}>Claim winnings 🏆</button>
+            );
+          }
+        })}
       <div className="absolute left-3 bottom-3 ">
         <button
           className="ml-5 mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
