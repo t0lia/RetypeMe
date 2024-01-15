@@ -15,6 +15,8 @@ import { userDeposit } from "@/app/contractUtils/userDeposit";
 import { parseEther } from "ethers";
 import { withdrawWinnings } from "@/app/contractUtils/claimWinnings";
 
+import "./page.css";
+
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
   const [textVisible, setTextVisible] = useState(false);
@@ -241,9 +243,15 @@ const GamePage = () => {
     }
   }
 
+  const [successfulWithdrawlWinnings, setSuccessfulWithdrawlWinnings] =
+    useState(false);
+
   async function handleClaimWinnings() {
     const response = await withdrawWinnings();
     console.log(response);
+    if (response && response.status === 1) {
+      setSuccessfulWithdrawlWinnings(true);
+    }
   }
 
   return (
@@ -400,12 +408,22 @@ const GamePage = () => {
       ></input>
       {ingameUserId?.startsWith("0x") &&
         userStats.map((user) => {
-          if (user.place === 1 && user.id === ingameUserId) {
+          if (
+            user.place === 1 &&
+            user.id === ingameUserId &&
+            !successfulWithdrawlWinnings
+          ) {
             return (
-              <button onClick={handleClaimWinnings}>Claim winnings 🏆</button>
+              <button
+                className="ml-5 mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 animation-pulse"
+                onClick={handleClaimWinnings}
+              >
+                Claim winnings 🏆
+              </button>
             );
           }
         })}
+
       <div className="absolute left-3 bottom-3 ">
         <button
           className="ml-5 mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
