@@ -3,7 +3,7 @@ import { useState } from "react";
 import { CREATE } from "./api/route";
 import { useRouter } from "next/navigation";
 
-import { connectWallet, shortWalletName } from "./helpers";
+import { connectWallet, formatWallet } from "./helpers";
 
 export default function Home() {
   const [wallet, setWallet] = useState("");
@@ -24,7 +24,7 @@ export default function Home() {
   async function onClickConnectButton() {
     const walletAddress = await connectWallet();
     if (walletAddress) {
-      setWallet(shortWalletName(walletAddress));
+      setWallet(formatWallet(walletAddress));
       localStorage.setItem("userId", walletAddress);
     }
   }

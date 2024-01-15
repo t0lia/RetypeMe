@@ -9,10 +9,9 @@ import WsApiService, {
   SessionStat,
   User,
 } from "@/app/api/WsApiService";
-import { shortWalletName } from "@/app/helpers";
+import { formatWallet } from "@/app/helpers";
 import { connectWallet } from "@/app/helpers";
 import { userDeposit } from "@/app/contractUtils/userDeposit";
-import { parseEther } from "ethers";
 import { withdrawWinnings } from "@/app/contractUtils/claimWinnings";
 
 import "./page.css";
@@ -31,6 +30,10 @@ const GamePage = () => {
   const [completedWords, setCompletedWords] = useState<string[]>([]);
   const [gameText, setGameText] = useState("");
   const [initialGameText, setInitialGameText] = useState("");
+  const [ingameUserId, setIngameUserId] = useState("");
+  const [txSuccessful, setTxSuccessful] = useState(false);
+  const [successfulWithdrawlWinnings, setSuccessfulWithdrawlWinnings] =
+    useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -46,7 +49,6 @@ const GamePage = () => {
     e.stopPropagation();
     setTextIsBlurred(false);
     inputRef.current?.focus();
-    // console.log("MODAL", textIsBlurred);
   }
 
   function handleClickFormattedText() {
@@ -73,7 +75,6 @@ const GamePage = () => {
         ?.progress === 100
     ) {
       setIsGameEnded(true);
-
       // setTxSuccessful(false); // check if it is in the right place?
 
       // Start the New game
@@ -82,8 +83,6 @@ const GamePage = () => {
 
     // if all users finishes typing
     if (stat.users.every((user) => user.progress === 100)) {
-      // console.log("all users ended");
-
       setGameText("");
       setCursorPosition(0);
       setIsButtonDisabled(false);
@@ -113,8 +112,6 @@ const GamePage = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
-  const [ingameUserId, setIngameUserId] = useState("");
 
   useEffect(() => {
     if (localStorage !== null) {
@@ -149,7 +146,6 @@ const GamePage = () => {
         hasMistake = true;
 
         if (gameText[i] === " " && enteredText[i] !== " ") {
-          // Replace gameText[i] with enteredText[i]
           setGameText((prev) => {
             const newGameText = prev.split("");
             newGameText[i] = enteredText[i];
@@ -170,8 +166,6 @@ const GamePage = () => {
         const progress = Math.round(
           (enteredTextLength / formattedText.length) * 100
         );
-
-        // console.log("Progress:", progress);
 
         const userId = localStorage.getItem("userId");
         apiServiceRef.current.sendStat(userId, progress);
@@ -229,12 +223,10 @@ const GamePage = () => {
   async function onClickConnectButton() {
     const walletAddress = await connectWallet();
     if (walletAddress) {
-      setIngameUserId(shortWalletName(walletAddress));
+      setIngameUserId(formatWallet(walletAddress));
       localStorage.setItem("userId", walletAddress);
     }
   }
-
-  const [txSuccessful, setTxSuccessful] = useState(false);
 
   async function handleUserDeposit() {
     const response = await userDeposit();
@@ -242,9 +234,6 @@ const GamePage = () => {
       setTxSuccessful(true);
     }
   }
-
-  const [successfulWithdrawlWinnings, setSuccessfulWithdrawlWinnings] =
-    useState(false);
 
   async function handleClaimWinnings() {
     const response = await withdrawWinnings();
@@ -263,7 +252,7 @@ const GamePage = () => {
             isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
-          {shortWalletName(ingameUserId)}
+          {formatWallet(ingameUserId)}
         </button>
       ) : (
         <button
@@ -291,7 +280,7 @@ const GamePage = () => {
                 style={{ width: `${user.progress}%` }}
               >
                 <span className="ml-1">
-                  {shortWalletName(user.id)}
+                  {formatWallet(user.id)}
                   {user.id === localStorage.getItem("userId") ? "(you)" : ""}
                 </span>
               </div>

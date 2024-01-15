@@ -1,4 +1,4 @@
 import { connectWallet } from "./connectWallet";
-import { shortWalletName } from "./helpers";
+import { formatWallet } from "./formatWallet";
 
-export { connectWallet, shortWalletName };
+export { connectWallet, formatWallet };
