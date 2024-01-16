@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
-import { CREATE } from "./api/route";
 import { useRouter } from "next/navigation";
 
+import { CREATE } from "./api/route";
 import { connectWallet, formatWallet } from "./helpers";
+
+import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 
 export default function Home() {
   const [wallet, setWallet] = useState("");
@@ -38,7 +40,7 @@ export default function Home() {
             We are Live on Polygon Mumbai Testnet
           </div>
         </div>
-
+        <DropDownFaucetMenu />
         <button
           className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 mr-8"
           onClick={onClickConnectButton}
