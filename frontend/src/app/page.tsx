@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
-import { CREATE } from "./api/route";
 import { useRouter } from "next/navigation";
 
+import { CREATE } from "./api/route";
 import { connectWallet, formatWallet } from "./helpers";
+
+import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 
 export default function Home() {
   const [wallet, setWallet] = useState("");
@@ -32,14 +34,13 @@ export default function Home() {
   return (
     <main className="h-screen flex flex-col">
       <nav className="flex justify-between h-16 items-center">
-        {/* <div className="ml-8 mt-7">We Are In Beta</div> */}
         <div className="relative ml-8">
-          <div className="absolute w-36 h-9 -top-1 -left-3 bg-gradient-to-br from-pink-300 via-pink-500 to-purple-700 rounded-full p-4 filter blur-sm rotate-[-3deg]"></div>
+          <div className="absolute w-80 h-10 -top-1 -left-2 bg-gradient-to-br from-pink-400 via-pink-500 to-purple-800 rounded-full p-4 filter blur-sm rotate-[-1.5deg]"></div>
           <div className="relative z-10 font-semibold text-white">
-            We are in Beta!
+            We are Live on Polygon Mumbai Testnet
           </div>
         </div>
-
+        <DropDownFaucetMenu />
         <button
           className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 mr-8"
           onClick={onClickConnectButton}
