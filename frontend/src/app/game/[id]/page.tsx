@@ -404,7 +404,7 @@ const GamePage = () => {
           ) {
             return (
               <button
-                className="ml-5 mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 animation-pulse"
+                className="mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 animation-pulse"
                 onClick={handleClaimWinnings}
               >
                 Claim winnings 🏆
@@ -412,7 +412,6 @@ const GamePage = () => {
             );
           }
         })}
-
       <div className="absolute left-3 bottom-3 ">
         <button
           className="ml-5 mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
