@@ -32,11 +32,10 @@ export default function Home() {
   return (
     <main className="h-screen flex flex-col">
       <nav className="flex justify-between h-16 items-center">
-        {/* <div className="ml-8 mt-7">We Are In Beta</div> */}
         <div className="relative ml-8">
-          <div className="absolute w-36 h-9 -top-1 -left-3 bg-gradient-to-br from-pink-300 via-pink-500 to-purple-700 rounded-full p-4 filter blur-sm rotate-[-3deg]"></div>
+          <div className="absolute w-80 h-10 -top-1 -left-2 bg-gradient-to-br from-pink-400 via-pink-500 to-purple-800 rounded-full p-4 filter blur-sm rotate-[-1.5deg]"></div>
           <div className="relative z-10 font-semibold text-white">
-            We are in Beta!
+            We are Live on Polygon Mumbai Testnet
           </div>
         </div>
 
