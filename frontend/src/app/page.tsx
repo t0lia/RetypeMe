@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { CREATE } from "./api/route";
 import { connectWallet, formatWallet } from "./helpers";
 
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
