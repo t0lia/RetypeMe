@@ -6,7 +6,7 @@ on:
       - 'main'
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +20,6 @@ jobs:
         id: increment_patch_version
         run: |
           git fetch --tags
-          git tag -l
           latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
           
           if [[ $latestTag == pre_v* ]]; then
