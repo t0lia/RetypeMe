@@ -55,7 +55,7 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile-multi
           push: true
-          tags: retypeme/retypeme-backend:latest
+          tags: retypeme/retypeme-backend:${{ env.newTag }}, retypeme/retypeme-backend:latest
 
       - name: Build and push Docker frontend image
         uses: docker/build-push-action@v5
@@ -63,7 +63,7 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
-          tags: retypeme/retypeme-frontend:latest
+          tags: retypeme/retypeme-frontend:latest:${{ env.newTag }}, retypeme/retypeme-frontend:latest
 
       - name: Call server endpoint
         run: |
