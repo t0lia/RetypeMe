@@ -1,8 +1,11 @@
 import { gameContract, provider } from "../contracts/GameContract";
 import { id } from "ethers";
+import { changeNetwork } from "../helpers/changeNetwork";
 
 export async function withdrawWinnings() {
   try {
+    await changeNetwork();
+
     const signer = await provider.getSigner();
     const connectedContract = gameContract.connect(signer);
     const sessionId = sessionStorage.getItem("sessionId");

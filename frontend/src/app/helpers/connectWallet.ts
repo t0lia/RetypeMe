@@ -9,8 +9,7 @@ import { BrowserProvider, getDefaultProvider } from "ethers";
 export async function connectWallet() {
   let provider;
   if (window.ethereum == null) {
-    console.log("Metamask is not installed; using readonly provider");
-    provider = getDefaultProvider("goerli");
+    provider = getDefaultProvider("maticMumbai");
   } else {
     provider = new BrowserProvider(window.ethereum);
     try {
@@ -18,7 +17,7 @@ export async function connectWallet() {
       console.log("Connected account:", accounts[0]);
       return accounts[0];
     } catch (error) {
-      console.error("Error connecting to MetaMask:", error);
+      console.error("Error connecting to MetaMask:", error.message);
     }
   }
 }
