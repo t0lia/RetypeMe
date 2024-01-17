@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 import { JOIN } from "@/app/api/route";
 import WsApiService, {
@@ -13,6 +13,7 @@ import { formatWallet } from "@/app/helpers";
 import { connectWallet } from "@/app/helpers";
 import { userDeposit } from "@/app/contractUtils/userDeposit";
 import { withdrawWinnings } from "@/app/contractUtils/claimWinnings";
+import { handleCreateNewGameSession } from "@/app/helpers/createNewGameSession";
 
 import "./page.css";
 
@@ -38,6 +39,7 @@ const GamePage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const params = useParams();
+  const router = useRouter();
   const id = params.id;
   const apiServiceRef = useRef<WsApiService | null>(null);
 
@@ -78,7 +80,7 @@ const GamePage = () => {
       // setTxSuccessful(false); // check if it is in the right place?
 
       // Start the New game
-      setStartBtnText("New game");
+      setStartBtnText("New Game");
     }
 
     // if all users finishes typing
@@ -120,6 +122,12 @@ const GamePage = () => {
   }, []);
 
   async function handleStartGame(id: string) {
+    if (startBtnText === "New Game") {
+      const data = await handleCreateNewGameSession();
+      if (data) {
+        router.push(`/game/${data.id}`);
+      }
+    }
     setIsButtonDisabled(true);
     const response = await JOIN(id, localStorage.getItem("userId"));
     const data = await response.json();
