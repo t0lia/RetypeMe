@@ -1,0 +1,40 @@
+name: tag major
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  tag-major:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Increment major version
+        id: increment_major_version
+        run: |
+          git fetch --tags
+          git tag -l
+          latestTag=$(git describe --tags `git rev-list --tags --max-count=1`)
+          version=${latestTag//v/}
+          IFS='.' read -ra parts <<< "$version"
+          major=${parts[0]}
+          minor=${parts[1]}
+          patch=${parts[2]}
+          # Increment the major version
+          major=$((major+1))
+          # Reset minor and patch versions to 0
+          minor=0
+          patch=0
+          newTag="pre_v$major.$minor.$patch"
+          echo "newTag=$newTag" >> $GITHUB_ENV
+
+      - name: Create major tag
+        id: create_major_tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git tag -a ${{ env.newTag }} -m "Release ${{ env.newTag }}"
+          git push origin ${{ env.newTag }}
