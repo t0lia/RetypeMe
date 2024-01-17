@@ -1,11 +1,5 @@
 import { BrowserProvider, getDefaultProvider } from "ethers";
 
-// declare global {
-//   interface Window {
-//     ethereum?: ethers.providers.ExternalProvider;
-//   }
-// }
-
 export async function connectWallet() {
   let provider;
   if (window.ethereum == null) {

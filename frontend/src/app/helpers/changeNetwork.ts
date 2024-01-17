@@ -1,3 +1,5 @@
+import { addNetwork } from "./addNetwork";
+
 export async function changeNetwork() {
   const networkId = await window.ethereum.request({ method: "eth_chainId" });
   // 0x13881 is Mumbai 80001
@@ -13,6 +15,7 @@ export async function changeNetwork() {
         });
       } catch (error) {
         console.error("Error switching network:", error.message);
+        await addNetwork(error);
         return;
       }
     } else {
