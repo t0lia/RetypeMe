@@ -6,16 +6,15 @@ import { CREATE } from "./api/route";
 import { connectWallet, formatWallet } from "./helpers";
 
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
+import { handleCreateNewGameSession } from "./helpers/createNewGameSession";
 
 export default function Home() {
   const [wallet, setWallet] = useState("");
 
   const router = useRouter();
 
-  async function handleCreateNewGameSession() {
-    const response = await CREATE({ players: 2 });
-    const data = await response.json();
-    console.log(data);
+  async function handleRetypeMeButton() {
+    const data = await handleCreateNewGameSession();
 
     if (data) {
       router.push(`/game/${data.id}`);
@@ -50,7 +49,7 @@ export default function Home() {
       <div className="flex-1 flex items-center justify-center">
         <button
           className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
-          onClick={handleCreateNewGameSession}
+          onClick={handleRetypeMeButton}
         >
           RetypeMe
         </button>
