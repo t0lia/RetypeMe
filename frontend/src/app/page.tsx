@@ -6,24 +6,22 @@ import { CREATE } from "./api/route";
 import { connectWallet, formatWallet } from "./helpers";
 
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
+import { handleCreateNewGameSession } from "./helpers/createNewGameSession";
 
 export default function Home() {
   const [wallet, setWallet] = useState("");
 
   const router = useRouter();
 
-  async function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    const response = await CREATE({ players: 2 });
-    const data = await response.json();
-    console.log(data);
+  async function handleRetypeMeButton() {
+    const data = await handleCreateNewGameSession();
 
     if (data) {
       router.push(`/game/${data.id}`);
     }
   }
 
-  async function onClickConnectButton() {
+  async function handleConnectWallet() {
     const walletAddress = await connectWallet();
     if (walletAddress) {
       setWallet(formatWallet(walletAddress));
@@ -43,7 +41,7 @@ export default function Home() {
         <DropDownFaucetMenu />
         <button
           className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 mr-8"
-          onClick={onClickConnectButton}
+          onClick={handleConnectWallet}
         >
           {wallet ? wallet : "Connect wallet"}
         </button>
@@ -51,9 +49,9 @@ export default function Home() {
       <div className="flex-1 flex items-center justify-center">
         <button
           className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
-          onClick={handleClick}
+          onClick={handleRetypeMeButton}
         >
-          Retype Me
+          RetypeMe
         </button>
       </div>
     </main>
