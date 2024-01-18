@@ -1,27 +1,16 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { connectWallet, formatWallet } from "./helpers";
 
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 import { handleCreateNewGameSession } from "./helpers/createNewGameSession";
-import {getVersion} from "@/app/api/route";
 
 export default function Home() {
   const [wallet, setWallet] = useState("");
-  const [version, setVersion] = useState("");
 
   const router = useRouter();
-
-  useEffect(() => {
-    fetchGitTag();
-  }, []);
-
-  async function fetchGitTag() {
-    const tag = await getVersion();
-    setVersion(tag);
-  }
 
   async function handleRetypeMeButton() {
     const data = await handleCreateNewGameSession();
@@ -64,9 +53,6 @@ export default function Home() {
           RetypeMe
         </button>
       </div>
-      <footer className="text-gray-500 text-sm text-center mt-4">
-        {version}
-      </footer>
     </main>
   );
 }
