@@ -27,3 +27,9 @@ export async function JOIN(id: string, userId: string|null) {
 
   return Response.json(data);
 }
+
+export async function getVersion() {
+  const res = await fetch(`${API_URL}/actuator/info`);
+  const tagData = await res.json();
+  return tagData.git.closest.tag.name;
+}

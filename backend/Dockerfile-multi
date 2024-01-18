@@ -1,4 +1,4 @@
-FROM gradle:8.4.0-jdk21 AS GRADLE_TOOL_CHAIN
+FROM gradle:8.5.0-jdk21 AS GRADLE_TOOL_CHAIN
 WORKDIR /app
 COPY . /app/
 RUN ./gradlew clean build
