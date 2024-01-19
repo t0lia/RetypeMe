@@ -5,7 +5,7 @@ import org.springframework.boot.actuate.info.Info
 import org.springframework.boot.actuate.info.InfoContributor
 import org.springframework.stereotype.Component
 
-@Component
+//@Component
 class ContractInfoContributor(private val smartContractService: SmartContractService) : InfoContributor {
 
     override fun contribute(builder: Info.Builder) {
