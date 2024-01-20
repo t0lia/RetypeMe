@@ -1,4 +1,4 @@
-package com.retypeme.backend
+package com.retypeme.project
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication

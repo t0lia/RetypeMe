@@ -1,11 +1,11 @@
-package com.retypeme.backend.service
+package com.retypeme.project.common.service
 
-import com.retypeme.backend.conroller.websock.model.SessionStat
-import com.retypeme.backend.conroller.websock.model.UserStat
-import com.retypeme.backend.model.JoinSessionResponse
-import com.retypeme.backend.model.Session
-import com.retypeme.backend.model.SessionResponse
-import com.retypeme.backend.repository.SessionRepository
+import com.retypeme.project.racing.model.SessionStat
+import com.retypeme.project.racing.model.UserStat
+import com.retypeme.project.model.JoinSessionResponse
+import com.retypeme.project.common.model.Session
+import com.retypeme.project.model.SessionResponse
+import com.retypeme.project.common.repository.SessionRepository
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
 

@@ -1,4 +1,4 @@
-package com.retypeme.backend.service
+package com.retypeme.project.common.service
 
 import org.springframework.stereotype.Service
 

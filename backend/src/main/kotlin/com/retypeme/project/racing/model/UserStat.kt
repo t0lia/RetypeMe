@@ -1,4 +1,4 @@
-package com.retypeme.backend.conroller.websock.model
+package com.retypeme.project.racing.model
 
 class UserStat(val sessionId: String,
                val userId: String,

@@ -1,11 +1,11 @@
-package com.retypeme.backend.conroller.rest
+package com.retypeme.project.control
 
-import com.retypeme.backend.api.SessionsApi
-import com.retypeme.backend.model.JoinSessionResponse
-import com.retypeme.backend.model.Players
-import com.retypeme.backend.model.SessionResponse
-import com.retypeme.backend.model.UserJoinRequest
-import com.retypeme.backend.service.SessionService
+import com.retypeme.project.api.SessionsApi
+import com.retypeme.project.model.JoinSessionResponse
+import com.retypeme.project.model.Players
+import com.retypeme.project.model.SessionResponse
+import com.retypeme.project.model.UserJoinRequest
+import com.retypeme.project.common.service.SessionService
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok

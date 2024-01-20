@@ -1,6 +1,6 @@
-package com.retypeme.backend.conroller.websock.model
+package com.retypeme.project.racing.model
 
-import com.retypeme.backend.model.User
+import com.retypeme.project.common.model.User
 
 class SessionStat(val id: String,
                   val users: MutableList<User> = mutableListOf())

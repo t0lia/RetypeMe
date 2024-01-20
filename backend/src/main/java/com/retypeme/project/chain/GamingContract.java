@@ -1,4 +1,4 @@
-package com.retypeme.backend.contract;
+package com.retypeme.project.chain;
 
 import io.reactivex.Flowable;
 import java.math.BigInteger;

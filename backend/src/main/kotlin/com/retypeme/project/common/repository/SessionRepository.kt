@@ -1,8 +1,10 @@
-package com.retypeme.backend.repository
+package com.retypeme.project.common.repository
 
-import com.retypeme.backend.model.*
-import com.retypeme.backend.service.DateTimeProvider
-import com.retypeme.backend.service.SmartContractService
+import com.retypeme.project.common.model.Session
+import com.retypeme.project.common.model.SessionUser
+import com.retypeme.project.common.model.User
+import com.retypeme.project.common.service.DateTimeProvider
+import com.retypeme.project.chain.SmartContractService
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.time.ZoneOffset.UTC

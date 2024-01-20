@@ -1,7 +1,7 @@
-package com.retypeme.backend.service
+package com.retypeme.project.common.service
 
-import com.retypeme.backend.conroller.websock.model.CountDown
-import com.retypeme.backend.repository.SessionRepository
+import com.retypeme.project.racing.model.CountDown
+import com.retypeme.project.common.repository.SessionRepository
 import org.springframework.stereotype.Service
 import java.util.concurrent.ConcurrentHashMap
 

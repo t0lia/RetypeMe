@@ -1,4 +1,4 @@
-package com.retypeme.backend.model
+package com.retypeme.project.common.model
 
 class SessionUser(val id: String,
                   val userId: String)

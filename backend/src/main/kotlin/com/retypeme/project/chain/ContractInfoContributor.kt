@@ -1,6 +1,5 @@
-package com.retypeme.backend.info
+package com.retypeme.project.chain
 
-import com.retypeme.backend.service.SmartContractService
 import org.springframework.boot.actuate.info.Info
 import org.springframework.boot.actuate.info.InfoContributor
 import org.springframework.stereotype.Component

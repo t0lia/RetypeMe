@@ -1,4 +1,4 @@
-package com.retypeme.backend.model
+package com.retypeme.project.common.model
 
 class User(val id: String,
            var place: Int,

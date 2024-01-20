@@ -1,10 +1,10 @@
-package com.retypeme.backend.conroller.websock
+package com.retypeme.project.racing
 
-import com.retypeme.backend.conroller.websock.model.CountDown
-import com.retypeme.backend.conroller.websock.model.SessionStat
-import com.retypeme.backend.conroller.websock.model.UserStat
-import com.retypeme.backend.service.CountDownService
-import com.retypeme.backend.service.SessionService
+import com.retypeme.project.racing.model.CountDown
+import com.retypeme.project.racing.model.SessionStat
+import com.retypeme.project.racing.model.UserStat
+import com.retypeme.project.common.service.CountDownService
+import com.retypeme.project.common.service.SessionService
 import org.slf4j.LoggerFactory
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessagingTemplate

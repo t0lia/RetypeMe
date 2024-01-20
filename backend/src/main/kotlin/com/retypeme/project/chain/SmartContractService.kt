@@ -1,6 +1,5 @@
-package com.retypeme.backend.service
+package com.retypeme.project.chain
 
-import com.retypeme.backend.contract.GamingContract
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
