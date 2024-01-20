@@ -1,4 +1,4 @@
-package com.retypeme.project.common.service
+package com.retypeme.project.racing.service
 
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime

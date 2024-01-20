@@ -5,7 +5,6 @@ import com.retypeme.project.model.JoinSessionResponse
 import com.retypeme.project.model.Players
 import com.retypeme.project.model.SessionResponse
 import com.retypeme.project.model.UserJoinRequest
-import com.retypeme.project.common.service.SessionService
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok

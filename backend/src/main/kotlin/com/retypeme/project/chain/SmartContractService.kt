@@ -1,7 +1,9 @@
 package com.retypeme.project.chain
 
+import com.retypeme.project.messaging.WinnerFinishedEvent
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Service
 import org.web3j.crypto.Credentials
 import org.web3j.crypto.Hash
@@ -47,6 +49,11 @@ class SmartContractService {
         logger.info("Network version: " + version.netVersion)
 
         return version.netVersion
+    }
+
+    @EventListener
+    fun onSessionReady(winnerFinishedEvent: WinnerFinishedEvent) {
+        endGame(winnerFinishedEvent.sessionId, winnerFinishedEvent.winnerId)
     }
 
     fun endGame(sessionId: String, winnerId: String) {

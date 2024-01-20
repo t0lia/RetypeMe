@@ -3,8 +3,11 @@ package com.retypeme.project
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.context.annotation.Bean
 import org.springframework.messaging.simp.config.MessageBrokerRegistry
 import org.springframework.scheduling.annotation.EnableScheduling
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.socket.config.annotation.*
 
 @SpringBootApplication
@@ -20,6 +23,18 @@ class BackendApplication(@Value("\${application.cors.allowed-origins}") val cors
 
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         registry.addEndpoint("/ws").setAllowedOrigins(corsAllowedOrigin)
+    }
+
+    @Bean
+    fun corsConfigurer(
+        @Value("\${application.cors.allowed-origins}") corsAllowedOrigin: String): WebMvcConfigurer {
+        return object : WebMvcConfigurer {
+            override fun addCorsMappings(registry: CorsRegistry) {
+                registry.addMapping("/**")
+                    .allowedOrigins(corsAllowedOrigin)
+                    .allowedMethods("*")
+            }
+        }
     }
 }
 fun main(args: Array<String>) {
