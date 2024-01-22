@@ -52,8 +52,8 @@ jobs:
       - name: Build and push Docker backend image
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
-          file: ./backend/Dockerfile-multi
+          context: .
+          file: ./backend/Dockerfile
           push: true
           tags: retypeme/retypeme-backend:${{ env.newTag }}, retypeme/retypeme-backend:latest
 

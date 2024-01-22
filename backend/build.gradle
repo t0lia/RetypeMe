@@ -6,6 +6,7 @@ plugins {
     id "org.jetbrains.kotlin.jvm" version "1.9.21"
     id "org.jetbrains.kotlin.plugin.spring" version "1.9.21"
     id "org.openapi.generator" version "7.1.0"
+    id "com.gorylenko.gradle-git-properties" version "2.4.1"
 }
 
 group = "com.retypeme"
@@ -58,7 +59,7 @@ compileKotlin.dependsOn tasks.named("openApiGenerate")
 
 openApiGenerate {
     generatorName = "kotlin-spring"
-    inputSpec.set("$rootDir/src/main/resources/api-spec.yml")
+    inputSpec.set("$rootDir/backend/src/main/resources/api-spec.yml")
     outputDir.set("$buildDir/generated")
     apiPackage.set("com.retypeme.backend.api")
     modelPackage.set("com.retypeme.backend.model")

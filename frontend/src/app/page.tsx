@@ -6,13 +6,24 @@ import { connectWallet, formatWallet } from "./helpers";
 
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 import { handleCreateNewGameSession } from "./helpers/createNewGameSession";
+import { getVersion } from "@/app/api/route";
 
 export default function Home() {
   const [wallet, setWallet] = useState("");
+  const [version, setVersion] = useState("");
   const [streamingText, setStreamingText] = useState("");
   const [textIndex, setTextIndex] = useState(0);
 
   const router = useRouter();
+
+  useEffect(() => {
+    fetchGitTag();
+  }, []);
+
+  async function fetchGitTag() {
+    const tag = await getVersion();
+    setVersion(tag);
+  }
 
   async function handleRetypeMeButton() {
     const data = await handleCreateNewGameSession();
@@ -93,7 +104,7 @@ export default function Home() {
           <div className="self-start pl-40">{streamingText}</div>
         </div>
       </main>
-      <footer className="self-end pb-1 pr-2">v0.1.0</footer>
+      <footer className="self-end pb-1 pr-2">{version}</footer>
     </>
   );
 }

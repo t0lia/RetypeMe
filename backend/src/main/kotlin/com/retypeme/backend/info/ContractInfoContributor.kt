@@ -15,9 +15,8 @@ class ContractInfoContributor(private val smartContractService: SmartContractSer
     private fun getSmartContractInfo(): Map<String, Any> {
         val infoMap = mutableMapOf<String, Any>()
 
-        infoMap["balance"] = smartContractService.getBalance()
-        infoMap["networkVersion"] = smartContractService.getNetworkVersion()
-
+        infoMap["balance"] =  "unavailable"
+        infoMap["networkVersion"] = "unavailable"
         return infoMap
     }
 }
