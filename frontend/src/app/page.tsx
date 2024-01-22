@@ -7,11 +7,14 @@ import { handleCreateNewGameSession } from "./helpers/createNewGameSession";
 
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 import Footer from "./components/footer/footer";
+import { Twitter } from "./public/icons/twitter";
+import Link from "next/link";
 
 export default function Home() {
   const [wallet, setWallet] = useState("");
   const [streamingText, setStreamingText] = useState("");
   const [textIndex, setTextIndex] = useState(0);
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   const router = useRouter();
 
@@ -30,6 +33,10 @@ export default function Home() {
       localStorage.setItem("userId", walletAddress);
     }
   }
+
+  useEffect(() => {
+    setIsSmallScreen(window.innerWidth < 768);
+  });
 
   useEffect(() => {
     const texts = [
@@ -62,13 +69,34 @@ export default function Home() {
     return () => clearInterval(intervalId);
   }, [textIndex]);
 
+  if (isSmallScreen) {
+    return (
+      <main className="flex flex-col h-screen justify-center bg-gradient-to-br from-indigo-600 to-violet-700 text-xl gap-32">
+        <div className="text-center">Explore on Desktop</div>
+        <div className="px-3 flex flex-col">
+          <div className="h-8 mb-16">{streamingText}</div>
+          <div className="self-center">Join us:</div>
+          <div className="self-center">
+            <Link
+              className=" pl-2"
+              href="https://x.com/retypemexyz"
+              target="_blank"
+            >
+              <Twitter width={36} height={40} />
+            </Link>{" "}
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <>
       <header>
-        <div className="flex justify-between h-16 items-center ">
+        <div className="flex justify-between h-16 items-center">
           <div className="relative ml-8">
             <div className="absolute w-80 h-10 -top-1.5 -left-4 bg-gradient-to-br from-pink-400 via-pink-500 to-purple-800 rounded-full p-4 filter blur-sm rotate-[-1.5deg]"></div>
-            <div className="relative z-10 font-semibold text-white ">
+            <div className="relative z-10 font-semibold text-white">
               Try Beta on Polygon Mumbai Testnet
             </div>
           </div>
