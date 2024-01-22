@@ -93,10 +93,10 @@ export default function Home() {
   return (
     <>
       <header>
-        <div className="flex justify-between h-16 items-center ">
+        <div className="flex justify-between h-16 items-center">
           <div className="relative ml-8">
             <div className="absolute w-80 h-10 -top-1.5 -left-4 bg-gradient-to-br from-pink-400 via-pink-500 to-purple-800 rounded-full p-4 filter blur-sm rotate-[-1.5deg]"></div>
-            <div className="relative z-10 font-semibold text-white ">
+            <div className="relative z-10 font-semibold text-white">
               Try Beta on Polygon Mumbai Testnet
             </div>
           </div>
