@@ -3,27 +3,17 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { connectWallet, formatWallet } from "./helpers";
+import { handleCreateNewGameSession } from "./helpers/createNewGameSession";
 
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
-import { handleCreateNewGameSession } from "./helpers/createNewGameSession";
-import {getVersion} from "@/app/api/route";
+import Footer from "./components/footer/footer";
 
 export default function Home() {
   const [wallet, setWallet] = useState("");
   const [streamingText, setStreamingText] = useState("");
   const [textIndex, setTextIndex] = useState(0);
-  const [version, setVersion] = useState("");
 
   const router = useRouter();
-
-  useEffect(() => {
-    fetchGitTag();
-  }, []);
-
-  async function fetchGitTag() {
-    const tag = await getVersion();
-    setVersion(tag);
-  }
 
   async function handleRetypeMeButton() {
     const data = await handleCreateNewGameSession();
@@ -75,10 +65,10 @@ export default function Home() {
   return (
     <>
       <header>
-        <div className="flex justify-between h-16 items-center">
+        <div className="flex justify-between h-16 items-center ">
           <div className="relative ml-8">
             <div className="absolute w-80 h-10 -top-1.5 -left-4 bg-gradient-to-br from-pink-400 via-pink-500 to-purple-800 rounded-full p-4 filter blur-sm rotate-[-1.5deg]"></div>
-            <div className="relative z-10 font-semibold text-white">
+            <div className="relative z-10 font-semibold text-white ">
               Try Beta on Polygon Mumbai Testnet
             </div>
           </div>
@@ -101,10 +91,10 @@ export default function Home() {
           >
             Try Duel Mode
           </button>
-          <div className="self-start pl-40">{streamingText}</div>
+          <div className="self-start pl-40 h-8">{streamingText}</div>
         </div>
       </main>
-      <footer className="self-end pb-1 pr-2">{version}</footer>
+      <Footer />
     </>
   );
 }
