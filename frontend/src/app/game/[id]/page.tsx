@@ -87,6 +87,7 @@ const GamePage = () => {
     // if all users finishes typing
     if (stat.users.every((user) => user.progress === 100)) {
       setGameText("");
+      setTextVisible(false);
       setCursorPosition(0);
       setIsButtonDisabled(false);
       setIsGameEnded(false);
