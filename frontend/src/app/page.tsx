@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { connectWallet, formatWallet } from "./helpers";
@@ -37,6 +37,9 @@ export default function Home() {
   useEffect(() => {
     setIsSmallScreen(window.innerWidth < 768);
   });
+  // useLayoutEffect(() => {
+  //   setIsSmallScreen(window.innerWidth < 768);
+  // });
 
   useEffect(() => {
     const texts = [
@@ -71,10 +74,10 @@ export default function Home() {
 
   if (isSmallScreen) {
     return (
-      <main className="flex flex-col h-screen justify-center bg-gradient-to-br from-indigo-600 to-violet-700 text-xl gap-32">
+      <main className="flex flex-col h-screen justify-evenly bg-gradient-to-br from-indigo-600 to-violet-700 text-xl gap-10">
         <div className="text-center">Explore on Desktop</div>
         <div className="px-3 flex flex-col">
-          <div className="h-8 mb-16">{streamingText}</div>
+          <div className="h-8 mb-36">{streamingText}</div>
           <div className="self-center">Join us:</div>
           <div className="self-center">
             <Link

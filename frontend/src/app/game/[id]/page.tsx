@@ -35,6 +35,7 @@ const GamePage = () => {
   const [txSuccessful, setTxSuccessful] = useState(false);
   const [successfulWithdrawlWinnings, setSuccessfulWithdrawlWinnings] =
     useState(false);
+  const [keyStrokeCount, setKeyStrokeCount] = useState(0);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -120,6 +121,24 @@ const GamePage = () => {
       setIngameUserId(localStorage.getItem("userId"));
     }
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = () => {
+      if (textIsBlurred) {
+        setKeyStrokeCount((prev) => prev + 1);
+        setTextIsBlurred(false);
+      }
+      if (!textIsBlurred && keyStrokeCount === 1) {
+        inputRef.current?.focus();
+        setKeyStrokeCount(0);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [textIsBlurred, keyStrokeCount]);
 
   async function handleStartGame(id: string) {
     if (startBtnText === "New Game") {
@@ -365,7 +384,7 @@ const GamePage = () => {
           <div
             id="text"
             className={`w-[1000px] mt-5 mb-5 filter text-gray-500 text-xl font-medium ${
-              textIsBlurred ? "blur-[2px]" : ""
+              textIsBlurred ? "blur-[3px]" : ""
             }`}
           >
             {formattedText.map((char, index) => (
@@ -388,7 +407,9 @@ const GamePage = () => {
               onClick={returnFocusOnClick}
               className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-full h-full flex justify-center items-center cursor-pointer"
             >
-              <p className="text-xl font-semibold">👉 Click here to focus 👈</p>
+              <p className="text-xl font-semibold">
+                👉 Click here or start typing to continue 👈
+              </p>
             </div>
           )}
         </div>
