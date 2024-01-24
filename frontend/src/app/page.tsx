@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { connectWallet, formatWallet } from "./helpers";
@@ -37,6 +37,9 @@ export default function Home() {
   useEffect(() => {
     setIsSmallScreen(window.innerWidth < 768);
   });
+  // useLayoutEffect(() => {
+  //   setIsSmallScreen(window.innerWidth < 768);
+  // });
 
   useEffect(() => {
     const texts = [
