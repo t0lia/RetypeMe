@@ -26,8 +26,6 @@ const GamePage = () => {
   const [textIsBlurred, setTextIsBlurred] = useState(false);
   const [textInputStyles, setTextInputStyles] = useState<string[]>([]);
   const [isGameEnded, setIsGameEnded] = useState(false);
-  const [cursorPosition, setCursorPosition] = useState(0);
-  const [cursorIsVisible, setCursorIsVisible] = useState(false);
   const [completedWords, setCompletedWords] = useState<string[]>([]);
   const [gameText, setGameText] = useState("");
   const [initialGameText, setInitialGameText] = useState("");
@@ -88,7 +86,6 @@ const GamePage = () => {
     if (stat.users.every((user) => user.progress === 100)) {
       setGameText("");
       setTextVisible(false);
-      setCursorPosition(0);
       setIsButtonDisabled(false);
       setIsGameEnded(false);
       setCompletedWords([]);
@@ -160,8 +157,6 @@ const GamePage = () => {
 
     const enteredTextLength = enteredText.length;
 
-    setCursorPosition(enteredTextLength - 1);
-
     const newTextStyles = Array.from(
       { length: enteredTextLength },
       (_, i) => "black"
@@ -228,15 +223,6 @@ const GamePage = () => {
     const lastEnteredWord = enteredWords[enteredWords.length - 1];
     return completedWords[completedWords.length - 1] === lastEnteredWord;
   }
-
-  useEffect(() => {
-    const cursorInterval = setInterval(
-      () => setCursorIsVisible((prev) => !prev),
-      500
-    );
-
-    return () => clearInterval(cursorInterval);
-  }, []);
 
   useEffect(() => {
     const sessionId: string = window.location.href.split("/").pop() as string;
@@ -389,17 +375,14 @@ const GamePage = () => {
             }`}
           >
             {formattedText.map((char, index) => (
-              <span
-                key={index}
-                style={{
-                  color: textInputStyles[index],
-                  borderRight:
-                    cursorPosition === index && cursorIsVisible
-                      ? "2px solid black"
-                      : "none",
-                }}
-              >
+              <span key={index} style={{ color: textInputStyles[index] }}>
+                {textInputStyles.length < 1 && index === 0 && (
+                  <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
+                )}
                 {char}
+                {textInputStyles.length === index + 1 && (
+                  <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
+                )}
               </span>
             ))}
           </div>

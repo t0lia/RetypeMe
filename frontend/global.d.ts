@@ -5,3 +5,8 @@ declare global {
     ethereum?: ethers.providers.ExternalProvider;
   }
 }
+// declare global {
+//   interface Window {
+//     ethereum?: ethers.JsonRpcProvider;
+//   }
+// }

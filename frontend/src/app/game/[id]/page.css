@@ -17,3 +17,18 @@
     transform: scale(0.9);
   }
 }
+
+@keyframes cursorFlash {
+  0%,
+  100% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-cursor {
+  animation: cursorFlash 1s infinite;
+}
