@@ -75,7 +75,6 @@ const GamePage = () => {
       stat.users.find((user) => user.id === localStorage.getItem("userId"))
         ?.progress === 100
     ) {
-      setIsGameEnded(true);
       // setTxSuccessful(false); // check if it is in the right place?
 
       // Start the New game
@@ -180,6 +179,16 @@ const GamePage = () => {
 
     setTextInputStyles(newTextStyles);
 
+    if (gameText === enteredText) {
+      const progress = Math.round(
+        (enteredTextLength / formattedText.length) * 100
+      );
+
+      apiServiceRef.current.sendStat(ingameUserId, progress);
+
+      setIsGameEnded(true);
+    }
+
     if (!hasMistake) {
       if (
         (gameText.startsWith(enteredText) &&
@@ -189,13 +198,7 @@ const GamePage = () => {
         const progress = Math.round(
           (enteredTextLength / formattedText.length) * 100
         );
-
-        const userId = localStorage.getItem("userId");
-        apiServiceRef.current.sendStat(userId, progress);
-
-        if (enteredText === gameText && isGameEnded) {
-          inputRef.current.disabled = true;
-        }
+        apiServiceRef.current.sendStat(ingameUserId, progress);
 
         setCompletedWords((prevCompletedWords) => [
           ...prevCompletedWords,
@@ -339,7 +342,9 @@ const GamePage = () => {
               className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8"
               id="progress"
             >
-              <span className="ml-1">Guest (you)</span>
+              <span className="ml-1">
+                {ingameUserId ? formatWallet(ingameUserId) : "Guest"} (you)
+              </span>
             </div>
             <div className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8">
               <span className="ml-1">Guest</span>
