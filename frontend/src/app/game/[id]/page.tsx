@@ -26,8 +26,6 @@ const GamePage = () => {
   const [textIsBlurred, setTextIsBlurred] = useState(false);
   const [textInputStyles, setTextInputStyles] = useState<string[]>([]);
   const [isGameEnded, setIsGameEnded] = useState(false);
-  const [cursorPosition, setCursorPosition] = useState(0);
-  const [cursorIsVisible, setCursorIsVisible] = useState(false);
   const [completedWords, setCompletedWords] = useState<string[]>([]);
   const [gameText, setGameText] = useState("");
   const [initialGameText, setInitialGameText] = useState("");
@@ -77,7 +75,6 @@ const GamePage = () => {
       stat.users.find((user) => user.id === localStorage.getItem("userId"))
         ?.progress === 100
     ) {
-      setIsGameEnded(true);
       // setTxSuccessful(false); // check if it is in the right place?
 
       // Start the New game
@@ -88,7 +85,6 @@ const GamePage = () => {
     if (stat.users.every((user) => user.progress === 100)) {
       setGameText("");
       setTextVisible(false);
-      setCursorPosition(0);
       setIsButtonDisabled(false);
       setIsGameEnded(false);
       setCompletedWords([]);
@@ -160,8 +156,6 @@ const GamePage = () => {
 
     const enteredTextLength = enteredText.length;
 
-    setCursorPosition(enteredTextLength - 1);
-
     const newTextStyles = Array.from(
       { length: enteredTextLength },
       (_, i) => "black"
@@ -185,6 +179,16 @@ const GamePage = () => {
 
     setTextInputStyles(newTextStyles);
 
+    if (gameText === enteredText) {
+      const progress = Math.round(
+        (enteredTextLength / formattedText.length) * 100
+      );
+
+      apiServiceRef.current.sendStat(ingameUserId, progress);
+
+      setIsGameEnded(true);
+    }
+
     if (!hasMistake) {
       if (
         (gameText.startsWith(enteredText) &&
@@ -194,13 +198,7 @@ const GamePage = () => {
         const progress = Math.round(
           (enteredTextLength / formattedText.length) * 100
         );
-
-        const userId = localStorage.getItem("userId");
-        apiServiceRef.current.sendStat(userId, progress);
-
-        if (enteredText === gameText && isGameEnded) {
-          inputRef.current.disabled = true;
-        }
+        apiServiceRef.current.sendStat(ingameUserId, progress);
 
         setCompletedWords((prevCompletedWords) => [
           ...prevCompletedWords,
@@ -228,15 +226,6 @@ const GamePage = () => {
     const lastEnteredWord = enteredWords[enteredWords.length - 1];
     return completedWords[completedWords.length - 1] === lastEnteredWord;
   }
-
-  useEffect(() => {
-    const cursorInterval = setInterval(
-      () => setCursorIsVisible((prev) => !prev),
-      500
-    );
-
-    return () => clearInterval(cursorInterval);
-  }, []);
 
   useEffect(() => {
     const sessionId: string = window.location.href.split("/").pop() as string;
@@ -353,7 +342,9 @@ const GamePage = () => {
               className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8"
               id="progress"
             >
-              <span className="ml-1">Guest (you)</span>
+              <span className="ml-1">
+                {ingameUserId ? formatWallet(ingameUserId) : "Guest"} (you)
+              </span>
             </div>
             <div className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8">
               <span className="ml-1">Guest</span>
@@ -389,17 +380,14 @@ const GamePage = () => {
             }`}
           >
             {formattedText.map((char, index) => (
-              <span
-                key={index}
-                style={{
-                  color: textInputStyles[index],
-                  borderRight:
-                    cursorPosition === index && cursorIsVisible
-                      ? "2px solid black"
-                      : "none",
-                }}
-              >
+              <span key={index} style={{ color: textInputStyles[index] }}>
+                {textInputStyles.length < 1 && index === 0 && (
+                  <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
+                )}
                 {char}
+                {textInputStyles.length === index + 1 && (
+                  <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
+                )}
               </span>
             ))}
           </div>

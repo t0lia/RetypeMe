@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useLayoutEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { connectWallet, formatWallet } from "./helpers";
 import { handleCreateNewGameSession } from "./helpers/createNewGameSession";
@@ -8,7 +9,6 @@ import { handleCreateNewGameSession } from "./helpers/createNewGameSession";
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 import Footer from "./components/footer/footer";
 import { Twitter } from "./public/icons/twitter";
-import Link from "next/link";
 
 export default function Home() {
   const [wallet, setWallet] = useState("");
