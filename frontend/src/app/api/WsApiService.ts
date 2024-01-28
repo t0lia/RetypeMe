@@ -60,6 +60,8 @@ export default class WsApiService {
 
   public sendStat(userId: string, progress: number): void {
     const userStat: UserStat = { sessionId: this.sessionId, userId, progress };
+    let body = JSON.stringify(userStat);
+    console.log("send stat: " + body);
     this.stompClient.publish({
       destination: "/app/stat",
       body: JSON.stringify(userStat),

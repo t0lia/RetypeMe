@@ -1,17 +1,13 @@
 package com.retypeme.project.control
 
 import com.retypeme.project.messaging.GameEventPublisher
-import com.retypeme.project.messaging.RaceReadyEvent
-import com.retypeme.project.racing.service.CountDownService
-import com.retypeme.project.racing.service.RaceService
 import com.retypeme.project.model.JoinSessionResponse
 import com.retypeme.project.model.SessionResponse
 import org.springframework.stereotype.Service
 
 @Service
 class SessionService(
-    private val repository: SessionRepository, private val raceService: RaceService,
-    private val countDownService: CountDownService,
+    private val repository: SessionRepository,
     private val gameEventPublisher: GameEventPublisher
 ) {
 
