@@ -59,6 +59,7 @@ const GamePage = () => {
 
   function handleBlurChanger() {
     setTextIsBlurred(true);
+    inputRef.current.blur();
   }
 
   function onProgressReceived(stat: SessionStat) {
