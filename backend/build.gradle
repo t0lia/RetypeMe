@@ -59,7 +59,7 @@ compileKotlin.dependsOn tasks.named("openApiGenerate")
 
 openApiGenerate {
     generatorName = "kotlin-spring"
-    inputSpec.set("$rootDir/src/main/resources/api-spec.yml")
+    inputSpec.set("$rootDir/backend/src/main/resources/api-spec.yml")
     outputDir.set("$buildDir/generated")
     apiPackage.set("com.retypeme.project.api")
     modelPackage.set("com.retypeme.project.model")
