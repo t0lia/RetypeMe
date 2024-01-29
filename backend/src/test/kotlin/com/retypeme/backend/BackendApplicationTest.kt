@@ -1,4 +1,4 @@
-package com.retypeme.backend
+package com.retypeme.project
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
