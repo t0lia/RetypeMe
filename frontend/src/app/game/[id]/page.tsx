@@ -161,10 +161,11 @@ const GamePage = () => {
       { length: enteredTextLength },
       (_, i) => "black"
     );
+
     let hasMistake = false;
 
     for (let i = 0; i < enteredTextLength; i++) {
-      if (enteredText[i] !== formattedText[i]?.props.children) {
+      if (enteredText[i] !== initialGameText[i]) {
         newTextStyles[i] = "orangered";
         hasMistake = true;
 
@@ -175,12 +176,15 @@ const GamePage = () => {
             return newGameText.join("");
           });
         }
+      } else if (enteredText[i] === initialGameText[i] && !hasMistake) {
+        newTextStyles[i] = "black";
+      } else {
+        newTextStyles[i] = "orangered";
       }
     }
-
     setTextInputStyles(newTextStyles);
 
-    if (gameText === enteredText) {
+    if (initialGameText === enteredText) {
       const progress = Math.round(
         (enteredTextLength / formattedText.length) * 100
       );
@@ -192,9 +196,9 @@ const GamePage = () => {
 
     if (!hasMistake) {
       if (
-        (gameText.startsWith(enteredText) &&
-          gameText[enteredTextLength] === " ") ||
-        gameText === enteredText
+        (initialGameText.startsWith(enteredText) &&
+          initialGameText[enteredTextLength] === " ") ||
+        initialGameText === enteredText
       ) {
         const progress = Math.round(
           (enteredTextLength / formattedText.length) * 100
@@ -381,7 +385,10 @@ const GamePage = () => {
             }`}
           >
             {formattedText.map((char, index) => (
-              <span key={index} style={{ color: textInputStyles[index] }}>
+              <span
+                key={crypto.randomUUID()}
+                style={{ color: textInputStyles[index] }}
+              >
                 {textInputStyles.length < 1 && index === 0 && (
                   <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
                 )}
