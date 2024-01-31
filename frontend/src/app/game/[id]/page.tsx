@@ -210,6 +210,13 @@ const GamePage = () => {
           enteredText.split(" ").pop(),
         ]);
       }
+    } else if (enteredText.length > initialGameText.length) {
+      setGameText(
+        (prev) =>
+          completedWords.join(" ") +
+          prev.slice(completedWords.join(" ").length, initialGameText.length) +
+          enteredText.slice(initialGameText.length)
+      );
     }
   }
 
