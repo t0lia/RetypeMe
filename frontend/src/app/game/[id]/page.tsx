@@ -205,10 +205,26 @@ const GamePage = () => {
         );
         apiServiceRef.current.sendStat(ingameUserId, progress);
 
-        setCompletedWords((prevCompletedWords) => [
-          ...prevCompletedWords,
-          enteredText.split(" ").pop(),
-        ]);
+        setCompletedWords((prevCompletedWords) => {
+          const enteredWords = enteredText.split(" ");
+          const lastEnteredWord = enteredWords.pop();
+
+          if (
+            lastEnteredWord &&
+            initialGameText.includes(lastEnteredWord) &&
+            (
+              initialGameText.match(
+                new RegExp(`\\b${lastEnteredWord}\\b`, "g")
+              ) || []
+            ).length >
+              prevCompletedWords.filter((word) => word === lastEnteredWord)
+                .length
+          ) {
+            return [...prevCompletedWords, lastEnteredWord];
+          }
+
+          return prevCompletedWords;
+        });
       }
     } else if (enteredText.length > initialGameText.length) {
       setGameText(
