@@ -1,4 +1,6 @@
-const API_URL: string = `${(process.env.API_REST)}/api`;
+import ApiDomainService from "@/app/api/ApiDomainService";
+
+const API_URL: string = new ApiDomainService().getRestUrl();
 
 export async function CREATE(players: any) {
   const res = await fetch(`${API_URL}/sessions`, {
