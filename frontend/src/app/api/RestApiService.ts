@@ -4,8 +4,6 @@ export default class RestApiService {
   private readonly apiUrl: string;
 
   constructor() {
-    console.log("constructor")
-    console.log(new ApiDomainService().getRestUrl())
     this.apiUrl = new ApiDomainService().getRestUrl();
   }
 
@@ -19,7 +17,7 @@ export default class RestApiService {
     });
 
     const data = await res.json();
-    return data; // Assuming you want to return the raw JSON response
+    return Response.json(data);
   }
 
   async join(id: string, userId: string | null): Promise<any> {
@@ -32,7 +30,7 @@ export default class RestApiService {
     });
 
     const data = await res.json();
-    return data; // Assuming you want to return the raw JSON response
+    return Response.json(data);
   }
 
   async getVersion(): Promise<string> {
