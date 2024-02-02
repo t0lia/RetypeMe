@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
-import { JOIN } from "@/app/api/route";
 import WsApiService, {
   CountDown,
   SessionStat,
@@ -16,6 +15,7 @@ import { withdrawWinnings } from "@/app/contractUtils/claimWinnings";
 import { handleCreateNewGameSession } from "@/app/helpers/createNewGameSession";
 
 import "./page.css";
+import RestApiService from "@/app/api/RestApiService";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
@@ -41,6 +41,7 @@ const GamePage = () => {
   const router = useRouter();
   const id = params.id;
   const apiServiceRef = useRef<WsApiService | null>(null);
+  const restServiceRef = useRef<RestApiService | null>(null);
 
   const formattedText = gameText
     .split("")
@@ -146,7 +147,7 @@ const GamePage = () => {
       }
     }
     setIsButtonDisabled(true);
-    const response = await JOIN(id, localStorage.getItem("userId"));
+    const response = await restServiceRef.current?.join(id, localStorage.getItem("userId"));
     const data = await response.json();
     localStorage.setItem("userId", data.userId);
     setUserStats([]); // shoul it be here?
@@ -189,7 +190,7 @@ const GamePage = () => {
         (enteredTextLength / formattedText.length) * 100
       );
 
-      apiServiceRef.current.sendStat(ingameUserId, progress);
+      apiServiceRef.current?.sendStat(ingameUserId, progress);
 
       setIsGameEnded(true);
     }
@@ -203,7 +204,7 @@ const GamePage = () => {
         const progress = Math.round(
           (enteredTextLength / formattedText.length) * 100
         );
-        apiServiceRef.current.sendStat(ingameUserId, progress);
+        apiServiceRef.current?.sendStat(ingameUserId, progress);
 
         setCompletedWords((prevCompletedWords) => [
           ...prevCompletedWords,
@@ -239,6 +240,7 @@ const GamePage = () => {
       onCountDownReceived,
       onProgressReceived
     );
+    restServiceRef.current = new RestApiService();
     sessionStorage.setItem("sessionId", sessionId);
   }, []);
 
