@@ -1,7 +1,7 @@
-import { CREATE } from "../api/route";
+import RestApiService from "@/app/api/RestApiService";
 
 export async function handleCreateNewGameSession() {
-  const response = await CREATE({ players: 2 });
+  const response = await new RestApiService().create({ players: 2 });
   const data = await response.json();
 
   if (data) {

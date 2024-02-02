@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { Twitter } from "@/app/public/icons/twitter";
 import { useEffect, useState } from "react";
-import { getVersion } from "@/app/api/route";
+import RestApiService from "@/app/api/RestApiService";
 
 export default function Footer() {
   const [version, setVersion] = useState("");
@@ -12,7 +12,8 @@ export default function Footer() {
   }, []);
 
   async function fetchGitTag() {
-    const tag = await getVersion();
+    const restApiService = new RestApiService();
+    const tag = await restApiService.getVersion();
     setVersion(tag);
   }
   return (

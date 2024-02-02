@@ -34,7 +34,7 @@ export default class WsApiService {
     countDownHandler: (countDown: CountDown) => void,
     progressHandler: (stat: SessionStat) => void
   ) {
-    const API_URL: string = new ApiDomainService().getRestUrl();
+    const API_URL: string = new ApiDomainService().getWebSocketUrl();
     console.log("api url: " + API_URL);
     this.sessionId = sessionId;
     this.stompClient = new Client({ brokerURL: API_URL });
