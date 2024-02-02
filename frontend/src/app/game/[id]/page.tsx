@@ -239,15 +239,26 @@ const GamePage = () => {
   function handleKeyDown(e) {
     if (
       e.key === "Backspace" &&
-      lastEnteredWordIsCorrect() &&
+      // lastEnteredWordIsCorrect() &&
       initialGameText.startsWith(inputRef.current.value)
     ) {
+      e.preventDefault();
+    }
+    if (
+      e.ctrlKey &&
+      e.key === "Backspace" &&
+      initialGameText.startsWith(inputRef.current.value)
+    ) {
+      console.log("works");
       e.preventDefault();
     }
     if (e.key === "Backspace" && gameText !== initialGameText) {
       setGameText(initialGameText);
     }
   }
+  console.log(inputRef.current?.value.length > completedWords.join(" ").length);
+  console.log(inputRef.current?.value.length, completedWords.join(" ").length);
+  console.log(inputRef.current?.value, completedWords, gameText);
 
   function lastEnteredWordIsCorrect() {
     const enteredWords = inputRef.current.value.trim().split(" ");
