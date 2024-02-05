@@ -147,7 +147,10 @@ const GamePage = () => {
       }
     }
     setIsButtonDisabled(true);
-    const response = await restServiceRef.current?.join(id, localStorage.getItem("userId"));
+    const response = await restServiceRef.current?.join(
+      id,
+      localStorage.getItem("userId")
+    );
     const data = await response.json();
     localStorage.setItem("userId", data.userId);
     setUserStats([]); // shoul it be here?
@@ -206,22 +209,44 @@ const GamePage = () => {
         );
         apiServiceRef.current?.sendStat(ingameUserId, progress);
 
+        // setCompletedWords((prevCompletedWords) => {
+        //   const enteredWords = enteredText.split(" ");
+        //   const lastEnteredWord = enteredWords.pop();
+
+        //   if (
+        //     lastEnteredWord &&
+        //     initialGameText.includes(lastEnteredWord) &&
+        //     (
+        //       initialGameText.match(
+        //         new RegExp(`\\b${lastEnteredWord}\\b`, "g")
+        //       ) || []
+        //     ).length >
+        //       prevCompletedWords.filter((word) => word === lastEnteredWord)
+        //         .length
+        //   ) {
+        //     return [...prevCompletedWords, lastEnteredWord];
+        //   }
+
+        //   return prevCompletedWords;
+        // });
         setCompletedWords((prevCompletedWords) => {
           const enteredWords = enteredText.split(" ");
           const lastEnteredWord = enteredWords.pop();
 
-          if (
-            lastEnteredWord &&
-            initialGameText.includes(lastEnteredWord) &&
-            (
-              initialGameText.match(
-                new RegExp(`\\b${lastEnteredWord}\\b`, "g")
-              ) || []
-            ).length >
-              prevCompletedWords.filter((word) => word === lastEnteredWord)
-                .length
-          ) {
-            return [...prevCompletedWords, lastEnteredWord];
+          if (lastEnteredWord && initialGameText.includes(lastEnteredWord)) {
+            const lastEnteredIndex = initialGameText.indexOf(lastEnteredWord);
+
+            // Check if the lastEnteredWord is at the correct position
+            if (
+              lastEnteredIndex !== -1 &&
+              lastEnteredIndex ===
+                initialGameText
+                  .split(" ")
+                  .filter((word) => prevCompletedWords.includes(word))
+                  .join(" ").length
+            ) {
+              return [...prevCompletedWords, lastEnteredWord];
+            }
           }
 
           return prevCompletedWords;
@@ -257,9 +282,9 @@ const GamePage = () => {
       setGameText(initialGameText);
     }
   }
-  console.log(inputRef.current?.value.length > completedWords.join(" ").length);
-  console.log(inputRef.current?.value.length, completedWords.join(" ").length);
-  console.log(inputRef.current?.value, completedWords, gameText);
+  // console.log(inputRef.current?.value.length > completedWords.join(" ").length);
+  // console.log(inputRef.current?.value.length, completedWords.join(" ").length);
+  // console.log(inputRef.current?.value, completedWords, gameText);
 
   function lastEnteredWordIsCorrect() {
     const enteredWords = inputRef.current.value.trim().split(" ");
