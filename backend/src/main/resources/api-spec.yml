@@ -53,32 +53,6 @@ paths:
         '404':
           description: Not Found
 
-  /sessions/{id}/join:
-    parameters: # Add parameters at the path level
-      - name: id
-        in: path
-        required: true
-        description: Session ID
-        schema:
-          type: string
-    post:
-      summary: Join a session
-      operationId: joinSession
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserJoinRequest'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/JoinSessionResponse'
-        '404':
-          description: Not Found
 components:
   schemas:
     JoinSessionRequest:

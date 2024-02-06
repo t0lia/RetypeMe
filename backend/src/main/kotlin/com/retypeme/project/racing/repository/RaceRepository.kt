@@ -1,6 +1,5 @@
 package com.retypeme.project.racing.repository
 
-import com.retypeme.project.chain.SmartContractService
 import com.retypeme.project.messaging.GameEventPublisher
 import com.retypeme.project.racing.model.Race
 import com.retypeme.project.racing.controller.RacerStat
@@ -19,7 +18,7 @@ class RaceRepository(
 
     fun createRace(id: String, users: MutableList<String>): Race {
         val now: LocalDateTime = dateTimeProvider.now()
-        val usersList: MutableList<RacerStat> = users.map { RacerStat(it, 0, 0, 0) }.toMutableList()
+        val usersList: MutableList<RacerStat> = users.map { RacerStat(it, 0, 0, 0, "new") }.toMutableList()
         val session = Race(id, "", null, now, usersList)
         openRaces[session.id] = session
         return session
@@ -33,6 +32,37 @@ class RaceRepository(
         val session: Race = getSessionById(sessionId)
         session.startedAt = dateTimeProvider.now()
         session.text = text
+    }
+
+    fun updateRegistration(sessionId: String, userId: String, state: String): Unit {
+        val race: Race = getSessionById(sessionId)
+        if (state == "joined") {
+            join(sessionId, userId)
+        }
+        if (state == "registered") {
+            register(race, userId, sessionId)
+        }
+    }
+
+    private fun register(race: Race, userId: String, sessionId: String) {
+        val user: RacerStat = race.users.find { u -> u.id == userId && u.state == "joined" }
+            ?: throw Exception("User not found")
+        user.state = "registered";
+        if (race.users.all { u -> u.state == "registered" }) {
+            gameEventPublisher.publishRaceReady(
+                sessionId, race.users.map { u -> u.id }.toMutableList()
+            )
+        }
+    }
+
+    fun join(sessionId: String, userId: String): Unit {
+        val session = getSessionById(sessionId)
+
+        // don't join second time
+        if (session.users.map { u -> u.id }.contains(userId)) {
+            return
+        }
+        session.users.add(RacerStat(userId, 0, 0, 0, "joined"))
     }
 
     fun updateProgress(sessionId: String, userId: String, progress: Int): Unit {

@@ -18,6 +18,12 @@ class RaceController(
 
     private val logger = LoggerFactory.getLogger(RaceController::class.java)
 
+    @MessageMapping("/reg")
+    fun receiveReg(info: RacerRegistrationIncomingInfo) {
+        val response: RaceStat = sessionService.updateRegistration(info)
+        simpMessagingTemplate.convertAndSend("/topic/" + info.sessionId + "/registration", response)
+    }
+
     @MessageMapping("/stat")
     fun receiveStat(racerIncomingStat: RacerIncomingStat) {
         val response: RaceStat = sessionService.updateProgress(racerIncomingStat)

@@ -15,7 +15,7 @@ import { withdrawWinnings } from "@/app/contractUtils/claimWinnings";
 import { handleCreateNewGameSession } from "@/app/helpers/createNewGameSession";
 
 import "./page.css";
-import RestApiService from "@/app/api/RestApiService";
+// import RestApiService from "@/app/api/RestApiService";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
@@ -40,8 +40,8 @@ const GamePage = () => {
   const params = useParams();
   const router = useRouter();
   const id = params.id;
-  const apiServiceRef = useRef<WsApiService | null>(null);
-  const restServiceRef = useRef<RestApiService | null>(null);
+  const wsApiServiceRef = useRef<WsApiService | null>(null);
+  // const restServiceRef = useRef<RestApiService | null>(null);
 
   const formattedText = gameText
     .split("")
@@ -61,6 +61,11 @@ const GamePage = () => {
   function handleBlurChanger() {
     setTextIsBlurred(true);
     inputRef.current.blur();
+  }
+
+  function onRegistrationReceived(stat: any) {
+    // TODO: mezger75 use this callback for update racers info
+    console.log(stat);
   }
 
   function onProgressReceived(stat: SessionStat) {
@@ -94,6 +99,7 @@ const GamePage = () => {
       inputRef.current.value = "";
     }
   }
+
   function onCountDownReceived(response: CountDown) {
     let count = response.count;
     if (count > 0) {
@@ -147,10 +153,17 @@ const GamePage = () => {
       }
     }
     setIsButtonDisabled(true);
-    const response = await restServiceRef.current?.join(id, localStorage.getItem("userId"));
-    const data = await response.json();
-    localStorage.setItem("userId", data.userId);
+    // const response = await restServiceRef.current?.join(id, localStorage.getItem("userId"));
+    // const data = await response.json();
+    // localStorage.setItem("userId", data.userId);
+    wsApiServiceRef.current?.register(localStorage.getItem("userId") ?? "")
     setUserStats([]); // shoul it be here?
+  }
+
+  // TODO: mezger75, move it right after page was loaded and delete join button
+  // TODO: Prerequisite: localStorage should contain userId
+  async function handleJoinGame(id: string) {
+    wsApiServiceRef.current?.join(localStorage.getItem("userId") ?? "")
   }
 
   function checkEqualHandler(e) {
@@ -159,7 +172,7 @@ const GamePage = () => {
     const enteredTextLength = enteredText.length;
 
     const newTextStyles = Array.from(
-      { length: enteredTextLength },
+      {length: enteredTextLength},
       (_, i) => "black"
     );
 
@@ -190,7 +203,7 @@ const GamePage = () => {
         (enteredTextLength / formattedText.length) * 100
       );
 
-      apiServiceRef.current?.sendStat(ingameUserId, progress);
+      wsApiServiceRef.current?.sendStat(ingameUserId, progress);
 
       setIsGameEnded(true);
     }
@@ -204,7 +217,7 @@ const GamePage = () => {
         const progress = Math.round(
           (enteredTextLength / formattedText.length) * 100
         );
-        apiServiceRef.current?.sendStat(ingameUserId, progress);
+        wsApiServiceRef.current?.sendStat(ingameUserId, progress);
 
         setCompletedWords((prevCompletedWords) => [
           ...prevCompletedWords,
@@ -214,11 +227,11 @@ const GamePage = () => {
     }
   }
 
-  function handleKeyDown(e) {
+  function handleKeyDown(e: any) {
     if (
       e.key === "Backspace" &&
       lastEnteredWordIsCorrect() &&
-      initialGameText.startsWith(inputRef.current.value)
+      initialGameText.startsWith(inputRef.current?.value ?? "")
     ) {
       e.preventDefault();
     }
@@ -228,19 +241,20 @@ const GamePage = () => {
   }
 
   function lastEnteredWordIsCorrect() {
-    const enteredWords = inputRef.current.value.trim().split(" ");
+    const enteredWords = inputRef.current?.value.trim().split(" ") ?? [];
     const lastEnteredWord = enteredWords[enteredWords.length - 1];
     return completedWords[completedWords.length - 1] === lastEnteredWord;
   }
 
   useEffect(() => {
     const sessionId: string = window.location.href.split("/").pop() as string;
-    apiServiceRef.current = new WsApiService(
+    wsApiServiceRef.current = new WsApiService(
       sessionId,
       onCountDownReceived,
-      onProgressReceived
+      onProgressReceived,
+      onRegistrationReceived
     );
-    restServiceRef.current = new RestApiService();
+    // restServiceRef.current = new RestApiService();
     sessionStorage.setItem("sessionId", sessionId);
   }, []);
 
@@ -301,7 +315,7 @@ const GamePage = () => {
               <div
                 key={user.id}
                 className="bg-blue-300 h-full"
-                style={{ width: `${user.progress}%` }}
+                style={{width: `${user.progress}%`}}
               >
                 <span className="ml-1">
                   {formatWallet(user.id)}
@@ -378,6 +392,15 @@ const GamePage = () => {
           {startBtnText}
         </button>
       )}
+      <button
+        id="start_btn"
+        className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
+          isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
+        }`}
+        onClick={() => handleJoinGame(id as string)}
+      >
+        join
+      </button>
       {textVisible && (
         <div className="relative" onClick={handleClickFormattedText}>
           <div
@@ -389,7 +412,7 @@ const GamePage = () => {
             {formattedText.map((char, index) => (
               <span
                 key={crypto.randomUUID()}
-                style={{ color: textInputStyles[index] }}
+                style={{color: textInputStyles[index]}}
               >
                 {textInputStyles.length < 1 && index === 0 && (
                   <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>

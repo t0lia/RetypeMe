@@ -1,6 +1,9 @@
 package com.retypeme.project.racing.controller
 
-class RacerStat(val id: String,
-                var place: Int,
-                var cpm: Int,
-                var progress: Int)
+class RacerStat(
+    val id: String,
+    var place: Int,
+    var cpm: Int,
+    var progress: Int,
+    var state: String
+)

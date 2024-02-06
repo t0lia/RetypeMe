@@ -35,10 +35,10 @@ class SessionController(val sessionService: SessionService) : SessionsApi {
         return ok(response)
     }
 
-    @PostMapping("{id}/join")
-    @Operation(summary = "Join a session")
-    override fun joinSession(@PathVariable id: String, @RequestBody userJoinRequest: UserJoinRequest): ResponseEntity<JoinSessionResponse> {
-        val response = sessionService.joinSession(id, userJoinRequest.userId)
-        return ok(response)
-    }
+//    @PostMapping("{id}/join")
+//    @Operation(summary = "Join a session")
+//    override fun joinSession(@PathVariable id: String, @RequestBody userJoinRequest: UserJoinRequest): ResponseEntity<JoinSessionResponse> {
+//        val response = sessionService.joinSession(id, userJoinRequest.userId)
+//        return ok(response)
+//    }
 }
