@@ -20,7 +20,7 @@ import "./page.css";
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
   const [textVisible, setTextVisible] = useState(false);
-  const [startBtnText, setStartBtnText] = useState("Start the game");
+  const [startBtnText, setStartBtnText] = useState("Start game");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [userStats, setUserStats] = useState<User[]>([]);
   const [textIsBlurred, setTextIsBlurred] = useState(false);
@@ -61,10 +61,11 @@ const GamePage = () => {
     setTextIsBlurred(true);
     inputRef.current.blur();
   }
-
+  const [sessionStat, setSessionStat] = useState<SessionStat>({});
   function onRegistrationReceived(stat: any) {
     // TODO: mezger75 use this callback for update racers info
-    console.log("STAT: ", stat);
+    setSessionStat(stat);
+    console.log(stat.users);
   }
 
   function onProgressReceived(stat: SessionStat) {
@@ -301,80 +302,78 @@ const GamePage = () => {
       )}
       <div className="flex flex-col gap-2 mb-3">
         <p>Progress</p>
-        {userStats.length > 0 ? (
-          userStats.map((user) => (
-            <div
-              key={user.id}
-              className="w-[700px] relative bg-gray-300 border-2 border-gray-500 rounded-sm h-8 overflow-hidden"
-              id="progress"
-            >
+        {userStats.length > 0
+          ? userStats.map((user) => (
               <div
                 key={user.id}
-                className="bg-blue-300 h-full"
-                style={{ width: `${user.progress}%` }}
+                className="w-[700px] relative bg-gray-300 border-2 border-gray-500 rounded-sm h-8 overflow-hidden"
+                id="progress"
               >
-                <span className="ml-1">
-                  {formatWallet(user.id)}
-                  {user.id === localStorage.getItem("userId") ? "(you)" : ""}
+                <div
+                  key={user.id}
+                  className="bg-blue-300 h-full transition-all duration-200"
+                  style={{ width: `${user.progress}%` }}
+                >
+                  <span className="ml-1">
+                    {formatWallet(user.id)}
+                    {user.id === localStorage.getItem("userId") ? "(you)" : ""}
+                  </span>
+                </div>
+                <span className="absolute right-0 top-0 mr-1">
+                  {user.progress === 100 && user.place === 1 && (
+                    <>
+                      <span>🎉 CPM: </span>
+                      <b className="font-semibold">{user.cpm}</b>
+                      <span> Place: 🥇</span>
+                    </>
+                  )}
+                  {user.progress === 100 && user.place === 2 && (
+                    <>
+                      <span>🎉 CPM: </span>
+                      <b className="font-semibold">{user.cpm}</b>
+                      <span> Place: 🥈</span>
+                    </>
+                  )}
+                  {user.progress === 100 && user.place === 3 && (
+                    <>
+                      <span>🎉 CPM: </span>
+                      <b className="font-semibold">{user.cpm}</b>
+                      <span> Place: 🥉</span>
+                    </>
+                  )}
+                  {user.progress === 100 && user.place > 3 && (
+                    <>
+                      <span>CPM: </span>
+                      <b className="font-semibold">{user.cpm}</b>
+                      <span>
+                        {" "}
+                        Place: <b>{user.place} 😭</b>
+                      </span>
+                    </>
+                  )}
                 </span>
               </div>
-              <span className="absolute right-0 top-0 mr-1">
-                {user.progress === 100 && user.place === 1 && (
-                  <>
-                    <span>🎉 CPM: </span>
-                    <b className="font-semibold">{user.cpm}</b>
-                    <span> Place: 🥇</span>
-                  </>
-                )}
-                {user.progress === 100 && user.place === 2 && (
-                  <>
-                    <span>🎉 CPM: </span>
-                    <b className="font-semibold">{user.cpm}</b>
-                    <span> Place: 🥈</span>
-                  </>
-                )}
-                {user.progress === 100 && user.place === 3 && (
-                  <>
-                    <span>🎉 CPM: </span>
-                    <b className="font-semibold">{user.cpm}</b>
-                    <span> Place: 🥉</span>
-                  </>
-                )}
-                {user.progress === 100 && user.place > 3 && (
-                  <>
-                    <span>CPM: </span>
-                    <b className="font-semibold">{user.cpm}</b>
-                    <span>
-                      {" "}
-                      Place: <b>{user.place} 😭</b>
-                    </span>
-                  </>
-                )}
-              </span>
-            </div>
-          ))
-        ) : (
-          <>
-            <div
-              className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8"
-              id="progress"
-            >
-              <span className="ml-1">
-                {ingameUserId ? formatWallet(ingameUserId) : "Guest"} (you)
-              </span>
-            </div>
-            <div className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8">
-              <span className="ml-1">Guest</span>
-            </div>
-          </>
-        )}
+            ))
+          : sessionStat?.users?.map((user) => {
+              return (
+                <div
+                  className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8"
+                  key={user.id}
+                >
+                  <span className="ml-1">
+                    {user.id ? formatWallet(user.id) : "Guest"}{" "}
+                    {user.id === ingameUserId ? "(you)" : ""}
+                  </span>
+                </div>
+              );
+            })}
       </div>
       {ingameUserId?.startsWith("0x") && !txSuccessful ? (
         <button
           className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
           onClick={handleUserDeposit}
         >
-          Click to deposit 0.1 Matic
+          Deposit 0.1 Matic
         </button>
       ) : (
         <button

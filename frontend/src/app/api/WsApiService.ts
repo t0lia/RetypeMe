@@ -47,7 +47,6 @@ export default class WsApiService {
       this.stompClient.subscribe(
         "/topic/" + sessionId + "/registration",
         (response: any) => {
-          console.log("REGISTRATION:", JSON.parse(response.body));
           onRegistrationReceivedHandler(JSON.parse(response.body));
         }
       );
