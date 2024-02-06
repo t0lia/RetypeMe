@@ -41,7 +41,6 @@ const GamePage = () => {
   const router = useRouter();
   const id = params.id;
   const wsApiServiceRef = useRef<WsApiService | null>(null);
-  // const restServiceRef = useRef<RestApiService | null>(null);
 
   const formattedText = gameText
     .split("")
@@ -65,7 +64,7 @@ const GamePage = () => {
 
   function onRegistrationReceived(stat: any) {
     // TODO: mezger75 use this callback for update racers info
-    console.log(stat);
+    console.log("STAT: ", stat);
   }
 
   function onProgressReceived(stat: SessionStat) {
@@ -153,17 +152,10 @@ const GamePage = () => {
       }
     }
     setIsButtonDisabled(true);
-    // const response = await restServiceRef.current?.join(id, localStorage.getItem("userId"));
-    // const data = await response.json();
-    // localStorage.setItem("userId", data.userId);
-    wsApiServiceRef.current?.register(localStorage.getItem("userId") ?? "")
-    setUserStats([]); // shoul it be here?
-  }
 
-  // TODO: mezger75, move it right after page was loaded and delete join button
-  // TODO: Prerequisite: localStorage should contain userId
-  async function handleJoinGame(id: string) {
-    wsApiServiceRef.current?.join(localStorage.getItem("userId") ?? "")
+    wsApiServiceRef.current?.register(localStorage.getItem("userId") ?? "");
+
+    setUserStats([]); // shoul it be here?
   }
 
   function checkEqualHandler(e) {
@@ -172,7 +164,7 @@ const GamePage = () => {
     const enteredTextLength = enteredText.length;
 
     const newTextStyles = Array.from(
-      {length: enteredTextLength},
+      { length: enteredTextLength },
       (_, i) => "black"
     );
 
@@ -248,8 +240,12 @@ const GamePage = () => {
 
   useEffect(() => {
     const sessionId: string = window.location.href.split("/").pop() as string;
+    if (!localStorage.getItem("userId")) {
+      localStorage.setItem("userId", crypto.randomUUID());
+    }
     wsApiServiceRef.current = new WsApiService(
       sessionId,
+      localStorage.getItem("userId") ?? "",
       onCountDownReceived,
       onProgressReceived,
       onRegistrationReceived
@@ -315,7 +311,7 @@ const GamePage = () => {
               <div
                 key={user.id}
                 className="bg-blue-300 h-full"
-                style={{width: `${user.progress}%`}}
+                style={{ width: `${user.progress}%` }}
               >
                 <span className="ml-1">
                   {formatWallet(user.id)}
@@ -392,15 +388,6 @@ const GamePage = () => {
           {startBtnText}
         </button>
       )}
-      <button
-        id="start_btn"
-        className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-          isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-        onClick={() => handleJoinGame(id as string)}
-      >
-        join
-      </button>
       {textVisible && (
         <div className="relative" onClick={handleClickFormattedText}>
           <div
@@ -412,7 +399,7 @@ const GamePage = () => {
             {formattedText.map((char, index) => (
               <span
                 key={crypto.randomUUID()}
-                style={{color: textInputStyles[index]}}
+                style={{ color: textInputStyles[index] }}
               >
                 {textInputStyles.length < 1 && index === 0 && (
                   <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
