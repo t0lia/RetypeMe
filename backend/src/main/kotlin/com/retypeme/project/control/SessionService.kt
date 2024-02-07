@@ -12,7 +12,9 @@ class SessionService(
 ) {
 
     fun createSession(players: Int): SessionResponse {
-        return SessionResponse(repository.createSession(players).id)
+        val session: Session = repository.createSession(players)
+        gameEventPublisher.publishRaceCreated(session.id, session.users)
+        return SessionResponse(session.id)
     }
 
     fun joinSession(sessionId: String, userId: String?): JoinSessionResponse {
@@ -25,7 +27,7 @@ class SessionService(
         val result = repository.joinSession(sessionId, userId)
 
         if (session.isFull()) {
-            gameEventPublisher.publishRaceReady(sessionId, session.users)
+            gameEventPublisher.publishRaceCreated(sessionId, session.users)
         }
 
         return JoinSessionResponse(sessionId, result)
