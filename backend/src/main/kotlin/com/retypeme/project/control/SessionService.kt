@@ -13,34 +13,18 @@ class SessionService(
 
     fun createSession(players: Int): SessionResponse {
         val session: Session = repository.createSession(players)
-        gameEventPublisher.publishRaceCreated(session.id, session.users)
+        gameEventPublisher.publishRaceCreated(session.id, session.players)
         return SessionResponse(session.id)
-    }
-
-    fun joinSession(sessionId: String, userId: String?): JoinSessionResponse {
-        val session = repository.getSessionById(sessionId)
-
-        if (session.isFull()) {
-            throw SessionStartedException("Session is full")
-        }
-
-        val result = repository.joinSession(sessionId, userId)
-
-        if (session.isFull()) {
-            gameEventPublisher.publishRaceCreated(sessionId, session.users)
-        }
-
-        return JoinSessionResponse(sessionId, result)
     }
 
     fun getAllSessions(): List<SessionResponse> {
         return repository.getAllSessions()
-            .map { session -> SessionResponse(session.id, session.users) }
+            .map { session -> SessionResponse(session.id, session.players) }
     }
 
     fun getSessionById(id: String): SessionResponse {
         val session = repository.getSessionById(id)
-        return SessionResponse(session.id, session.users)
+        return SessionResponse(session.id, session.players)
     }
 
 }
