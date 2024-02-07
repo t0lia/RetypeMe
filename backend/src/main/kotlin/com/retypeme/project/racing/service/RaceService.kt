@@ -15,11 +15,11 @@ class RaceService(private val repository: RaceRepository) {
 
     @EventListener
     fun onSessionReady(event: RaceCreatedEvent) {
-        repository.createRace(event.id, event.users)
+        repository.createRace(event.id, event.userCount)
     }
 
     fun updateRegistration(info: RacerRegistrationIncomingInfo): RaceStat {
-        repository.updateRegistration(info.sessionId, info.userId, info.state)
+        repository.updateRegistration(info.sessionId, info.userId, info.walletId, info.state)
         return getRegistration(info.sessionId)
     }
 

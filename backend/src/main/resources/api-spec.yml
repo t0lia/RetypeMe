@@ -79,10 +79,8 @@ components:
       properties:
         id:
           type: string
-        users:
-          type: array
-          items:
-            type: string
+        players:
+          type: integer
     Players:
       type: object
       required:
