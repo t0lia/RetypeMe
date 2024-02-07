@@ -18,7 +18,7 @@ class RaceRepository(
 
     fun createRace(id: String, users: MutableList<String>): Race {
         val now: LocalDateTime = dateTimeProvider.now()
-        val usersList: MutableList<RacerStat> = users.map { RacerStat(it, 0, 0, 0, "new") }.toMutableList()
+        val usersList: MutableList<RacerStat> = users.map { RacerStat(it,"", 0, 0, 0, "new") }.toMutableList()
         val session = Race(id, "", null, now, usersList)
         openRaces[session.id] = session
         return session
@@ -34,10 +34,10 @@ class RaceRepository(
         session.text = text
     }
 
-    fun updateRegistration(sessionId: String, userId: String, state: String): Unit {
+    fun updateRegistration(sessionId: String, userId: String, walletId: String, state: String): Unit {
         val race: Race = getSessionById(sessionId)
         if (state == "joined") {
-            join(sessionId, userId)
+            join(sessionId, userId, walletId)
         }
         if (state == "registered") {
             register(race, userId, sessionId)
@@ -55,14 +55,16 @@ class RaceRepository(
         }
     }
 
-    fun join(sessionId: String, userId: String): Unit {
+    fun join(sessionId: String, userId: String, walletId: String): Unit {
         val session = getSessionById(sessionId)
 
-        // don't join second time
         if (session.users.map { u -> u.id }.contains(userId)) {
-            return
+            val user: RacerStat = session.users.find { u -> u.id == userId } ?: throw Exception("User not found")
+            user.walletId = walletId
         }
-        session.users.add(RacerStat(userId, 0, 0, 0, "joined"))
+        else {
+            session.users.add(RacerStat(userId, walletId, 0, 0, 0, "joined"))
+        }
     }
 
     fun updateProgress(sessionId: String, userId: String, progress: Int): Unit {

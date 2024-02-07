@@ -33,7 +33,7 @@ export default function Home() {
     const walletAddress = await connectWallet();
     if (walletAddress) {
       setWallet(formatWallet(walletAddress));
-      localStorage.setItem("userId", walletAddress);
+      localStorage.setItem("walletId", walletAddress);
     }
   }
 

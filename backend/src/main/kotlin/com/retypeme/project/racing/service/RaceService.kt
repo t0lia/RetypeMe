@@ -19,7 +19,7 @@ class RaceService(private val repository: RaceRepository) {
     }
 
     fun updateRegistration(info: RacerRegistrationIncomingInfo): RaceStat {
-        repository.updateRegistration(info.sessionId, info.userId, info.state)
+        repository.updateRegistration(info.sessionId, info.userId, info.walletId, info.state)
         return getRegistration(info.sessionId)
     }
 
