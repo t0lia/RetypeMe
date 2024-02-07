@@ -18,8 +18,11 @@ export default function Home() {
 
   const router = useRouter();
 
-  async function handleRetypeMeButton() {
+  async function handleTryDuelModeButton() {
     const data = await handleCreateNewGameSession();
+    if (!wallet) {
+      localStorage.setItem("userId", crypto.randomUUID());
+    }
 
     if (data) {
       router.push(`/game/${data.id}`);
@@ -118,7 +121,7 @@ export default function Home() {
         <div className="flex flex-col flex-1 justify-center items-center gap-20">
           <button
             className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
-            onClick={handleRetypeMeButton}
+            onClick={handleTryDuelModeButton}
           >
             Try Duel Mode
           </button>

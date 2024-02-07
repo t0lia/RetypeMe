@@ -1,4 +1,4 @@
-import {Client} from "@stomp/stompjs";
+import { Client } from "@stomp/stompjs";
 import ApiDomainService from "@/app/api/ApiDomainService";
 
 export interface CountDown {
@@ -31,6 +31,7 @@ export default class WsApiService {
 
   constructor(
     sessionId: string,
+    userId: string,
     countDownHandler: (countDown: CountDown) => void,
     progressHandler: (stat: SessionStat) => void,
     onRegistrationReceivedHandler: (reg: any) => void
@@ -38,7 +39,7 @@ export default class WsApiService {
     const API_URL: string = new ApiDomainService().getWebSocketUrl();
     console.log("api url: " + API_URL);
     this.sessionId = sessionId;
-    this.stompClient = new Client({brokerURL: API_URL});
+    this.stompClient = new Client({ brokerURL: API_URL });
 
     this.stompClient.onConnect = (frame) => {
       console.log("Connected: " + frame);
@@ -46,7 +47,7 @@ export default class WsApiService {
       this.stompClient.subscribe(
         "/topic/" + sessionId + "/registration",
         (response: any) => {
-          console.log(JSON.parse(response.body));
+          onRegistrationReceivedHandler(JSON.parse(response.body));
         }
       );
 
@@ -63,13 +64,15 @@ export default class WsApiService {
           countDownHandler(JSON.parse(countdown.body));
         }
       );
+
+      this.join(userId);
     };
     this.stompClient.activate();
     console.log("stomp activated");
   }
 
   public sendStat(userId: string, progress: number): void {
-    const userStat: UserStat = {sessionId: this.sessionId, userId, progress};
+    const userStat: UserStat = { sessionId: this.sessionId, userId, progress };
     let body = JSON.stringify(userStat);
     console.log("send stat: " + body);
     this.stompClient.publish({
@@ -89,7 +92,7 @@ export default class WsApiService {
   }
 
   private action(userId: string, sessionId: string, state: string): void {
-    const userStat: any = {sessionId, userId, state};
+    const userStat: any = { sessionId, userId, state };
 
     let body = JSON.stringify(userStat);
     console.log("send join: " + body);

@@ -20,7 +20,7 @@ import "./page.css";
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
   const [textVisible, setTextVisible] = useState(false);
-  const [startBtnText, setStartBtnText] = useState("Start the game");
+  const [startBtnText, setStartBtnText] = useState("Start game");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [userStats, setUserStats] = useState<User[]>([]);
   const [textIsBlurred, setTextIsBlurred] = useState(false);
@@ -41,7 +41,6 @@ const GamePage = () => {
   const router = useRouter();
   const id = params.id;
   const wsApiServiceRef = useRef<WsApiService | null>(null);
-  // const restServiceRef = useRef<RestApiService | null>(null);
 
   const formattedText = gameText
     .split("")
@@ -62,10 +61,11 @@ const GamePage = () => {
     setTextIsBlurred(true);
     inputRef.current.blur();
   }
-
+  const [sessionStat, setSessionStat] = useState<SessionStat>({});
   function onRegistrationReceived(stat: any) {
     // TODO: mezger75 use this callback for update racers info
-    console.log(stat);
+    setSessionStat(stat);
+    console.log(stat.users);
   }
 
   function onProgressReceived(stat: SessionStat) {
@@ -153,17 +153,10 @@ const GamePage = () => {
       }
     }
     setIsButtonDisabled(true);
-    // const response = await restServiceRef.current?.join(id, localStorage.getItem("userId"));
-    // const data = await response.json();
-    // localStorage.setItem("userId", data.userId);
-    wsApiServiceRef.current?.register(localStorage.getItem("userId") ?? "")
-    setUserStats([]); // shoul it be here?
-  }
 
-  // TODO: mezger75, move it right after page was loaded and delete join button
-  // TODO: Prerequisite: localStorage should contain userId
-  async function handleJoinGame(id: string) {
-    wsApiServiceRef.current?.join(localStorage.getItem("userId") ?? "")
+    wsApiServiceRef.current?.register(localStorage.getItem("userId") ?? "");
+
+    setUserStats([]); // shoul it be here?
   }
 
   function checkEqualHandler(e) {
@@ -172,7 +165,7 @@ const GamePage = () => {
     const enteredTextLength = enteredText.length;
 
     const newTextStyles = Array.from(
-      {length: enteredTextLength},
+      { length: enteredTextLength },
       (_, i) => "black"
     );
 
@@ -248,8 +241,12 @@ const GamePage = () => {
 
   useEffect(() => {
     const sessionId: string = window.location.href.split("/").pop() as string;
+    if (!localStorage.getItem("userId")) {
+      localStorage.setItem("userId", crypto.randomUUID());
+    }
     wsApiServiceRef.current = new WsApiService(
       sessionId,
+      localStorage.getItem("userId") ?? "",
       onCountDownReceived,
       onProgressReceived,
       onRegistrationReceived
@@ -305,80 +302,78 @@ const GamePage = () => {
       )}
       <div className="flex flex-col gap-2 mb-3">
         <p>Progress</p>
-        {userStats.length > 0 ? (
-          userStats.map((user) => (
-            <div
-              key={user.id}
-              className="w-[700px] relative bg-gray-300 border-2 border-gray-500 rounded-sm h-8 overflow-hidden"
-              id="progress"
-            >
+        {userStats.length > 0
+          ? userStats.map((user) => (
               <div
                 key={user.id}
-                className="bg-blue-300 h-full"
-                style={{width: `${user.progress}%`}}
+                className="w-[700px] relative bg-gray-300 border-2 border-gray-500 rounded-sm h-8 overflow-hidden"
+                id="progress"
               >
-                <span className="ml-1">
-                  {formatWallet(user.id)}
-                  {user.id === localStorage.getItem("userId") ? "(you)" : ""}
+                <div
+                  key={user.id}
+                  className="bg-blue-300 h-full transition-all duration-200"
+                  style={{ width: `${user.progress}%` }}
+                >
+                  <span className="ml-1">
+                    {formatWallet(user.id)}
+                    {user.id === localStorage.getItem("userId") ? "(you)" : ""}
+                  </span>
+                </div>
+                <span className="absolute right-0 top-0 mr-1">
+                  {user.progress === 100 && user.place === 1 && (
+                    <>
+                      <span>🎉 CPM: </span>
+                      <b className="font-semibold">{user.cpm}</b>
+                      <span> Place: 🥇</span>
+                    </>
+                  )}
+                  {user.progress === 100 && user.place === 2 && (
+                    <>
+                      <span>🎉 CPM: </span>
+                      <b className="font-semibold">{user.cpm}</b>
+                      <span> Place: 🥈</span>
+                    </>
+                  )}
+                  {user.progress === 100 && user.place === 3 && (
+                    <>
+                      <span>🎉 CPM: </span>
+                      <b className="font-semibold">{user.cpm}</b>
+                      <span> Place: 🥉</span>
+                    </>
+                  )}
+                  {user.progress === 100 && user.place > 3 && (
+                    <>
+                      <span>CPM: </span>
+                      <b className="font-semibold">{user.cpm}</b>
+                      <span>
+                        {" "}
+                        Place: <b>{user.place} 😭</b>
+                      </span>
+                    </>
+                  )}
                 </span>
               </div>
-              <span className="absolute right-0 top-0 mr-1">
-                {user.progress === 100 && user.place === 1 && (
-                  <>
-                    <span>🎉 CPM: </span>
-                    <b className="font-semibold">{user.cpm}</b>
-                    <span> Place: 🥇</span>
-                  </>
-                )}
-                {user.progress === 100 && user.place === 2 && (
-                  <>
-                    <span>🎉 CPM: </span>
-                    <b className="font-semibold">{user.cpm}</b>
-                    <span> Place: 🥈</span>
-                  </>
-                )}
-                {user.progress === 100 && user.place === 3 && (
-                  <>
-                    <span>🎉 CPM: </span>
-                    <b className="font-semibold">{user.cpm}</b>
-                    <span> Place: 🥉</span>
-                  </>
-                )}
-                {user.progress === 100 && user.place > 3 && (
-                  <>
-                    <span>CPM: </span>
-                    <b className="font-semibold">{user.cpm}</b>
-                    <span>
-                      {" "}
-                      Place: <b>{user.place} 😭</b>
-                    </span>
-                  </>
-                )}
-              </span>
-            </div>
-          ))
-        ) : (
-          <>
-            <div
-              className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8"
-              id="progress"
-            >
-              <span className="ml-1">
-                {ingameUserId ? formatWallet(ingameUserId) : "Guest"} (you)
-              </span>
-            </div>
-            <div className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8">
-              <span className="ml-1">Guest</span>
-            </div>
-          </>
-        )}
+            ))
+          : sessionStat?.users?.map((user) => {
+              return (
+                <div
+                  className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8"
+                  key={user.id}
+                >
+                  <span className="ml-1">
+                    {user.id ? formatWallet(user.id) : "Guest"}{" "}
+                    {user.id === ingameUserId ? "(you)" : ""}
+                  </span>
+                </div>
+              );
+            })}
       </div>
       {ingameUserId?.startsWith("0x") && !txSuccessful ? (
         <button
           className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
           onClick={handleUserDeposit}
         >
-          Click to deposit 0.1 Matic
+          Deposit 0.1 Matic
         </button>
       ) : (
         <button
@@ -392,15 +387,6 @@ const GamePage = () => {
           {startBtnText}
         </button>
       )}
-      <button
-        id="start_btn"
-        className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-          isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-        onClick={() => handleJoinGame(id as string)}
-      >
-        join
-      </button>
       {textVisible && (
         <div className="relative" onClick={handleClickFormattedText}>
           <div
@@ -412,7 +398,7 @@ const GamePage = () => {
             {formattedText.map((char, index) => (
               <span
                 key={crypto.randomUUID()}
-                style={{color: textInputStyles[index]}}
+                style={{ color: textInputStyles[index] }}
               >
                 {textInputStyles.length < 1 && index === 0 && (
                   <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
