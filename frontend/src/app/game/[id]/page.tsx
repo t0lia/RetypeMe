@@ -318,7 +318,7 @@ const GamePage = () => {
   async function onClickConnectButton() {
     const walletAddress = await connectWallet();
     if (walletAddress) {
-      setIngameWalletId(formatWallet(walletAddress));
+      setIngameWalletId(walletAddress);
       localStorage.setItem("walletId", walletAddress);
     }
   }
@@ -337,7 +337,7 @@ const GamePage = () => {
       setSuccessfulWithdrawlWinnings(true);
     }
   }
-
+  console.log(userStats);
   return (
     <>
       <header className="flex h-16 justify-end items-center p-4">
@@ -379,8 +379,10 @@ const GamePage = () => {
                     style={{ width: `${user.progress}%` }}
                   >
                     <span className="ml-1">
-                      {formatWallet(user.id)}
-                      {user.id === localStorage.getItem("walletId")
+                      {user.id === ingameUserId && ingameWalletId
+                        ? formatWallet(ingameWalletId)
+                        : formatWallet(user.id)}{" "}
+                      {user.id === localStorage.getItem("userId")
                         ? "(you)"
                         : ""}
                     </span>
@@ -427,14 +429,16 @@ const GamePage = () => {
                     key={user.id}
                   >
                     <span className="ml-1">
-                      {user.id ? formatWallet(user.id) : "Guest"}{" "}
+                      {user.id === ingameUserId && ingameWalletId
+                        ? formatWallet(ingameWalletId)
+                        : formatWallet(user.id)}{" "}
                       {user.id === ingameUserId ? "(you)" : ""}
                     </span>
                   </div>
                 );
               })}
         </div>
-        {ingameWalletId != null && ingameWalletId != "" && !txSuccessful ? (
+        {ingameWalletId !== null && ingameWalletId !== "" && !txSuccessful ? (
           <button
             className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
             onClick={handleUserDeposit}
@@ -498,25 +502,24 @@ const GamePage = () => {
           onKeyDown={handleKeyDown}
           autoComplete="off"
         ></input>
-        {ingameWalletId != null ||
-          (ingameWalletId != "" &&
-            userStats.map((user) => {
-              if (
-                user.place === 1 &&
-                user.id === ingameUserId &&
-                !successfulWithdrawlWinnings
-              ) {
-                return (
-                  <button
-                    key={user.id}
-                    className="mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 animation-pulse"
-                    onClick={handleClaimWinnings}
-                  >
-                    Claim winnings 🏆
-                  </button>
-                );
-              }
-            }))}
+        {ingameWalletId &&
+          userStats.map((user) => {
+            if (
+              user.place === 1 &&
+              user.id === ingameUserId &&
+              !successfulWithdrawlWinnings
+            ) {
+              return (
+                <button
+                  key={user.id}
+                  className="mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 animation-pulse"
+                  onClick={handleClaimWinnings}
+                >
+                  Claim winnings 🏆
+                </button>
+              );
+            }
+          })}
         <div className="absolute left-3 bottom-3 ">
           <button
             className="ml-5 mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
