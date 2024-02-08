@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.time.ZoneOffset.UTC
 
+const val JOINED = "joined"
+const val REGISTERED = "registered"
+
 @Component
 class RaceRepository(
     private val dateTimeProvider: DateTimeProvider,
@@ -16,10 +19,10 @@ class RaceRepository(
 
     private val openRaces: MutableMap<String, Race> = mutableMapOf()
 
-    fun createRace(id: String, users: MutableList<String>): Race {
+    fun createRace(id: String, users: Int): Race {
         val now: LocalDateTime = dateTimeProvider.now()
-        val usersList: MutableList<RacerStat> = users.map { RacerStat(it, 0, 0, 0, "new") }.toMutableList()
-        val session = Race(id, "", null, now, usersList)
+        val usersList: MutableList<RacerStat> = mutableListOf()
+        val session = Race(id, "", users, null, now, usersList)
         openRaces[session.id] = session
         return session
     }
@@ -34,35 +37,36 @@ class RaceRepository(
         session.text = text
     }
 
-    fun updateRegistration(sessionId: String, userId: String, state: String): Unit {
+    fun updateRegistration(sessionId: String, userId: String, walletId: String, state: String): Unit {
         val race: Race = getSessionById(sessionId)
-        if (state == "joined") {
-            join(sessionId, userId)
+        if (state == JOINED) {
+            join(sessionId, userId, walletId)
         }
-        if (state == "registered") {
+        if (state == REGISTERED) {
             register(race, userId, sessionId)
         }
     }
 
     private fun register(race: Race, userId: String, sessionId: String) {
-        val user: RacerStat = race.users.find { u -> u.id == userId && u.state == "joined" }
-            ?: throw Exception("User not found")
-        user.state = "registered";
-        if (race.users.all { u -> u.state == "registered" }) {
+        val user: RacerStat =
+            race.users.find { u -> u.id == userId && u.state == JOINED } ?: throw Exception("User not found")
+        user.state = REGISTERED;
+        if (race.isReady()) {
             gameEventPublisher.publishRaceReady(
                 sessionId, race.users.map { u -> u.id }.toMutableList()
             )
         }
     }
 
-    fun join(sessionId: String, userId: String): Unit {
+    fun join(sessionId: String, userId: String, walletId: String): Unit {
         val session = getSessionById(sessionId)
 
-        // don't join second time
         if (session.users.map { u -> u.id }.contains(userId)) {
-            return
+            val user: RacerStat = session.users.find { u -> u.id == userId } ?: throw Exception("User not found")
+            user.walletId = walletId
+        } else {
+            session.users.add(RacerStat(userId, walletId, 0, 0, 0, JOINED))
         }
-        session.users.add(RacerStat(userId, 0, 0, 0, "joined"))
     }
 
     fun updateProgress(sessionId: String, userId: String, progress: Int): Unit {
@@ -80,7 +84,7 @@ class RaceRepository(
 
         if (progress == 100) {
             user.place = session.users.count { u -> u.progress == 100 }
-            if (user.place == 1) {
+            if (user.place == 1 && user.walletId.isNotEmpty() && user.walletId.startsWith("0x")) {
                 gameEventPublisher.publishWinnerFinished(session.id, user.id)
             }
         }
@@ -91,5 +95,4 @@ class RaceRepository(
         val time: Long = session.updatedAt.toEpochSecond(UTC) - session.startedAt!!.toEpochSecond(UTC)
         return ((typedChars * 60) / time).toInt()
     }
-
 }

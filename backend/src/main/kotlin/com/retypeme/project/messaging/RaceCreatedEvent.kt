@@ -8,5 +8,5 @@ import org.springframework.context.ApplicationEvent
 class RaceCreatedEvent(
     source: GameEventPublisher,
     val id: String,
-    val users: MutableList<String>
+    val userCount: Int
 ) : ApplicationEvent(source)

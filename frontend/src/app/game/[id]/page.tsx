@@ -15,7 +15,6 @@ import { withdrawWinnings } from "@/app/contractUtils/claimWinnings";
 import { handleCreateNewGameSession } from "@/app/helpers/createNewGameSession";
 
 import "./page.css";
-// import RestApiService from "@/app/api/RestApiService";
 
 const GamePage = () => {
   const [copied, setCopied] = useState(false);
@@ -30,6 +29,7 @@ const GamePage = () => {
   const [gameText, setGameText] = useState("");
   const [initialGameText, setInitialGameText] = useState("");
   const [ingameUserId, setIngameUserId] = useState("");
+  const [ingameWalletId, setIngameWalletId] = useState("");
   const [txSuccessful, setTxSuccessful] = useState(false);
   const [successfulWithdrawlWinnings, setSuccessfulWithdrawlWinnings] =
     useState(false);
@@ -59,13 +59,11 @@ const GamePage = () => {
 
   function handleBlurChanger() {
     setTextIsBlurred(true);
-    inputRef.current.blur();
+    inputRef.current?.blur();
   }
   const [sessionStat, setSessionStat] = useState<SessionStat>({});
   function onRegistrationReceived(stat: any) {
-    // TODO: mezger75 use this callback for update racers info
     setSessionStat(stat);
-    console.log(stat.users);
   }
 
   function onProgressReceived(stat: SessionStat) {
@@ -125,6 +123,9 @@ const GamePage = () => {
     if (localStorage !== null) {
       setIngameUserId(localStorage.getItem("userId"));
     }
+    if (localStorage !== null) {
+      setIngameWalletId(localStorage.getItem("walletId"));
+    }
   }, []);
 
   useEffect(() => {
@@ -154,7 +155,8 @@ const GamePage = () => {
     }
     setIsButtonDisabled(true);
 
-    wsApiServiceRef.current?.register(localStorage.getItem("userId") ?? "");
+    wsApiServiceRef.current?.register(localStorage.getItem("userId") ?? "",
+      localStorage.getItem("walletId") ?? "" );
 
     setUserStats([]); // shoul it be here?
   }
@@ -297,25 +299,27 @@ const GamePage = () => {
 
   useEffect(() => {
     const sessionId: string = window.location.href.split("/").pop() as string;
+    sessionStorage.setItem("sessionId", sessionId);
+
     if (!localStorage.getItem("userId")) {
       localStorage.setItem("userId", crypto.randomUUID());
     }
+
     wsApiServiceRef.current = new WsApiService(
       sessionId,
       localStorage.getItem("userId") ?? "",
+      localStorage.getItem("walletId") ?? "",
       onCountDownReceived,
       onProgressReceived,
       onRegistrationReceived
     );
-    // restServiceRef.current = new RestApiService();
-    sessionStorage.setItem("sessionId", sessionId);
   }, []);
 
   async function onClickConnectButton() {
     const walletAddress = await connectWallet();
     if (walletAddress) {
-      setIngameUserId(formatWallet(walletAddress));
-      localStorage.setItem("userId", walletAddress);
+      setIngameWalletId(formatWallet(walletAddress));
+      localStorage.setItem("walletId", walletAddress);
     }
   }
 
@@ -336,14 +340,14 @@ const GamePage = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screen py-2">
-      {ingameUserId?.startsWith("0x") ? (
+      {ingameWalletId != null && ingameWalletId != "" ? (
         <button
           disabled={isButtonDisabled}
           className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
             isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
-          {formatWallet(ingameUserId)}
+          {formatWallet(ingameWalletId)}
         </button>
       ) : (
         <button
@@ -372,7 +376,7 @@ const GamePage = () => {
                 >
                   <span className="ml-1">
                     {formatWallet(user.id)}
-                    {user.id === localStorage.getItem("userId") ? "(you)" : ""}
+                    {user.id === localStorage.getItem("walletId") ? "(you)" : ""}
                   </span>
                 </div>
                 <span className="absolute right-0 top-0 mr-1">
@@ -424,7 +428,7 @@ const GamePage = () => {
               );
             })}
       </div>
-      {ingameUserId?.startsWith("0x") && !txSuccessful ? (
+      {ingameWalletId != null && ingameWalletId != "" && !txSuccessful ? (
         <button
           className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
           onClick={handleUserDeposit}
@@ -488,7 +492,7 @@ const GamePage = () => {
         onKeyDown={handleKeyDown}
         autoComplete="off"
       ></input>
-      {ingameUserId?.startsWith("0x") &&
+      {ingameWalletId != null || ingameWalletId != "" &&
         userStats.map((user) => {
           if (
             user.place === 1 &&

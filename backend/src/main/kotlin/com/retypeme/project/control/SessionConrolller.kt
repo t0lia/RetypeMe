@@ -1,10 +1,8 @@
 package com.retypeme.project.control
 
 import com.retypeme.project.api.SessionsApi
-import com.retypeme.project.model.JoinSessionResponse
 import com.retypeme.project.model.Players
 import com.retypeme.project.model.SessionResponse
-import com.retypeme.project.model.UserJoinRequest
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseEntity.ok
@@ -35,10 +33,4 @@ class SessionController(val sessionService: SessionService) : SessionsApi {
         return ok(response)
     }
 
-//    @PostMapping("{id}/join")
-//    @Operation(summary = "Join a session")
-//    override fun joinSession(@PathVariable id: String, @RequestBody userJoinRequest: UserJoinRequest): ResponseEntity<JoinSessionResponse> {
-//        val response = sessionService.joinSession(id, userJoinRequest.userId)
-//        return ok(response)
-//    }
 }

@@ -1,4 +1,4 @@
-import { Client } from "@stomp/stompjs";
+import {Client} from "@stomp/stompjs";
 import ApiDomainService from "@/app/api/ApiDomainService";
 
 export interface CountDown {
@@ -32,6 +32,7 @@ export default class WsApiService {
   constructor(
     sessionId: string,
     userId: string,
+    walletId: string,
     countDownHandler: (countDown: CountDown) => void,
     progressHandler: (stat: SessionStat) => void,
     onRegistrationReceivedHandler: (reg: any) => void
@@ -39,7 +40,7 @@ export default class WsApiService {
     const API_URL: string = new ApiDomainService().getWebSocketUrl();
     console.log("api url: " + API_URL);
     this.sessionId = sessionId;
-    this.stompClient = new Client({ brokerURL: API_URL });
+    this.stompClient = new Client({brokerURL: API_URL});
 
     this.stompClient.onConnect = (frame) => {
       console.log("Connected: " + frame);
@@ -65,14 +66,14 @@ export default class WsApiService {
         }
       );
 
-      this.join(userId);
+      this.join(userId, walletId);
     };
     this.stompClient.activate();
     console.log("stomp activated");
   }
 
   public sendStat(userId: string, progress: number): void {
-    const userStat: UserStat = { sessionId: this.sessionId, userId, progress };
+    const userStat: UserStat = {sessionId: this.sessionId, userId, progress};
     let body = JSON.stringify(userStat);
     console.log("send stat: " + body);
     this.stompClient.publish({
@@ -81,18 +82,18 @@ export default class WsApiService {
     });
   }
 
-  public join(userId: string): void {
+  public join(userId: string, walletId: string): void {
     console.log("ws: session joined user:" + userId);
-    this.action(userId, this.sessionId, "joined");
+    this.sendUserState(userId, walletId, this.sessionId, "joined");
   }
 
-  public register(userId: string): void {
+  public register(userId: string, walletId: string): void {
     console.log("ws: session register user:" + userId);
-    this.action(userId, this.sessionId, "registered");
+    this.sendUserState(userId, walletId, this.sessionId, "registered");
   }
 
-  private action(userId: string, sessionId: string, state: string): void {
-    const userStat: any = { sessionId, userId, state };
+  private sendUserState(userId: string, walletId: string, sessionId: string, state: string): void {
+    const userStat: any = {sessionId, userId, walletId, state};
 
     let body = JSON.stringify(userStat);
     console.log("send join: " + body);
