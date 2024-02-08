@@ -503,6 +503,7 @@ const GamePage = () => {
           autoComplete="off"
         ></input>
         {ingameWalletId &&
+          userStats.every((user) => user.id.startsWith("0x")) &&
           userStats.map((user) => {
             if (
               user.place === 1 &&
