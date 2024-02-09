@@ -388,12 +388,13 @@ const GamePage = () => {
                     style={{ width: `${user.progress}%` }}
                   >
                     <span className="ml-1">
-                      {user.id === ingameUserId && ingameWalletId
-                        ? formatWallet(ingameWalletId)
-                        : formatWallet(user.id)}{" "}
-                      {user.id === localStorage.getItem("userId")
-                        ? "(you)"
-                        : ""}
+                      {sessionStat.users.map((userSession) => {
+                        if (userSession.id === user.id)
+                          return userSession.walletId
+                            ? formatWallet(userSession.walletId)
+                            : formatWallet(user.id);
+                      })}
+                      {user.id === ingameUserId && "(you)"}
                     </span>
                   </div>
                   <span className="absolute right-0 top-0 mr-1">
