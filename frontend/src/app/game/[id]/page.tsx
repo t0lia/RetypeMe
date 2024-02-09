@@ -452,7 +452,8 @@ const GamePage = () => {
         {ingameWalletId !== null &&
         ingameWalletId !== "" &&
         !txSuccessful &&
-        sessionStat?.users?.every((user) => user.walletId) ? (
+        sessionStat?.users?.every((user) => user.walletId) &&
+        sessionStat?.users?.length > 1 ? (
           <button
             className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
             onClick={handleUserDeposit}
