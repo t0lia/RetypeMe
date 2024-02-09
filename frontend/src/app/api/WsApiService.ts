@@ -1,4 +1,4 @@
-import {Client} from "@stomp/stompjs";
+import { Client } from "@stomp/stompjs";
 import ApiDomainService from "@/app/api/ApiDomainService";
 
 export interface CountDown {
@@ -22,6 +22,7 @@ export interface SessionStat {
 export interface UserStat {
   sessionId: string;
   userId: string;
+  walletId: string;
   progress: number;
 }
 
@@ -40,7 +41,7 @@ export default class WsApiService {
     const API_URL: string = new ApiDomainService().getWebSocketUrl();
     console.log("api url: " + API_URL);
     this.sessionId = sessionId;
-    this.stompClient = new Client({brokerURL: API_URL});
+    this.stompClient = new Client({ brokerURL: API_URL });
 
     this.stompClient.onConnect = (frame) => {
       console.log("Connected: " + frame);
@@ -72,8 +73,13 @@ export default class WsApiService {
     console.log("stomp activated");
   }
 
-  public sendStat(userId: string, progress: number): void {
-    const userStat: UserStat = {sessionId: this.sessionId, userId, progress};
+  public sendStat(userId: string, walletId: string, progress: number): void {
+    const userStat: UserStat = {
+      sessionId: this.sessionId,
+      userId,
+      walletId,
+      progress,
+    };
     let body = JSON.stringify(userStat);
     console.log("send stat: " + body);
     this.stompClient.publish({
@@ -92,8 +98,13 @@ export default class WsApiService {
     this.sendUserState(userId, walletId, this.sessionId, "registered");
   }
 
-  private sendUserState(userId: string, walletId: string, sessionId: string, state: string): void {
-    const userStat: any = {sessionId, userId, walletId, state};
+  private sendUserState(
+    userId: string,
+    walletId: string,
+    sessionId: string,
+    state: string
+  ): void {
+    const userStat: any = { sessionId, userId, walletId, state };
 
     let body = JSON.stringify(userStat);
     console.log("send join: " + body);

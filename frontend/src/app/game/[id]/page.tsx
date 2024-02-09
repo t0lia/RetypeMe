@@ -34,6 +34,7 @@ const GamePage = () => {
   const [successfulWithdrawlWinnings, setSuccessfulWithdrawlWinnings] =
     useState(false);
   const [keyStrokeCount, setKeyStrokeCount] = useState(0);
+  const [sessionStat, setSessionStat] = useState<SessionStat>({});
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -61,8 +62,7 @@ const GamePage = () => {
     setTextIsBlurred(true);
     inputRef.current?.blur();
   }
-  const [sessionStat, setSessionStat] = useState<SessionStat>({});
-  function onRegistrationReceived(stat: any) {
+  function onRegistrationReceived(stat: SessionStat) {
     setSessionStat(stat);
   }
 
@@ -144,7 +144,7 @@ const GamePage = () => {
     };
   }, [textIsBlurred, keyStrokeCount]);
 
-  async function handleStartGame(id: string) {
+  async function handleStartGame() {
     if (startBtnText === "New Game") {
       const data = await handleCreateNewGameSession();
       if (data) {
@@ -198,7 +198,7 @@ const GamePage = () => {
         (enteredTextLength / formattedText.length) * 100
       );
 
-      wsApiServiceRef.current?.sendStat(ingameUserId, progress);
+      wsApiServiceRef.current?.sendStat(ingameUserId, ingameWalletId, progress);
 
       setIsGameEnded(true);
     }
@@ -212,7 +212,11 @@ const GamePage = () => {
         const progress = Math.round(
           (enteredTextLength / formattedText.length) * 100
         );
-        wsApiServiceRef.current?.sendStat(ingameUserId, progress);
+        wsApiServiceRef.current?.sendStat(
+          ingameUserId,
+          ingameWalletId,
+          progress
+        );
 
         // setCompletedWords((prevCompletedWords) => {
         //   const enteredWords = enteredText.split(" ");
@@ -320,6 +324,11 @@ const GamePage = () => {
     if (walletAddress) {
       setIngameWalletId(walletAddress);
       localStorage.setItem("walletId", walletAddress);
+
+      wsApiServiceRef.current?.join(
+        localStorage.getItem("userId") ?? "",
+        localStorage.getItem("walletId") ?? ""
+      );
     }
   }
 
@@ -337,7 +346,7 @@ const GamePage = () => {
       setSuccessfulWithdrawlWinnings(true);
     }
   }
-  console.log(userStats);
+
   return (
     <>
       <header className="flex h-16 justify-end items-center p-4">
@@ -431,14 +440,19 @@ const GamePage = () => {
                     <span className="ml-1">
                       {user.id === ingameUserId && ingameWalletId
                         ? formatWallet(ingameWalletId)
-                        : formatWallet(user.id)}{" "}
+                        : formatWallet(
+                            user.walletId ? user.walletId : user.id
+                          )}{" "}
                       {user.id === ingameUserId ? "(you)" : ""}
                     </span>
                   </div>
                 );
               })}
         </div>
-        {ingameWalletId !== null && ingameWalletId !== "" && !txSuccessful ? (
+        {ingameWalletId !== null &&
+        ingameWalletId !== "" &&
+        !txSuccessful &&
+        sessionStat?.users?.every((user) => user.walletId) ? (
           <button
             className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
             onClick={handleUserDeposit}
@@ -447,11 +461,10 @@ const GamePage = () => {
           </button>
         ) : (
           <button
-            id="start_btn"
             className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
               isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
             }`}
-            onClick={() => handleStartGame(id as string)}
+            onClick={() => handleStartGame()}
             disabled={isButtonDisabled}
           >
             {startBtnText}
@@ -460,7 +473,6 @@ const GamePage = () => {
         {textVisible && (
           <div className="relative" onClick={handleClickFormattedText}>
             <div
-              id="text"
               className={`w-[1000px] mt-5 mb-5 filter text-gray-500 text-xl font-medium ${
                 textIsBlurred ? "blur-[3px]" : ""
               }`}
