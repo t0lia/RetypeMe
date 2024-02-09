@@ -348,201 +348,192 @@ const GamePage = () => {
   }
 
   return (
-    <>
-      <header className="flex h-16 justify-end items-center p-4">
-        {ingameWalletId !== null && ingameWalletId !== "" ? (
-          <button
-            disabled={isButtonDisabled}
-            className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold h-auto py-2 px-4 rounded transform active:translate-y-0.5 ${
-              isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-          >
-            {formatWallet(ingameWalletId)}
-          </button>
-        ) : (
-          <button
-            disabled={isButtonDisabled}
-            onClick={onClickConnectButton}
-            className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-              isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-          >
-            Connect wallet
-          </button>
-        )}{" "}
-      </header>
-
-      <main className="flex flex-col items-center min-[h-screen-h-16] py-2">
-        <div className="flex flex-col gap-2 mb-3">
-          <p>Progress</p>
-          {userStats.length > 0
-            ? userStats.map((user) => (
+    <div className="flex flex-col items-center min-h-screen py-2">
+      {ingameWalletId != null && ingameWalletId != "" ? (
+        <button
+          disabled={isButtonDisabled}
+          className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
+            isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          {formatWallet(ingameWalletId)}
+        </button>
+      ) : (
+        <button
+          disabled={isButtonDisabled}
+          onClick={onClickConnectButton}
+          className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
+            isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          Connect wallet
+        </button>
+      )}
+      <div className="flex flex-col gap-2 mb-3">
+        <p>Progress</p>
+        {userStats.length > 0
+          ? userStats.map((user) => (
+              <div
+                key={user.id}
+                className="w-[700px] relative bg-gray-300 border-2 border-gray-500 rounded-sm h-8 overflow-hidden"
+                id="progress"
+              >
                 <div
                   key={user.id}
-                  className="w-[700px] relative bg-gray-300 border-2 border-gray-500 rounded-sm h-8 overflow-hidden"
-                  id="progress"
+                  className="bg-blue-300 h-full transition-all duration-200"
+                  style={{ width: `${user.progress}%` }}
                 >
-                  <div
-                    key={user.id}
-                    className="bg-blue-300 h-full transition-all duration-200"
-                    style={{ width: `${user.progress}%` }}
-                  >
-                    <span className="ml-1">
-                      {user.id === ingameUserId && ingameWalletId
-                        ? formatWallet(ingameWalletId)
-                        : formatWallet(user.id)}{" "}
-                      {user.id === localStorage.getItem("userId")
-                        ? "(you)"
-                        : ""}
-                    </span>
-                  </div>
-                  <span className="absolute right-0 top-0 mr-1">
-                    {user.progress === 100 && user.place === 1 && (
-                      <>
-                        <span>🎉 CPM: </span>
-                        <b className="font-semibold">{user.cpm}</b>
-                        <span> Place: 🥇</span>
-                      </>
-                    )}
-                    {user.progress === 100 && user.place === 2 && (
-                      <>
-                        <span>🎉 CPM: </span>
-                        <b className="font-semibold">{user.cpm}</b>
-                        <span> Place: 🥈</span>
-                      </>
-                    )}
-                    {user.progress === 100 && user.place === 3 && (
-                      <>
-                        <span>🎉 CPM: </span>
-                        <b className="font-semibold">{user.cpm}</b>
-                        <span> Place: 🥉</span>
-                      </>
-                    )}
-                    {user.progress === 100 && user.place > 3 && (
-                      <>
-                        <span>CPM: </span>
-                        <b className="font-semibold">{user.cpm}</b>
-                        <span>
-                          {" "}
-                          Place: <b>{user.place} 😭</b>
-                        </span>
-                      </>
-                    )}
+                  <span className="ml-1">
+                    {sessionStat.users.map((userSession) => {
+                      if (userSession.id === user.id)
+                        return userSession.walletId
+                          ? formatWallet(userSession.walletId)
+                          : formatWallet(user.id);
+                    })}
+                    {user.id === ingameUserId && "(you)"}
                   </span>
                 </div>
-              ))
-            : sessionStat?.users?.map((user) => {
-                return (
-                  <div
-                    className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8"
-                    key={user.id}
-                  >
-                    <span className="ml-1">
-                      {user.id === ingameUserId && ingameWalletId
-                        ? formatWallet(ingameWalletId)
-                        : formatWallet(
-                            user.walletId ? user.walletId : user.id
-                          )}{" "}
-                      {user.id === ingameUserId ? "(you)" : ""}
-                    </span>
-                  </div>
-                );
-              })}
-        </div>
-        {ingameWalletId !== null &&
-        ingameWalletId !== "" &&
-        !txSuccessful &&
-        sessionStat?.users?.every((user) => user.walletId) ? (
-          <button
-            className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
-            onClick={handleUserDeposit}
-          >
-            Deposit 0.1 Matic
-          </button>
-        ) : (
-          <button
-            className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-              isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={() => handleStartGame()}
-            disabled={isButtonDisabled}
-          >
-            {startBtnText}
-          </button>
-        )}
-        {textVisible && (
-          <div className="relative" onClick={handleClickFormattedText}>
-            <div
-              className={`w-[1000px] mt-5 mb-5 filter text-gray-500 text-xl font-medium ${
-                textIsBlurred ? "blur-[3px]" : ""
-              }`}
-            >
-              {formattedText.map((char, index) => (
-                <span
-                  key={crypto.randomUUID()}
-                  style={{ color: textInputStyles[index] }}
-                >
-                  {textInputStyles.length < 1 && index === 0 && (
-                    <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
+                <span className="absolute right-0 top-0 mr-1">
+                  {user.progress === 100 && user.place === 1 && (
+                    <>
+                      <span>🎉 CPM: </span>
+                      <b className="font-semibold">{user.cpm}</b>
+                      <span> Place: 🥇</span>
+                    </>
                   )}
-                  {char}
-                  {textInputStyles.length === index + 1 && (
-                    <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
+                  {user.progress === 100 && user.place === 2 && (
+                    <>
+                      <span>🎉 CPM: </span>
+                      <b className="font-semibold">{user.cpm}</b>
+                      <span> Place: 🥈</span>
+                    </>
+                  )}
+                  {user.progress === 100 && user.place === 3 && (
+                    <>
+                      <span>🎉 CPM: </span>
+                      <b className="font-semibold">{user.cpm}</b>
+                      <span> Place: 🥉</span>
+                    </>
+                  )}
+                  {user.progress === 100 && user.place > 3 && (
+                    <>
+                      <span>CPM: </span>
+                      <b className="font-semibold">{user.cpm}</b>
+                      <span>
+                        {" "}
+                        Place: <b>{user.place} 😭</b>
+                      </span>
+                    </>
                   )}
                 </span>
-              ))}
-            </div>
-            {textIsBlurred && (
-              <div
-                onClick={returnFocusOnClick}
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-full h-full flex justify-center items-center cursor-pointer"
-              >
-                <p className="text-xl font-semibold">
-                  👉 Click here or start typing to continue 👈
-                </p>
               </div>
-            )}
-          </div>
-        )}
-        <input
-          ref={inputRef}
-          className="opacity-0 cursor-default"
-          id="result"
-          onChange={checkEqualHandler}
-          onBlur={handleBlurChanger}
-          disabled={isGameEnded}
-          onKeyDown={handleKeyDown}
-          autoComplete="off"
-        ></input>
-        {ingameWalletId &&
-          userStats.every((user) => user.id.startsWith("0x")) &&
-          userStats.map((user) => {
-            if (
-              user.place === 1 &&
-              user.id === ingameUserId &&
-              !successfulWithdrawlWinnings
-            ) {
+            ))
+          : sessionStat?.users?.map((user) => {
               return (
-                <button
+                <div
+                  className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8"
                   key={user.id}
-                  className="mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 animation-pulse"
-                  onClick={handleClaimWinnings}
                 >
-                  Claim winnings 🏆
-                </button>
+                  <span className="ml-1">
+                    {user.id ? formatWallet(user.id) : "Guest"}{" "}
+                    {user.id === ingameUserId ? "(you)" : ""}
+                  </span>
+                </div>
               );
-            }
-          })}
-        <div className="absolute left-3 bottom-3 ">
-          <button
-            className="ml-5 mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
-            onClick={handleCopy}
+            })}
+      </div>
+      {ingameWalletId != null && ingameWalletId != "" && !txSuccessful ? (
+        <button
+          className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
+          onClick={handleUserDeposit}
+        >
+          Deposit 0.1 Matic
+        </button>
+      ) : (
+        <button
+          id="start_btn"
+          className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
+            isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          onClick={() => handleStartGame(id as string)}
+          disabled={isButtonDisabled}
+        >
+          {startBtnText}
+        </button>
+      )}
+      {textVisible && (
+        <div className="relative" onClick={handleClickFormattedText}>
+          <div
+            id="text"
+            className={`w-[1000px] mt-5 mb-5 filter text-gray-500 text-xl font-medium ${
+              textIsBlurred ? "blur-[3px]" : ""
+            }`}
           >
-            {copied ? "Copied!" : "Click to copy game URL"}
-          </button>
+            {formattedText.map((char, index) => (
+              <span
+                key={crypto.randomUUID()}
+                style={{ color: textInputStyles[index] }}
+              >
+                {textInputStyles.length < 1 && index === 0 && (
+                  <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
+                )}
+                {char}
+                {textInputStyles.length === index + 1 && (
+                  <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
+                )}
+              </span>
+            ))}
+          </div>
+          {textIsBlurred && (
+            <div
+              onClick={returnFocusOnClick}
+              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 w-full h-full flex justify-center items-center cursor-pointer"
+            >
+              <p className="text-xl font-semibold">
+                👉 Click here or start typing to continue 👈
+              </p>
+            </div>
+          )}
         </div>
-      </main>
-    </>
+      )}
+      <input
+        ref={inputRef}
+        className="opacity-0 cursor-default"
+        id="result"
+        onChange={checkEqualHandler}
+        onBlur={handleBlurChanger}
+        disabled={isGameEnded}
+        onKeyDown={handleKeyDown}
+        autoComplete="off"
+      ></input>
+      {ingameWalletId &&
+        userStats.every((user) => user.id.startsWith("0x")) &&
+        userStats.map((user) => {
+          if (
+            user.place === 1 &&
+            user.id === ingameUserId &&
+            !successfulWithdrawlWinnings
+          ) {
+            return (
+              <button
+                key={user.id}
+                className="mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 animation-pulse"
+                onClick={handleClaimWinnings}
+              >
+                Claim winnings 🏆
+              </button>
+            );
+          }
+        })}
+      <div className="absolute left-3 bottom-3 ">
+        <button
+          className="ml-5 mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
+          onClick={handleCopy}
+        >
+          {copied ? "Copied!" : "Click to copy game URL"}
+        </button>
+      </div>
+    </div>
   );
 };
 
