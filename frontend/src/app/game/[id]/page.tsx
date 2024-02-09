@@ -91,7 +91,7 @@ const GamePage = () => {
       setGameText("");
       setTextVisible(false);
       setIsButtonDisabled(false);
-      setIsGameEnded(false);
+      setIsGameEnded(true);
       setCompletedWords([]);
       setTextInputStyles([]);
       inputRef.current.value = "";
@@ -361,10 +361,12 @@ const GamePage = () => {
           </button>
         ) : (
           <button
-            disabled={isButtonDisabled}
+            disabled={isButtonDisabled || isGameEnded}
             onClick={onClickConnectButton}
             className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-              isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
+              isButtonDisabled || isGameEnded
+                ? "opacity-50 cursor-not-allowed"
+                : ""
             }`}
           >
             Connect wallet
