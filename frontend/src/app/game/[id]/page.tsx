@@ -437,7 +437,11 @@ const GamePage = () => {
                     key={user.id}
                   >
                     <span className="ml-1">
-                      {user.id ? formatWallet(user.id) : "Guest"}{" "}
+                      {user.id === ingameUserId && ingameWalletId
+                        ? formatWallet(ingameWalletId)
+                        : formatWallet(
+                            user.walletId ? user.walletId : user.id
+                          )}{" "}
                       {user.id === ingameUserId ? "(you)" : ""}
                     </span>
                   </div>
