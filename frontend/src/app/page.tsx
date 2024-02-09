@@ -20,9 +20,7 @@ export default function Home() {
 
   async function handleTryDuelModeButton() {
     const data = await handleCreateNewGameSession();
-    if (!wallet) {
-      localStorage.setItem("userId", crypto.randomUUID());
-    }
+    localStorage.setItem("userId", crypto.randomUUID());
 
     if (data) {
       router.push(`/game/${data.id}`);
