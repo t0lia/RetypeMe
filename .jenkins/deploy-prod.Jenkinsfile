@@ -7,29 +7,24 @@ pipeline {
 
     stages {
         stage('Check Image Versions') {
+        stage('Check Image Versions') {
             steps {
                 script {
-                    // Execute whoami to check the current user, capture the output, and print it
-                    def currentUser = sh(script: "whoami", returnStdout: true).trim()
-                    echo "Current user: ${currentUser}"
-
-                    // Define your image names with the repository
                     def backendImage = "retypeme/retypeme-backend:${params.VERSION}"
                     def frontendImage = "retypeme/retypeme-frontend:${params.VERSION}"
 
-                    // Check if the backend image exists
                     def backendImageExists = sh(script: "docker pull ${backendImage}", returnStatus: true) == 0
-
-                    // Check if the frontend image exists
-                    def frontendImageExists = sh(script: "docker pull ${frontendImage}", returnStatus: true) == 0
-
-                    // Set an environment variable based on the existence of images
-                    if (backendImageExists && frontendImageExists) {
-                        env.DEPLOY = 'true'
-                    } else {
-                        env.DEPLOY = 'false'
-                        echo "One or more images do not exist for version ${params.VERSION}. Skipping deployment."
+                    if (!backendImageExists) {
+                        error "Backend image ${backendImage} does not exist. Failing build."
                     }
+
+                    def frontendImageExists = sh(script: "docker pull ${frontendImage}", returnStatus: true) == 0
+                    if (!frontendImageExists) {
+                        error "Frontend image ${frontendImage} does not exist. Failing build."
+                    }
+
+                    // If both images exist, proceed
+                    echo "Both images exist. Proceeding with deployment."
                 }
             }
         }
@@ -54,6 +49,13 @@ pipeline {
                    docker-compose up -d
                    '
                 """)
+            }
+        }
+        stage('Cleanup') {
+            steps {
+                script {
+                    sh "docker image prune -a -f"
+                }
             }
         }
     }
