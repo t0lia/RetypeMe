@@ -17,8 +17,8 @@ pipeline {
                    export VERSION=${params.VERSION};
                    cd retypeme;
                    ls;
-                   docker-compose down;
                    docker-compose pull;
+                   docker-compose down;
                    docker-compose up -d
                    '
                 """)
