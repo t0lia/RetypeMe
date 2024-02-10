@@ -7,7 +7,6 @@ pipeline {
 
     stages {
         stage('Check Image Versions') {
-        stage('Check Image Versions') {
             steps {
                 script {
                     def backendImage = "retypeme/retypeme-backend:${params.VERSION}"
