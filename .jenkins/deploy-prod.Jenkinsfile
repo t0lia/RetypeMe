@@ -9,7 +9,10 @@ pipeline {
         stage('Check Image Versions') {
             steps {
                 script {
-                    whoami
+                    // Execute whoami to check the current user and print it
+                    echo "Current user: "
+                    sh(script: "whoami", returnStdout: true).trim()
+
                     // Define your image names with the repository
                     def backendImage = "retypeme/retypeme-backend:${params.VERSION}"
                     def frontendImage = "retypeme/retypeme-frontend:${params.VERSION}"
