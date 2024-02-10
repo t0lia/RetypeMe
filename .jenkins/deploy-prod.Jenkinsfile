@@ -9,6 +9,7 @@ pipeline {
         stage('Check Image Versions') {
             steps {
                 script {
+                    whoami
                     // Define your image names with the repository
                     def backendImage = "retypeme/retypeme-backend:${params.VERSION}"
                     def frontendImage = "retypeme/retypeme-frontend:${params.VERSION}"
