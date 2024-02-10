@@ -1,7 +1,8 @@
 package com.retypeme.project.racing.controller
 
-class RacerStat(
-    val id: String,
+class DriverMetrics(
+    val sessionId: String,
+    val userId: String,
     var walletId: String,
     var place: Int,
     var cpm: Int,
