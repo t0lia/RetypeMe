@@ -29,10 +29,6 @@ pipeline {
         }
 
         stage('Deploy') {
-            when {
-                // Only proceed with deployment if both images exist
-                expression { env.DEPLOY == 'true' }
-            }
             steps {
                 echo "Deploying version ${params.VERSION}"
 
