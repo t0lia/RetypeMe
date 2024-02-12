@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import WsApiService, {
-  CountDown, DriverMetrics,
+  CountDown,
+  DriverMetrics,
   RaceStatistic,
 } from "@/app/api/WsApiService";
 import { formatWallet } from "@/app/helpers";
@@ -519,7 +520,8 @@ const GamePage = () => {
           autoComplete="off"
         ></input>
         {ingameWalletId &&
-          userStats.every((driver) => driver.userId.startsWith("0x")) &&
+          userStats.every((driver) => driver.walletId) &&
+          txSuccessful &&
           userStats.map((driver) => {
             if (
               driver.place === 1 &&
