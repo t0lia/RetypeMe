@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import WsApiService, {
-  CountDown, DriverMetrics,
+  CountDown,
+  DriverMetrics,
   RaceStatistic,
 } from "@/app/api/WsApiService";
 import { formatWallet } from "@/app/helpers";
@@ -94,7 +95,7 @@ const GamePage = () => {
       setGameText("");
       setTextVisible(false);
       setIsButtonDisabled(false);
-      setIsGameEnded(false);
+      setIsGameEnded(true);
       setCompletedWords([]);
       setTextInputStyles([]);
       inputRef.current.value = "";
@@ -364,10 +365,12 @@ const GamePage = () => {
           </button>
         ) : (
           <button
-            disabled={isButtonDisabled}
+            disabled={isButtonDisabled || isGameEnded}
             onClick={onClickConnectButton}
             className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-              isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
+              isButtonDisabled || isGameEnded
+                ? "opacity-50 cursor-not-allowed"
+                : ""
             }`}
           >
             Connect wallet
@@ -517,7 +520,8 @@ const GamePage = () => {
           autoComplete="off"
         ></input>
         {ingameWalletId &&
-          userStats.every((driver) => driver.userId.startsWith("0x")) &&
+          userStats.every((driver) => driver.walletId) &&
+          txSuccessful &&
           userStats.map((driver) => {
             if (
               driver.place === 1 &&
