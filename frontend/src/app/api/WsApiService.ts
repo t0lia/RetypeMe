@@ -7,23 +7,19 @@ export interface CountDown {
   text: string;
 }
 
-export interface User {
-  id: string;
-  cpm: number;
-  progress: number;
-  place: number;
-}
-
-export interface SessionStat {
-  id: string;
-  users: Array<User>;
-}
-
-export interface UserStat {
+export interface DriverMetrics {
   sessionId: string;
   userId: string;
   walletId: string;
+  cpm: number;
   progress: number;
+  place: number;
+  state: string;
+}
+
+export interface RaceStatistic {
+  id: string;
+  users: Array<DriverMetrics>;
 }
 
 export default class WsApiService {
@@ -35,8 +31,8 @@ export default class WsApiService {
     userId: string,
     walletId: string,
     countDownHandler: (countDown: CountDown) => void,
-    progressHandler: (stat: SessionStat) => void,
-    onRegistrationReceivedHandler: (reg: any) => void
+    progressHandler: (stat: RaceStatistic) => void,
+    onRacePrepareHandler: (reg: any) => void
   ) {
     const API_URL: string = new ApiDomainService().getWebSocketUrl();
     console.log("api url: " + API_URL);
@@ -49,7 +45,7 @@ export default class WsApiService {
       this.stompClient.subscribe(
         "/topic/" + sessionId + "/registration",
         (response: any) => {
-          onRegistrationReceivedHandler(JSON.parse(response.body));
+          onRacePrepareHandler(JSON.parse(response.body));
         }
       );
 
@@ -74,11 +70,14 @@ export default class WsApiService {
   }
 
   public sendStat(userId: string, walletId: string, progress: number): void {
-    const userStat: UserStat = {
+    const userStat: DriverMetrics = {
       sessionId: this.sessionId,
-      userId,
-      walletId,
-      progress,
+      userId: userId,
+      walletId: walletId ?? "",
+      cpm: 0,
+      progress: progress,
+      place: 0,
+      state: "",
     };
     let body = JSON.stringify(userStat);
     console.log("send stat: " + body);

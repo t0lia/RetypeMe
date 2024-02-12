@@ -20,17 +20,17 @@ class RaceController(
 
     @MessageMapping("/reg")
     fun receiveReg(info: RacerRegistrationIncomingInfo) {
-        val response: RaceStat = sessionService.updateRegistration(info)
+        val response: RaceStatistic = sessionService.updateRegistration(info)
         simpMessagingTemplate.convertAndSend("/topic/" + info.sessionId + "/registration", response)
     }
 
     @MessageMapping("/stat")
-    fun receiveStat(racerIncomingStat: RacerIncomingStat) {
-        val response: RaceStat = sessionService.updateProgress(racerIncomingStat)
+    fun receiveStat(racerIncomingStat: DriverMetrics) {
+        val response: RaceStatistic = sessionService.updateProgress(racerIncomingStat)
         logger.info("receive progress: ${racerIncomingStat.progress} for user ${racerIncomingStat.userId} in session ${racerIncomingStat.sessionId}")
 
         logger.info("sending stat for session ${racerIncomingStat.sessionId}")
-        response.users.forEach { user -> logger.info("user ${user.id} progress: ${user.progress} place: ${user.place}") }
+        response.users.forEach { user -> logger.info("user ${user.userId} progress: ${user.progress} place: ${user.place}") }
         simpMessagingTemplate.convertAndSend("/topic/" + racerIncomingStat.sessionId + "/progress", response)
     }
 

@@ -4,9 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 import WsApiService, {
-  CountDown,
-  SessionStat,
-  User,
+  CountDown, DriverMetrics,
+  RaceStatistic,
 } from "@/app/api/WsApiService";
 import { formatWallet } from "@/app/helpers";
 import { connectWallet } from "@/app/helpers";
@@ -21,7 +20,7 @@ const GamePage = () => {
   const [textVisible, setTextVisible] = useState(false);
   const [startBtnText, setStartBtnText] = useState("Start game");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-  const [userStats, setUserStats] = useState<User[]>([]);
+  const [userStats, setUserStats] = useState<DriverMetrics[]>([]);
   const [textIsBlurred, setTextIsBlurred] = useState(false);
   const [textInputStyles, setTextInputStyles] = useState<string[]>([]);
   const [isGameEnded, setIsGameEnded] = useState(false);
@@ -34,7 +33,7 @@ const GamePage = () => {
   const [successfulWithdrawlWinnings, setSuccessfulWithdrawlWinnings] =
     useState(false);
   const [keyStrokeCount, setKeyStrokeCount] = useState(0);
-  const [sessionStat, setSessionStat] = useState<SessionStat>({});
+  const [sessionStat, setSessionStat] = useState<RaceStatistic>({});
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -62,22 +61,26 @@ const GamePage = () => {
     setTextIsBlurred(true);
     inputRef.current?.blur();
   }
-  function onRegistrationReceived(stat: SessionStat) {
+
+  function onRacePrepareInfoReceived(stat: RaceStatistic) {
     setSessionStat(stat);
   }
 
-  function onProgressReceived(stat: SessionStat) {
+  function onStatisticReceived(stat: RaceStatistic) {
     setUserStats(
-      stat.users.map((user) => ({
-        id: user.id,
-        progress: user.progress,
-        cpm: user.cpm,
-        place: user.place,
+      stat.users.map((driverMetrics: DriverMetrics) => ({
+        sessionId: driverMetrics.sessionId,
+        userId: driverMetrics.userId,
+        walletId: driverMetrics.walletId,
+        progress: driverMetrics.progress,
+        cpm: driverMetrics.cpm,
+        place: driverMetrics.place,
+        state: driverMetrics.state,
       }))
     );
 
     if (
-      stat.users.find((user) => user.id === localStorage.getItem("userId"))
+      stat.users.find((user) => user.userId === localStorage.getItem("userId"))
         ?.progress === 100
     ) {
       // setTxSuccessful(false); // check if it is in the right place?
@@ -314,8 +317,8 @@ const GamePage = () => {
       localStorage.getItem("userId") ?? "",
       localStorage.getItem("walletId") ?? "",
       onCountDownReceived,
-      onProgressReceived,
-      onRegistrationReceived
+      onStatisticReceived,
+      onRacePrepareInfoReceived
     );
   }, []);
 
@@ -377,74 +380,74 @@ const GamePage = () => {
         <div className="flex flex-col gap-2 mb-3">
           <p>Progress</p>
           {userStats.length > 0
-            ? userStats.map((user) => (
+            ? userStats.map((driver) => (
                 <div
-                  key={user.id}
+                  key={driver.userId}
                   className="w-[700px] relative bg-gray-300 border-2 border-gray-500 rounded-sm h-8 overflow-hidden"
                 >
                   <div
-                    key={user.id}
+                    key={driver.userId}
                     className="bg-blue-300 h-full transition-all duration-200"
-                    style={{ width: `${user.progress}%` }}
+                    style={{ width: `${driver.progress}%` }}
                   >
                     <span className="ml-1">
                       {sessionStat.users.map((userSession) => {
-                        if (userSession.id === user.id)
+                        if (userSession.userId === driver.userId)
                           return userSession.walletId
                             ? formatWallet(userSession.walletId)
-                            : formatWallet(user.id);
+                            : formatWallet(driver.userId);
                       })}
-                      {user.id === ingameUserId && "(you)"}
+                      {driver.userId === ingameUserId && "(you)"}
                     </span>
                   </div>
                   <span className="absolute right-0 top-0 mr-1">
-                    {user.progress === 100 && user.place === 1 && (
+                    {driver.progress === 100 && driver.place === 1 && (
                       <>
                         <span>🎉 CPM: </span>
-                        <b className="font-semibold">{user.cpm}</b>
+                        <b className="font-semibold">{driver.cpm}</b>
                         <span> Place: 🥇</span>
                       </>
                     )}
-                    {user.progress === 100 && user.place === 2 && (
+                    {driver.progress === 100 && driver.place === 2 && (
                       <>
                         <span>🎉 CPM: </span>
-                        <b className="font-semibold">{user.cpm}</b>
+                        <b className="font-semibold">{driver.cpm}</b>
                         <span> Place: 🥈</span>
                       </>
                     )}
-                    {user.progress === 100 && user.place === 3 && (
+                    {driver.progress === 100 && driver.place === 3 && (
                       <>
                         <span>🎉 CPM: </span>
-                        <b className="font-semibold">{user.cpm}</b>
+                        <b className="font-semibold">{driver.cpm}</b>
                         <span> Place: 🥉</span>
                       </>
                     )}
-                    {user.progress === 100 && user.place > 3 && (
+                    {driver.progress === 100 && driver.place > 3 && (
                       <>
                         <span>CPM: </span>
-                        <b className="font-semibold">{user.cpm}</b>
+                        <b className="font-semibold">{driver.cpm}</b>
                         <span>
                           {" "}
-                          Place: <b>{user.place} 😭</b>
+                          Place: <b>{driver.place} 😭</b>
                         </span>
                       </>
                     )}
                   </span>
                 </div>
               ))
-            : sessionStat?.users?.map((user) => {
+            : sessionStat?.users?.map((driver) => {
                 return (
                   <div
                     className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8"
-                    key={user.id}
+                    key={driver.userId}
                   >
                     <span className="ml-1">
-                      {user.id === ingameUserId && ingameWalletId
+                      {driver.userId === ingameUserId && ingameWalletId
                         ? formatWallet(ingameWalletId)
                         : formatWallet(
-                            user.walletId ? user.walletId : user.id
+                            driver.walletId ? driver.walletId : driver.userId
                           )}{" "}
-                      {user.id === ingameUserId ? "(you)" : ""}
+                      {driver.userId === ingameUserId ? "(you)" : ""}
                     </span>
                   </div>
                 );
@@ -453,7 +456,7 @@ const GamePage = () => {
         {ingameWalletId != null &&
         ingameWalletId != "" &&
         !txSuccessful &&
-        sessionStat?.users?.every((user) => user.walletId) &&
+        sessionStat?.users?.every((driver) => driver.walletId) &&
         sessionStat?.users?.length > 1 ? (
           <button
             className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
@@ -516,16 +519,16 @@ const GamePage = () => {
           autoComplete="off"
         ></input>
         {ingameWalletId &&
-          userStats.every((user) => user.id.startsWith("0x")) &&
-          userStats.map((user) => {
+          userStats.every((driver) => driver.userId.startsWith("0x")) &&
+          userStats.map((driver) => {
             if (
-              user.place === 1 &&
-              user.id === ingameUserId &&
+              driver.place === 1 &&
+              driver.userId === ingameUserId &&
               !successfulWithdrawlWinnings
             ) {
               return (
                 <button
-                  key={user.id}
+                  key={driver.userId}
                   className="mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 animation-pulse"
                   onClick={handleClaimWinnings}
                 >
