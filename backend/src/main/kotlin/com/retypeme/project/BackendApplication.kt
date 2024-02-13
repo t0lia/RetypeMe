@@ -37,6 +37,7 @@ class BackendApplication(@Value("\${application.cors.allowed-origins}") val cors
         }
     }
 }
+//@JvmStatic
 fun main(args: Array<String>) {
     runApplication<BackendApplication>(*args)
 }
