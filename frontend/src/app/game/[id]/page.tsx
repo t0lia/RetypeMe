@@ -34,7 +34,10 @@ const GamePage = () => {
   const [successfulWithdrawlWinnings, setSuccessfulWithdrawlWinnings] =
     useState(false);
   const [keyStrokeCount, setKeyStrokeCount] = useState(0);
-  const [sessionStat, setSessionStat] = useState<RaceStatistic>({});
+  const [sessionStat, setSessionStat] = useState<RaceStatistic>({
+    id: "",
+    users: [],
+  });
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -126,10 +129,11 @@ const GamePage = () => {
   };
 
   useEffect(() => {
-    if (localStorage !== null) {
-      setIngameUserId(localStorage.getItem("userId"));
-      setIngameWalletId(localStorage.getItem("walletId"));
-    }
+    const userIdFromStorage = localStorage.getItem("userId");
+    const walletIdFromStorage = localStorage.getItem("walletId");
+
+    userIdFromStorage && setIngameUserId(userIdFromStorage);
+    walletIdFromStorage && setIngameWalletId(walletIdFromStorage);
   }, []);
 
   useEffect(() => {
