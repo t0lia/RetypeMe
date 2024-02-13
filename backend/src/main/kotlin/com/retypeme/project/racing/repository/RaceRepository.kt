@@ -85,7 +85,7 @@ class RaceRepository(
         if (progress == 100) {
             user.place = session.users.count { u -> u.progress == 100 }
             if (user.place == 1 && user.walletId.isNotEmpty() && user.walletId.startsWith("0x")) {
-                gameEventPublisher.publishWinnerFinished(session.id, user.userId)
+                gameEventPublisher.publishWinnerFinished(session.id, user.walletId)
             }
         }
     }
