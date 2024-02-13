@@ -98,7 +98,9 @@ const GamePage = () => {
       setIsGameEnded(true);
       setCompletedWords([]);
       setTextInputStyles([]);
-      inputRef.current.value = "";
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
     }
   }
 
@@ -279,6 +281,7 @@ const GamePage = () => {
     if (
       e.key === "Backspace" &&
       // lastEnteredWordIsCorrect() &&
+      inputRef.current &&
       initialGameText.startsWith(inputRef.current.value)
     ) {
       e.preventDefault();
@@ -286,6 +289,7 @@ const GamePage = () => {
     if (
       e.ctrlKey &&
       e.key === "Backspace" &&
+      inputRef.current &&
       initialGameText.startsWith(inputRef.current.value)
     ) {
       console.log("works");
