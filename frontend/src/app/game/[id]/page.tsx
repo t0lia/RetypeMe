@@ -34,7 +34,10 @@ const GamePage = () => {
   const [successfulWithdrawlWinnings, setSuccessfulWithdrawlWinnings] =
     useState(false);
   const [keyStrokeCount, setKeyStrokeCount] = useState(0);
-  const [sessionStat, setSessionStat] = useState<RaceStatistic>({});
+  const [sessionStat, setSessionStat] = useState<RaceStatistic>({
+    id: "",
+    users: [],
+  });
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -47,7 +50,7 @@ const GamePage = () => {
     .split("")
     .map((char, index) => <span key={index}>{char}</span>);
 
-  function returnFocusOnClick(e: MouseEvent) {
+  function returnFocusOnClick(e: React.MouseEvent<HTMLDivElement>): void {
     e.stopPropagation();
     setTextIsBlurred(false);
     inputRef.current?.focus();
@@ -98,7 +101,9 @@ const GamePage = () => {
       setIsGameEnded(true);
       setCompletedWords([]);
       setTextInputStyles([]);
-      inputRef.current.value = "";
+      if (inputRef.current) {
+        inputRef.current.value = "";
+      }
     }
   }
 
@@ -124,10 +129,11 @@ const GamePage = () => {
   };
 
   useEffect(() => {
-    if (localStorage !== null) {
-      setIngameUserId(localStorage.getItem("userId"));
-      setIngameWalletId(localStorage.getItem("walletId"));
-    }
+    const userIdFromStorage = localStorage.getItem("userId");
+    const walletIdFromStorage = localStorage.getItem("walletId");
+
+    userIdFromStorage && setIngameUserId(userIdFromStorage);
+    walletIdFromStorage && setIngameWalletId(walletIdFromStorage);
   }, []);
 
   useEffect(() => {
@@ -165,7 +171,7 @@ const GamePage = () => {
     setUserStats([]); // shoul it be here?
   }
 
-  function checkEqualHandler(e) {
+  function checkEqualHandler(e: React.ChangeEvent<HTMLInputElement>) {
     const enteredText = e.target.value;
 
     const enteredTextLength = enteredText.length;
@@ -279,6 +285,7 @@ const GamePage = () => {
     if (
       e.key === "Backspace" &&
       // lastEnteredWordIsCorrect() &&
+      inputRef.current &&
       initialGameText.startsWith(inputRef.current.value)
     ) {
       e.preventDefault();
@@ -286,6 +293,7 @@ const GamePage = () => {
     if (
       e.ctrlKey &&
       e.key === "Backspace" &&
+      inputRef.current &&
       initialGameText.startsWith(inputRef.current.value)
     ) {
       console.log("works");
