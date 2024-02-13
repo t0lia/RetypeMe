@@ -47,7 +47,7 @@ const GamePage = () => {
     .split("")
     .map((char, index) => <span key={index}>{char}</span>);
 
-  function returnFocusOnClick(e: MouseEvent) {
+  function returnFocusOnClick(e: React.MouseEvent<HTMLDivElement>): void {
     e.stopPropagation();
     setTextIsBlurred(false);
     inputRef.current?.focus();
@@ -167,7 +167,7 @@ const GamePage = () => {
     setUserStats([]); // shoul it be here?
   }
 
-  function checkEqualHandler(e) {
+  function checkEqualHandler(e: React.ChangeEvent<HTMLInputElement>) {
     const enteredText = e.target.value;
 
     const enteredTextLength = enteredText.length;
