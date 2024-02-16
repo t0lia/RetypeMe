@@ -1,8 +1,11 @@
 import { BrowserProvider, Contract } from "ethers";
 
+let provider;
 const address = "0xf813b4e5d34079ebcc59adf39a7782ad989891fe";
 
-export const provider = new BrowserProvider(window.ethereum);
+if (typeof window !== "undefined") {
+  provider = new BrowserProvider(window.ethereum);
+}
 
 const abi = [
   {
@@ -258,4 +261,5 @@ const abi = [
   },
 ];
 
+export { provider };
 export const gameContract = new Contract(address, abi, provider);
