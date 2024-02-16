@@ -1,9 +1,9 @@
 import { addNetwork } from "./add-network";
+import { CHAIN_ID_MUMBAI } from "../constants/contract-constants";}
 
 export async function changeNetwork() {
   const networkId = await window.ethereum.request({ method: "eth_chainId" });
-  // 0x13881 is Mumbai 80001
-  if (networkId !== "0x13881") {
+  if (networkId !== CHAIN_ID_MUMBAI) {
     const changeNetwork = window.confirm(
       "Please switch to the Mumbai network for this transaction. Do you want to switch now?"
     );
@@ -11,7 +11,7 @@ export async function changeNetwork() {
       try {
         await window.ethereum.request({
           method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x13881" }],
+          params: [{ chainId: CHAIN_ID_MUMBAI }],
         });
       } catch (error) {
         console.error("Error switching network:", error.message);

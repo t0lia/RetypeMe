@@ -1,3 +1,5 @@
+import { CHAIN_ID_MUMBAI } from "../constants/contract-constants";
+
 export async function addNetwork(error) {
   if (error.code === 4902) {
     const addNetwork = window.confirm(
@@ -9,7 +11,7 @@ export async function addNetwork(error) {
           method: "wallet_addEthereumChain",
           params: [
             {
-              chainId: "0x13881",
+              chainId: CHAIN_ID_MUMBAI,
               chainName: "Mumbai Testnet",
               nativeCurrency: {
                 name: "Matic",

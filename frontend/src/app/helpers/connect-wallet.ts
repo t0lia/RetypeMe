@@ -2,7 +2,7 @@ import { BrowserProvider, getDefaultProvider } from "ethers";
 
 export async function connectWallet() {
   let provider;
-  if (window.ethereum == null) {
+  if (window.ethereum === null) {
     provider = getDefaultProvider("maticMumbai");
   } else {
     provider = new BrowserProvider(window.ethereum);
