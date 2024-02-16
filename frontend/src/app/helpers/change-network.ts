@@ -1,5 +1,5 @@
 import { addNetwork } from "./add-network";
-import { CHAIN_ID_MUMBAI } from "../constants/contract-constants";}
+import { CHAIN_ID_MUMBAI } from "../constants/contract-constants";
 
 export async function changeNetwork() {
   const networkId = await window.ethereum.request({ method: "eth_chainId" });

@@ -1,5 +1,4 @@
 export default class ApiDomainService {
-
   private readonly uiDomain: string;
   private readonly domains: Map<string, string>;
 
@@ -12,19 +11,26 @@ export default class ApiDomainService {
     ]);
   }
 
-  public getWebSocketUrl(): string {
-    if (process.env.NODE_ENV === "production" && this.uiDomain !== "localhost") {
+  private getUrl(isWebSocket: boolean): string {
+    if (
+      process.env.NODE_ENV === "production" &&
+      this.uiDomain !== "localhost"
+    ) {
       let domain = this.domains.get(this.uiDomain);
-      return `wss://${domain}/api/ws`;
+      return `${isWebSocket ? "wss" : "https"}://${domain}/api${
+        isWebSocket ? "/ws" : ""
+      }`;
     }
-    return `${process.env.API_WS}/api/ws`;
+    return `${isWebSocket ? process.env.API_WS : process.env.API_REST}/api${
+      isWebSocket ? "/ws" : ""
+    }`;
   }
 
-  public getRestUrl(): string {
-    if (process.env.NODE_ENV === "production" && this.uiDomain !== "localhost") {
-      let domain = this.domains.get(this.uiDomain);
-      return `https://${domain}/api`;
-    }
-    return `${process.env.API_REST}/api`;
+  getWebSocketUrl(): string {
+    return this.getUrl(true);
+  }
+
+  getRestUrl(): string {
+    return this.getUrl(false);
   }
 }
