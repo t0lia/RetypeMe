@@ -1,5 +1,9 @@
 import ApiDomainService from "@/app/api/api-domain-service";
 
+type PlayersInput = {
+  players: number;
+};
+
 export default class RestApiService {
   private readonly apiUrl: string;
 
@@ -7,7 +11,7 @@ export default class RestApiService {
     this.apiUrl = new ApiDomainService().getRestUrl();
   }
 
-  async create(players: any): Promise<any> {
+  async create<T>(players: PlayersInput): Promise<T> {
     const res = await fetch(`${this.apiUrl}/sessions`, {
       method: "POST",
       headers: {
@@ -17,10 +21,10 @@ export default class RestApiService {
     });
 
     const data = await res.json();
-    return Response.json(data);
+    return data as T;
   }
 
-  async join(id: string, userId: string | null): Promise<any> {
+  async join<T>(id: string, userId: string | null): Promise<T> {
     const res = await fetch(`${this.apiUrl}/sessions/${id}/join`, {
       method: "POST",
       headers: {
@@ -30,7 +34,7 @@ export default class RestApiService {
     });
 
     const data = await res.json();
-    return Response.json(data);
+    return data as T;
   }
 
   async getVersion(): Promise<string> {
