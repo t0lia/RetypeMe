@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { Twitter } from "@/app/public/icons/twitter";
 import { useEffect, useState } from "react";
-import RestApiService from "@/app/api/RestApiService";
+import RestApiService from "@/app/api/rest-api-service";
 
 export default function Footer() {
   const [version, setVersion] = useState("");

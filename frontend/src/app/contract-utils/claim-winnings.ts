@@ -1,14 +1,13 @@
-import { gameContract, provider } from "../contracts/GameContract";
-import { parseEther, id } from "ethers";
-import { changeNetwork } from "../helpers/changeNetwork";
+import { gameContract, provider } from "../contracts/game-contract";
+import { id } from "ethers";
+import { changeNetwork } from "../helpers/change-network";
 
-export async function userDeposit() {
+export async function withdrawWinnings() {
   try {
     await changeNetwork();
 
     const signer = await provider.getSigner();
     const connectedContract = gameContract.connect(signer);
-    const amountInWei = parseEther("0.1");
     const sessionId = sessionStorage.getItem("sessionId");
 
     if (!sessionId) {
@@ -17,11 +16,11 @@ export async function userDeposit() {
     }
     const hashSessionId = id(sessionId);
 
-    const depositTx = await connectedContract.deposit(hashSessionId, {
-      value: amountInWei,
-    });
+    const withdrawWinnings = await connectedContract.withdrawWinnings(
+      hashSessionId
+    );
 
-    const response = await depositTx.wait();
+    const response = await withdrawWinnings.wait();
     return response;
   } catch (error) {
     console.error(error);

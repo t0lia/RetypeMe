@@ -1,4 +1,4 @@
-import RestApiService from "@/app/api/RestApiService";
+import RestApiService from "@/app/api/rest-api-service";
 
 export async function handleCreateNewGameSession() {
   const response = await new RestApiService().create({ players: 2 });

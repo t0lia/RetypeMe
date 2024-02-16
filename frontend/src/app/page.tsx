@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { connectWallet, formatWallet } from "./helpers";
-import { handleCreateNewGameSession } from "./helpers/createNewGameSession";
+import { handleCreateNewGameSession } from "./helpers/create-new-game-session";
 
-import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
-import Footer from "./components/footer/footer";
+import DropDownFaucetMenu from "./components/dropdown/DropdownFaucetMenu";
+import Footer from "./components/footer/Footer";
 import { Twitter } from "./public/icons/twitter";
 
 export default function Home() {

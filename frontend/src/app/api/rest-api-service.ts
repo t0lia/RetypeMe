@@ -1,4 +1,4 @@
-import ApiDomainService from "@/app/api/ApiDomainService";
+import ApiDomainService from "@/app/api/api-domain-service";
 
 export default class RestApiService {
   private readonly apiUrl: string;

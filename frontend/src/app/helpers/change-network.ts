@@ -1,4 +1,4 @@
-import { addNetwork } from "./addNetwork";
+import { addNetwork } from "./add-network";
 
 export async function changeNetwork() {
   const networkId = await window.ethereum.request({ method: "eth_chainId" });

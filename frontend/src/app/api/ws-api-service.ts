@@ -1,5 +1,5 @@
 import { Client } from "@stomp/stompjs";
-import ApiDomainService from "@/app/api/ApiDomainService";
+import ApiDomainService from "@/app/api/api-domain-service";
 
 export interface CountDown {
   id: string;
