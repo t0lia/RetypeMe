@@ -6,7 +6,7 @@ import Link from "next/link";
 import { connectWallet, formatWallet } from "./helpers";
 import { handleCreateNewGameSession } from "./helpers/create-new-game-session";
 
-import DropdownFaucetMenu from "./components/dropdown/DropdownFaucetMenu";
+import DropdownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 import Footer from "./components/footer/footer";
 import { Twitter } from "./public/icons/twitter";
 
