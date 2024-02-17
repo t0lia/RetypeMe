@@ -1,4 +1,4 @@
-package com.apozdniakov.cryptoauth
+package com.retypeme.project.auth
 
 import com.retypeme.project.auth.MetaMaskAuthenticationRequest
 import jakarta.servlet.http.HttpServletRequest
@@ -10,14 +10,10 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 
 class MetaMaskAuthenticationFilter : AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/login", "POST")) {
-    companion object {
-        const val SPRING_SECURITY_FORM_ADDRESS_KEY = "address"
-        const val SPRING_SECURITY_FORM_SIGNATURE_KEY = "signature"
-    }
 
     @Throws(AuthenticationException::class)
-    override fun attemptAuthentication(request: HttpServletRequest?, response: HttpServletResponse?): Authentication {
-        val authRequest = getAuthRequest(request!!)
+    override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
+        val authRequest = getAuthRequest(request)
         authRequest.details = authenticationDetailsSource.buildDetails(request)
         return authenticationManager.authenticate(authRequest)
     }
@@ -29,8 +25,8 @@ class MetaMaskAuthenticationFilter : AbstractAuthenticationProcessingFilter(AntP
     }
 
     private fun obtainAddress(request: HttpServletRequest): String? =
-        request.getParameter(SPRING_SECURITY_FORM_ADDRESS_KEY)
+        request.getParameter("address")
 
     private fun obtainSignature(request: HttpServletRequest): String? =
-        request.getParameter(SPRING_SECURITY_FORM_SIGNATURE_KEY)
+        request.getParameter("signature")
 }

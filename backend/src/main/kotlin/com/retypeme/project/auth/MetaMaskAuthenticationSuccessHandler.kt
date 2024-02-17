@@ -1,6 +1,5 @@
 package com.retypeme.project.auth
 
-import com.apozdniakov.cryptoauth.User
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -9,9 +8,8 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import java.io.IOException
 
 
-class MetaMaskAuthenticationSuccessHandler(userRepository: UserRepository) :
+class MetaMaskAuthenticationSuccessHandler(private val userRepository: UserRepository) :
     SimpleUrlAuthenticationSuccessHandler("/") {
-    private val userRepository: UserRepository = userRepository
 
     @Throws(ServletException::class, IOException::class)
     override fun onAuthenticationSuccess(

@@ -1,6 +1,5 @@
 package com.retypeme.project.auth
 
-import com.apozdniakov.cryptoauth.User
 import org.springframework.stereotype.Repository
 import java.util.concurrent.ConcurrentHashMap
 

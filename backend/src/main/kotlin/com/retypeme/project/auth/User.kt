@@ -1,4 +1,4 @@
-package com.apozdniakov.cryptoauth
+package com.retypeme.project.auth
 
 data class User(
     val address: String,

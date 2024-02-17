@@ -1,6 +1,5 @@
 package com.retypeme.project.auth
 
-import com.apozdniakov.cryptoauth.MetaMaskAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -17,6 +16,9 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.CorsConfigurationSource
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 
 @Configuration
@@ -29,13 +31,28 @@ class SecurityConfig (val userRepository: UserRepository ){
     }
 
     @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val corsConfiguration = CorsConfiguration()
+        //Make the below setting as * to allow connection from any hos
+        corsConfiguration.allowedOrigins = listOf("*")
+        corsConfiguration.allowedMethods = listOf("GET", "POST")
+        corsConfiguration.allowCredentials = true
+        corsConfiguration.allowedHeaders = listOf("*")
+        corsConfiguration.maxAge = 3600L
+        val source: UrlBasedCorsConfigurationSource = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", corsConfiguration)
+        return source
+    }
+
+    @Bean
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity, authenticationManager: AuthenticationManager): SecurityFilterChain {
         return http
+            .cors(Customizer{ c -> c.configurationSource(corsConfigurationSource())})
             .authorizeHttpRequests(Customizer { customizer  ->
                 customizer
                     .requestMatchers(HttpMethod.GET, "/nonce/*").permitAll()
-                    .requestMatchers("/public/**").permitAll()
+                    .requestMatchers("/**").permitAll()
                     .anyRequest().authenticated()
             })
             .formLogin { customizer: FormLoginConfigurer<HttpSecurity?> ->

@@ -1,4 +1,4 @@
-package com.apozdniakov.cryptoauth
+package com.retypeme.project.auth
 
 import com.retypeme.project.auth.MetaMaskAuthenticationRequest
 import com.retypeme.project.auth.MetaMaskUserDetails

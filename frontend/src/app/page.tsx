@@ -9,6 +9,7 @@ import { handleCreateNewGameSession } from "./helpers/createNewGameSession";
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 import Footer from "./components/footer/footer";
 import { Twitter } from "./public/icons/twitter";
+import ApiDomainService from "@/app/api/ApiDomainService";
 
 export default function Home() {
   const [wallet, setWallet] = useState("");
@@ -25,6 +26,48 @@ export default function Home() {
     if (data) {
       router.push(`/game/${data.id}`);
     }
+  }
+
+  async function login() {
+    console.log("login");
+    if (!window.ethereum) {
+      console.error('Please install MetaMask');
+      return;
+    }
+
+    // Prompt user to connect MetaMask
+    const accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
+    const address = accounts[0];
+
+    // Receive nonce and sign a message
+    const nonce = await getNonce(address);
+    const message = `Signing a message to login: ${nonce}`;
+    const signature = await window.ethereum.request({method: 'personal_sign', params: [message, address]});
+
+    // Login with signature
+    await sendLoginData(address, signature);
+  }
+
+  async function getNonce(address:any) {
+    const apiUrl = new ApiDomainService().getSecRestUrl();
+    return await fetch(`${apiUrl}/nonce/${address}`)
+      .then(response => response.text());
+  }
+
+  async function sendLoginData(address:string, signature:string) {
+    const apiUrl = new ApiDomainService().getSecRestUrl();
+    return fetch(`${apiUrl}/login`, {
+      method: 'POST',
+      headers: {'content-type': 'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({
+        address: encodeURIComponent(address),
+        signature: encodeURIComponent(signature)
+      })
+    }).then((response) => {
+      // console.log(response)
+      // return true;
+      return window.location.href = response.url;
+    });
   }
 
   async function handleConnectWallet() {
@@ -99,13 +142,19 @@ export default function Home() {
       <header>
         <div className="flex justify-between h-16 items-center">
           <div className="relative ml-8">
-            <div className="absolute w-80 h-10 -top-1.5 -left-4 bg-gradient-to-br from-pink-400 via-pink-500 to-purple-800 rounded-full p-4 filter blur-sm rotate-[-1.5deg]"></div>
+            <div
+              className="absolute w-80 h-10 -top-1.5 -left-4 bg-gradient-to-br from-pink-400 via-pink-500 to-purple-800 rounded-full p-4 filter blur-sm rotate-[-1.5deg]"></div>
             <div className="relative z-10 font-semibold text-white">
               Try Beta on Polygon Mumbai Testnet
             </div>
           </div>
+          <div className="form-signin">
+            <h3 className="form-signin-heading">Please sign in</h3>
+            <button className="btn btn-lg btn-primary btn-block" type="submit" onClick={login}>Login with MetaMask
+            </button>
+          </div>
           <div className="flex flex-row gap-5">
-            <DropDownFaucetMenu />
+            <DropDownFaucetMenu/>
             <button
               className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 mr-8"
               onClick={handleConnectWallet}

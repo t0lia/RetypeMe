@@ -21,7 +21,7 @@ management:
       show-details: always
 application:
   cors:
-    allowed-origins: "http://localhost:3000/"
+    allowed-origins: "*"
 
 contract:
   address: "0x"
