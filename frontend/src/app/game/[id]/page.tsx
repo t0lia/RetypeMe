@@ -7,12 +7,12 @@ import WsApiService, {
   CountDown,
   DriverMetrics,
   RaceStatistic,
-} from "@/app/api/WsApiService";
+} from "@/app/api/ws-api-service";
 import { formatWallet } from "@/app/helpers";
 import { connectWallet } from "@/app/helpers";
-import { userDeposit } from "@/app/contractUtils/userDeposit";
-import { withdrawWinnings } from "@/app/contractUtils/claimWinnings";
-import { handleCreateNewGameSession } from "@/app/helpers/createNewGameSession";
+import { userDeposit } from "@/app/contract-utils/user-deposit";
+import { withdrawWinnings } from "@/app/contract-utils/claim-winnings";
+import { handleCreateNewGameSession } from "@/app/helpers/create-new-game-session";
 
 import "./page.css";
 

@@ -1,5 +1,5 @@
-import { Client } from "@stomp/stompjs";
-import ApiDomainService from "@/app/api/ApiDomainService";
+import { Client, Message } from "@stomp/stompjs";
+import ApiDomainService from "@/app/api/api-domain-service";
 
 export interface CountDown {
   id: string;
@@ -11,15 +11,15 @@ export interface DriverMetrics {
   sessionId: string;
   userId: string;
   walletId: string;
-  cpm: number;
-  progress: number;
-  place: number;
-  state: string;
+  cpm?: number;
+  progress?: number;
+  place?: number;
+  state?: string;
 }
 
 export interface RaceStatistic {
   id: string;
-  users: Array<DriverMetrics>;
+  users: DriverMetrics[];
 }
 
 export default class WsApiService {
@@ -32,7 +32,7 @@ export default class WsApiService {
     walletId: string,
     countDownHandler: (countDown: CountDown) => void,
     progressHandler: (stat: RaceStatistic) => void,
-    onRacePrepareHandler: (reg: any) => void
+    onRacePrepareHandler: (reg: RaceStatistic) => void
   ) {
     const API_URL: string = new ApiDomainService().getWebSocketUrl();
     console.log("api url: " + API_URL);
@@ -44,21 +44,21 @@ export default class WsApiService {
 
       this.stompClient.subscribe(
         "/topic/" + sessionId + "/registration",
-        (response: any) => {
+        (response: Message) => {
           onRacePrepareHandler(JSON.parse(response.body));
         }
       );
 
       this.stompClient.subscribe(
         "/topic/" + sessionId + "/progress",
-        (response: any) => {
+        (response: Message) => {
           progressHandler(JSON.parse(response.body));
         }
       );
 
       this.stompClient.subscribe(
         "/topic/" + sessionId + "/countdown",
-        (countdown: any) => {
+        (countdown: Message) => {
           countDownHandler(JSON.parse(countdown.body));
         }
       );
@@ -103,7 +103,12 @@ export default class WsApiService {
     sessionId: string,
     state: string
   ): void {
-    const userStat: any = { sessionId, userId, walletId, state };
+    const userStat: DriverMetrics = {
+      sessionId,
+      userId,
+      walletId,
+      state,
+    };
 
     let body = JSON.stringify(userStat);
     console.log("send join: " + body);

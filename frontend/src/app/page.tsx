@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { connectWallet, formatWallet } from "./helpers";
-import { handleCreateNewGameSession } from "./helpers/createNewGameSession";
+import { handleCreateNewGameSession } from "./helpers/create-new-game-session";
 
-import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
+import DropdownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 import Footer from "./components/footer/footer";
 import { Twitter } from "./public/icons/twitter";
 
@@ -105,7 +105,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex flex-row gap-5">
-            <DropDownFaucetMenu />
+            <DropdownFaucetMenu />
             <button
               className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 mr-8"
               onClick={handleConnectWallet}

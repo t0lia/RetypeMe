@@ -1,7 +1,7 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
 
-export default function DropDownFaucetMenu() {
+export default function DropdownFaucetMenu() {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
