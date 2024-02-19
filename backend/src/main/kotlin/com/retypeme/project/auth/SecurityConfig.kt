@@ -1,17 +1,16 @@
 package com.retypeme.project.auth
 
+import com.retypeme.project.auth.metamask.MetaMaskAuthenticationFilter
+import com.retypeme.project.auth.metamask.MetaMaskAuthenticationSuccessHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.ProviderManager
-import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer
-import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
@@ -23,7 +22,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig (val userRepository: UserRepository ){
+class SecurityConfig(val userRepository: UserRepository) {
 
     @Bean
     fun authenticationManager(myAuthenticationProviders: List<AuthenticationProvider>): AuthenticationManager {
@@ -34,10 +33,10 @@ class SecurityConfig (val userRepository: UserRepository ){
     fun corsConfigurationSource(): CorsConfigurationSource {
         val corsConfiguration = CorsConfiguration()
         //Make the below setting as * to allow connection from any hos
-        corsConfiguration.allowedOrigins = listOf("*")
-        corsConfiguration.allowedMethods = listOf("GET", "POST")
-        corsConfiguration.allowCredentials = true
+        corsConfiguration.allowedOrigins = listOf("http://localhost:3000")
+        corsConfiguration.allowedMethods = listOf("*")
         corsConfiguration.allowedHeaders = listOf("*")
+        corsConfiguration.allowCredentials = true
         corsConfiguration.maxAge = 3600L
         val source: UrlBasedCorsConfigurationSource = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", corsConfiguration)
@@ -48,23 +47,15 @@ class SecurityConfig (val userRepository: UserRepository ){
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity, authenticationManager: AuthenticationManager): SecurityFilterChain {
         return http
-            .cors(Customizer{ c -> c.configurationSource(corsConfigurationSource())})
-            .authorizeHttpRequests(Customizer { customizer  ->
+            .cors { c -> c.configurationSource(corsConfigurationSource()) }
+            .authorizeHttpRequests { customizer ->
                 customizer
                     .requestMatchers(HttpMethod.GET, "/nonce/*").permitAll()
                     .requestMatchers("/**").permitAll()
                     .anyRequest().authenticated()
-            })
-            .formLogin { customizer: FormLoginConfigurer<HttpSecurity?> ->
-                customizer.loginPage("/login")
-                    .failureUrl("/login?error=true")
-                    .permitAll()
             }
-            .logout { customizer: LogoutConfigurer<HttpSecurity?> ->
-                customizer.logoutUrl(
-                    "/logout"
-                )
-            }
+            .formLogin { customizer -> customizer.loginProcessingUrl("/login").permitAll() }
+            .logout { customizer -> customizer.logoutUrl("/logout") }
             .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
             .addFilterBefore(
                 authenticationFilter(authenticationManager),

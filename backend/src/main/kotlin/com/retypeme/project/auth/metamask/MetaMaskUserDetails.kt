@@ -1,4 +1,4 @@
-package com.retypeme.project.auth
+package com.retypeme.project.auth.metamask
 
 import org.springframework.security.core.userdetails.User
 

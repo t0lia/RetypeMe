@@ -9,13 +9,23 @@ import { handleCreateNewGameSession } from "./helpers/createNewGameSession";
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 import Footer from "./components/footer/footer";
 import { Twitter } from "./public/icons/twitter";
-import ApiDomainService from "@/app/api/ApiDomainService";
 
 export default function Home() {
   const [wallet, setWallet] = useState("");
   const [streamingText, setStreamingText] = useState("");
   const [textIndex, setTextIndex] = useState(0);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [authData, setAuthData] = useState({"username": null, "isAuthenticated": false});
+
+  const fetchAuthData = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/auth', {credentials: 'include'});
+      const data = await response.json();
+      setAuthData(data);
+    } catch (error) {
+      console.error('Error fetching API data:', error);
+    }
+  };
 
   const router = useRouter();
 
@@ -28,48 +38,69 @@ export default function Home() {
     }
   }
 
-  async function login() {
-    console.log("login");
-    if (!window.ethereum) {
-      console.error('Please install MetaMask');
-      return;
+  const login = async () => {
+    try {
+      if (!window.ethereum) {
+        console.error('Please install MetaMask');
+        return;
+      }
+
+      const accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
+      const address = accounts[0];
+      const nonce = await getNonce(address);
+      const message = `Signing a message to login: ${nonce}`;
+      const signature = await window.ethereum.request({
+        method: 'personal_sign',
+        params: [message, address],
+      });
+
+      await sendLoginData(address, signature);
+      await fetchAuthData();
+    } catch (error) {
+      console.error('Login failed:', error);
     }
+  };
 
-    // Prompt user to connect MetaMask
-    const accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
-    const address = accounts[0];
-
-    // Receive nonce and sign a message
-    const nonce = await getNonce(address);
-    const message = `Signing a message to login: ${nonce}`;
-    const signature = await window.ethereum.request({method: 'personal_sign', params: [message, address]});
-
-    // Login with signature
-    await sendLoginData(address, signature);
-  }
-
-  async function getNonce(address:any) {
-    const apiUrl = new ApiDomainService().getSecRestUrl();
-    return await fetch(`${apiUrl}/nonce/${address}`)
+  const getNonce = async (address:string) => {
+    return await fetch(`http://localhost:8080/api/nonce/${address}`, {credentials: 'include'})
       .then(response => response.text());
-  }
+  };
 
-  async function sendLoginData(address:string, signature:string) {
-    const apiUrl = new ApiDomainService().getSecRestUrl();
-    return fetch(`${apiUrl}/login`, {
+  const sendLoginData = async (address:string, signature:string) => {
+    await fetch('http://localhost:8080/api/login', {
       method: 'POST',
-      headers: {'content-type': 'application/x-www-form-urlencoded'},
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
       body: new URLSearchParams({
         address: encodeURIComponent(address),
-        signature: encodeURIComponent(signature)
-      })
+        signature: encodeURIComponent(signature),
+      }),
+      credentials: 'include'
     }).then((response) => {
-      // console.log(response)
-      // return true;
-      return window.location.href = response.url;
+      if (response.ok) {
+        console.log('Login successful');
+        window.location.href = response.url;
+      } else {
+        console.log('Login error');
+      }
     });
-  }
+  };
 
+  const sendLogout = async () => {
+    await fetch('http://localhost:8080/api/logout', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      credentials: 'include'
+    }).then((response) => {
+      if (response.ok) {
+      } else {
+      }
+    });
+  };
+
+  const logout = async () => {
+    await sendLogout();
+    await fetchAuthData();
+  }
   async function handleConnectWallet() {
     const walletAddress = await connectWallet();
     if (walletAddress) {
@@ -77,6 +108,10 @@ export default function Home() {
       localStorage.setItem("walletId", walletAddress);
     }
   }
+
+  useEffect(() => {
+    fetchAuthData();
+  }, []);
 
   useEffect(() => {
     setIsSmallScreen(window.innerWidth < 768);
@@ -148,11 +183,8 @@ export default function Home() {
               Try Beta on Polygon Mumbai Testnet
             </div>
           </div>
-          <div className="form-signin">
-            <h3 className="form-signin-heading">Please sign in</h3>
-            <button className="btn btn-lg btn-primary btn-block" type="submit" onClick={login}>Login with MetaMask
-            </button>
-          </div>
+
+
           <div className="flex flex-row gap-5">
             <DropDownFaucetMenu/>
             <button
@@ -166,6 +198,25 @@ export default function Home() {
       </header>
       <main className="h-screen flex flex-col">
         <div className="flex flex-col flex-1 justify-center items-center gap-20">
+          <div>
+            {authData.isAuthenticated ? (
+              <div>
+                <p>Logged in as: <span>{authData.isAuthenticated ? authData.username : 'Not logged in'}</span></p>
+                <div className="form-logout">
+                  <button className="btn btn-lg btn-primary btn-block" onClick={logout}>Logout</button>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div className="form-signin">
+                  <h3 className="form-signin-heading">Please sign in</h3>
+                  <button className="btn btn-lg btn-primary btn-block" type="submit" onClick={login}>Login with MetaMask
+                  </button>
+                </div>
+              </div>
+
+            )}
+          </div>
           <button
             className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
             onClick={handleTryDuelModeButton}
@@ -175,7 +226,7 @@ export default function Home() {
           <div className="self-start pl-40 h-8">{streamingText}</div>
         </div>
       </main>
-      <Footer />
+      <Footer/>
     </>
   );
 }

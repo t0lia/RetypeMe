@@ -1,5 +1,7 @@
-package com.retypeme.project.auth
+package com.retypeme.project.auth.metamask
 
+import com.retypeme.project.auth.User
+import com.retypeme.project.auth.UserRepository
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -9,7 +11,7 @@ import java.io.IOException
 
 
 class MetaMaskAuthenticationSuccessHandler(private val userRepository: UserRepository) :
-    SimpleUrlAuthenticationSuccessHandler("/") {
+    SimpleUrlAuthenticationSuccessHandler() {
 
     @Throws(ServletException::class, IOException::class)
     override fun onAuthenticationSuccess(

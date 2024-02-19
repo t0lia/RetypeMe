@@ -1,7 +1,5 @@
-package com.retypeme.project.auth
+package com.retypeme.project.auth.metamask
 
-import com.retypeme.project.auth.MetaMaskAuthenticationRequest
-import com.retypeme.project.auth.MetaMaskUserDetails
 import com.retypeme.project.auth.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.BadCredentialsException
