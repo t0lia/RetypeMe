@@ -13,7 +13,7 @@ management:
       exposure:
         include: "health,info"
       cors:
-        allowed-origins: "*"
+        allowed-origins: "http://localhost:3000"
         allowed-methods: "*"
         allowed-headers: "*"
   endpoint:
@@ -21,7 +21,7 @@ management:
       show-details: always
 application:
   cors:
-    allowed-origins: "http://localhost:3000/"
+    allowed-origins: "http://localhost:3000"
 
 contract:
   address: "0x"
