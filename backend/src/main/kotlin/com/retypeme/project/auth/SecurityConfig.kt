@@ -2,9 +2,9 @@ package com.retypeme.project.auth
 
 import com.retypeme.project.auth.metamask.MetaMaskAuthenticationFilter
 import com.retypeme.project.auth.metamask.MetaMaskAuthenticationSuccessHandler
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.ProviderManager
@@ -29,11 +29,10 @@ class SecurityConfig(val userRepository: UserRepository) {
         return ProviderManager(myAuthenticationProviders)
     }
 
-    @Bean
-    fun corsConfigurationSource(): CorsConfigurationSource {
+    fun corsConfigurationSource(corsAllowedOrigin: String): CorsConfigurationSource {
         val corsConfiguration = CorsConfiguration()
         //Make the below setting as * to allow connection from any hos
-        corsConfiguration.allowedOrigins = listOf("http://localhost:3000")
+        corsConfiguration.allowedOrigins = listOf(corsAllowedOrigin)
         corsConfiguration.allowedMethods = listOf("*")
         corsConfiguration.allowedHeaders = listOf("*")
         corsConfiguration.allowCredentials = true
@@ -45,14 +44,15 @@ class SecurityConfig(val userRepository: UserRepository) {
 
     @Bean
     @Throws(Exception::class)
-    fun filterChain(http: HttpSecurity, authenticationManager: AuthenticationManager): SecurityFilterChain {
+    fun filterChain(
+        http: HttpSecurity,
+        authenticationManager: AuthenticationManager,
+        @Value("\${application.cors.allowed-origins}") corsAllowedOrigin: String
+    ): SecurityFilterChain {
         return http
-            .cors { c -> c.configurationSource(corsConfigurationSource()) }
+            .cors { c -> c.configurationSource(corsConfigurationSource(corsAllowedOrigin)) }
             .authorizeHttpRequests { customizer ->
-                customizer
-                    .requestMatchers(HttpMethod.GET, "/nonce/*").permitAll()
-                    .requestMatchers("/**").permitAll()
-                    .anyRequest().authenticated()
+                customizer.requestMatchers("/**").permitAll().anyRequest().authenticated()
             }
             .formLogin { customizer -> customizer.loginProcessingUrl("/login").permitAll() }
             .logout { customizer -> customizer.logoutUrl("/logout") }
