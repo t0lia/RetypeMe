@@ -1,31 +1,21 @@
 "use client";
-import { useState, useEffect, useLayoutEffect } from "react";
-import { useRouter } from "next/navigation";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
 import Link from "next/link";
 
-import { connectWallet, formatWallet } from "./helpers";
-import { handleCreateNewGameSession } from "./helpers/createNewGameSession";
+import {connectWallet, formatWallet} from "./helpers";
+import {handleCreateNewGameSession} from "./helpers/createNewGameSession";
 
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 import Footer from "./components/footer/footer";
-import { Twitter } from "./public/icons/twitter";
+import {Twitter} from "./public/icons/twitter";
+import RestApiService from "@/app/api/RestApiService";
 
 export default function Home() {
-  const [wallet, setWallet] = useState("");
   const [streamingText, setStreamingText] = useState("");
   const [textIndex, setTextIndex] = useState(0);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [authData, setAuthData] = useState({"username": null, "isAuthenticated": false});
-
-  const fetchAuthData = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/auth', {credentials: 'include'});
-      const data = await response.json();
-      setAuthData(data);
-    } catch (error) {
-      console.error('Error fetching API data:', error);
-    }
-  };
 
   const router = useRouter();
 
@@ -38,79 +28,27 @@ export default function Home() {
     }
   }
 
-  const login = async () => {
-    try {
-      if (!window.ethereum) {
-        console.error('Please install MetaMask');
-        return;
-      }
-
-      const accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
-      const address = accounts[0];
-      const nonce = await getNonce(address);
-      const message = `Signing a message to login: ${nonce}`;
-      const signature = await window.ethereum.request({
-        method: 'personal_sign',
-        params: [message, address],
-      });
-
-      await sendLoginData(address, signature);
-      await fetchAuthData();
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
-  };
-
-  const getNonce = async (address:string) => {
-    return await fetch(`http://localhost:8080/api/nonce/${address}`, {credentials: 'include'})
-      .then(response => response.text());
-  };
-
-  const sendLoginData = async (address:string, signature:string) => {
-    await fetch('http://localhost:8080/api/login', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: new URLSearchParams({
-        address: encodeURIComponent(address),
-        signature: encodeURIComponent(signature),
-      }),
-      credentials: 'include'
-    }).then((response) => {
-      if (response.ok) {
-        console.log('Login successful');
-        window.location.href = response.url;
-      } else {
-        console.log('Login error');
-      }
-    });
-  };
-
-  const sendLogout = async () => {
-    await fetch('http://localhost:8080/api/logout', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      credentials: 'include'
-    }).then((response) => {
-      if (response.ok) {
-      } else {
-      }
-    });
-  };
-
-  const logout = async () => {
-    await sendLogout();
-    await fetchAuthData();
-  }
   async function handleConnectWallet() {
-    const walletAddress = await connectWallet();
+    await connectWallet();
+    const authResponse:any = await new RestApiService().fetchAuthData()
+    setAuthData(authResponse);
+    const walletAddress = authResponse.username;
     if (walletAddress) {
-      setWallet(formatWallet(walletAddress));
       localStorage.setItem("walletId", walletAddress);
     }
   }
+  async function logoff() {
+    await new RestApiService().logout();
+    localStorage.removeItem("walletId");
+    const authResponse:any = await new RestApiService().fetchAuthData()
+    setAuthData(authResponse);
+  }
 
   useEffect(() => {
-    fetchAuthData();
+    const authResponse: any = new RestApiService().fetchAuthData()
+    authResponse.then((auth: any) => {
+      setAuthData(auth);
+    });
   }, []);
 
   useEffect(() => {
@@ -153,7 +91,8 @@ export default function Home() {
 
   if (isSmallScreen) {
     return (
-      <main className="flex flex-col h-screen justify-center bg-gradient-to-br from-indigo-600 to-violet-700 text-xl gap-32">
+      <main
+        className="flex flex-col h-screen justify-center bg-gradient-to-br from-indigo-600 to-violet-700 text-xl gap-32">
         <div className="text-center">Explore on Desktop</div>
         <div className="px-3 flex flex-col">
           <div className="h-8 mb-16">{streamingText}</div>
@@ -164,7 +103,7 @@ export default function Home() {
               href="https://x.com/retypemexyz"
               target="_blank"
             >
-              <Twitter width={36} height={40} />
+              <Twitter width={36} height={40}/>
             </Link>{" "}
           </div>
         </div>
@@ -184,39 +123,36 @@ export default function Home() {
             </div>
           </div>
 
+          {authData.isAuthenticated && (
+            <div className="flex flex-row gap-5 text-gray-600">
+              <div className="flex flex-row gap-5"> {authData.username}</div>
+            </div>
+          )}
 
           <div className="flex flex-row gap-5">
             <DropDownFaucetMenu/>
-            <button
-              className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 mr-8"
-              onClick={handleConnectWallet}
-            >
-              {wallet ? wallet : "Connect wallet"}
-            </button>
+            {authData.isAuthenticated ?
+              <div>
+                <button
+                  className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 mr-8"
+                  onClick={logoff}
+                >
+                  Unbind wallet
+                </button>
+              </div>
+              :
+              <button
+                className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 mr-8"
+                onClick={handleConnectWallet}
+              >
+                Connect wallet
+              </button>
+            }
           </div>
         </div>
       </header>
       <main className="h-screen flex flex-col">
         <div className="flex flex-col flex-1 justify-center items-center gap-20">
-          <div>
-            {authData.isAuthenticated ? (
-              <div>
-                <p>Logged in as: <span>{authData.isAuthenticated ? authData.username : 'Not logged in'}</span></p>
-                <div className="form-logout">
-                  <button className="btn btn-lg btn-primary btn-block" onClick={logout}>Logout</button>
-                </div>
-              </div>
-            ) : (
-              <div>
-                <div className="form-signin">
-                  <h3 className="form-signin-heading">Please sign in</h3>
-                  <button className="btn btn-lg btn-primary btn-block" type="submit" onClick={login}>Login with MetaMask
-                  </button>
-                </div>
-              </div>
-
-            )}
-          </div>
           <button
             className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
             onClick={handleTryDuelModeButton}
