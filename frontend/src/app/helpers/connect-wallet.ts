@@ -1,4 +1,5 @@
-import { BrowserProvider, getDefaultProvider } from "ethers";
+import {BrowserProvider, getDefaultProvider} from "ethers";
+import RestApiService from "../api/rest-api-service";
 
 export async function connectWallet() {
   let provider;
@@ -7,11 +8,22 @@ export async function connectWallet() {
   } else {
     provider = new BrowserProvider(window.ethereum);
     try {
-      const accounts = await provider.send("eth_requestAccounts", []);
-      console.log("Connected account:", accounts[0]);
+      const accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
+      const address = accounts[0];
+      const nonce = await new RestApiService().getNonce(address);
+      const message = `Signing a message to login: ${nonce}`;
+      const signature = await window.ethereum.request({
+        method: 'personal_sign',
+        params: [message, address],
+      });
+
+      await new RestApiService().sendLoginData(address, signature);
       return accounts[0];
+
     } catch (error) {
       console.error("Error connecting to MetaMask:", error.message);
     }
   }
 }
+
+;
