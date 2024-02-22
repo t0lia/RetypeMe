@@ -27,6 +27,7 @@ export default class ApiDomainService {
     }
     return `${process.env.API_REST}/api`;
   }
+
   public getSecRestUrl(): string {
     if (process.env.NODE_ENV === "production" && this.uiDomain !== "localhost") {
       let domain = this.domains.get(this.uiDomain);
