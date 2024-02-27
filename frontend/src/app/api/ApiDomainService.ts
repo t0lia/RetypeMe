@@ -1,4 +1,4 @@
-export default class apidomainservice {
+export default class ApiDomainService {
 
   private readonly uiDomain: string;
   private readonly domains: Map<string, string>;
@@ -26,5 +26,12 @@ export default class apidomainservice {
       return `https://${domain}/api`;
     }
     return `${process.env.API_REST}/api`;
+  }
+  public getSecRestUrl(): string {
+    if (process.env.NODE_ENV === "production" && this.uiDomain !== "localhost") {
+      let domain = this.domains.get(this.uiDomain);
+      return `https://${domain}`;
+    }
+    return `${process.env.API_REST}`;
   }
 }

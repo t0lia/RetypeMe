@@ -24,6 +24,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-websocket"
+    implementation "org.springframework.boot:spring-boot-starter-security"
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin"
     implementation "org.jetbrains.kotlin:kotlin-reflect"
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0"
@@ -59,7 +60,7 @@ compileKotlin.dependsOn tasks.named("openApiGenerate")
 
 openApiGenerate {
     generatorName = "kotlin-spring"
-    inputSpec.set("$rootDir/backend/src/main/resources/api-spec.yml")
+    inputSpec.set("$rootDir/src/main/resources/api-spec.yml")
     outputDir.set("$buildDir/generated")
     apiPackage.set("com.retypeme.project.api")
     modelPackage.set("com.retypeme.project.model")
