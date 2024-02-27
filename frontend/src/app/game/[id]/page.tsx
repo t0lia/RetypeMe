@@ -303,9 +303,6 @@ const GamePage = () => {
       setGameText(initialGameText);
     }
   }
-  // console.log(inputRef.current?.value.length > completedWords.join(" ").length);
-  // console.log(inputRef.current?.value.length, completedWords.join(" ").length);
-  // console.log(inputRef.current?.value, completedWords, gameText);
 
   function lastEnteredWordIsCorrect() {
     const enteredWords = inputRef.current?.value.trim().split(" ") ?? [];

@@ -1,6 +1,6 @@
 "use client";
-import {useEffect, useState} from "react";
-import {useRouter} from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import { connectWallet, formatWallet } from "./helpers";
@@ -8,14 +8,18 @@ import { handleCreateNewGameSession } from "./helpers/create-new-game-session";
 
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 import Footer from "./components/footer/footer";
-import {Twitter} from "./public/icons/twitter";
+import { Twitter } from "./public/icons/twitter";
 import RestApiService from "./api/rest-api-service";
+import { Exit } from "./public/icons/exit";
 
 export default function Home() {
   const [streamingText, setStreamingText] = useState("");
   const [textIndex, setTextIndex] = useState(0);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [authData, setAuthData] = useState({"username": null, "isAuthenticated": false});
+  const [authData, setAuthData] = useState({
+    username: null,
+    isAuthenticated: false,
+  });
 
   const router = useRouter();
 
@@ -30,7 +34,7 @@ export default function Home() {
 
   async function handleConnectWallet() {
     await connectWallet();
-    const authResponse:any = await new RestApiService().fetchAuthData()
+    const authResponse: any = await new RestApiService().fetchAuthData();
     setAuthData(authResponse);
     const walletAddress = authResponse.username;
     if (walletAddress) {
@@ -40,12 +44,12 @@ export default function Home() {
   async function logoff() {
     await new RestApiService().logout();
     localStorage.removeItem("walletId");
-    const authResponse:any = await new RestApiService().fetchAuthData()
+    const authResponse: any = await new RestApiService().fetchAuthData();
     setAuthData(authResponse);
   }
 
   useEffect(() => {
-    const authResponse: any = new RestApiService().fetchAuthData()
+    const authResponse: any = new RestApiService().fetchAuthData();
     authResponse.then((auth: any) => {
       setAuthData(auth);
     });
@@ -91,8 +95,7 @@ export default function Home() {
 
   if (isSmallScreen) {
     return (
-      <main
-        className="flex flex-col h-screen justify-center bg-gradient-to-br from-indigo-600 to-violet-700 text-xl gap-32">
+      <main className="flex flex-col h-screen justify-center bg-gradient-to-br from-indigo-600 to-violet-700 text-xl gap-32">
         <div className="text-center">Explore on Desktop</div>
         <div className="px-3 flex flex-col">
           <div className="h-8 mb-16">{streamingText}</div>
@@ -103,7 +106,7 @@ export default function Home() {
               href="https://x.com/retypemexyz"
               target="_blank"
             >
-              <Twitter width={36} height={40}/>
+              <Twitter width={36} height={40} />
             </Link>{" "}
           </div>
         </div>
@@ -116,38 +119,34 @@ export default function Home() {
       <header>
         <div className="flex justify-between h-16 items-center">
           <div className="relative ml-8">
-            <div
-              className="absolute w-80 h-10 -top-1.5 -left-4 bg-gradient-to-br from-pink-400 via-pink-500 to-purple-800 rounded-full p-4 filter blur-sm rotate-[-1.5deg]"></div>
+            <div className="absolute w-80 h-10 -top-1.5 -left-4 bg-gradient-to-br from-pink-400 via-pink-500 to-purple-800 rounded-full p-4 filter blur-sm rotate-[-1.5deg]"></div>
             <div className="relative z-10 font-semibold text-white">
               Try Beta on Polygon Mumbai Testnet
             </div>
           </div>
 
-          {authData.isAuthenticated && (
-            <div className="flex flex-row gap-5 text-gray-600">
-              <div className="flex flex-row gap-5"> {authData.username}</div>
-            </div>
-          )}
-
           <div className="flex flex-row gap-5">
-            <DropDownFaucetMenu/>
-            {authData.isAuthenticated ?
-              <div>
+            <DropDownFaucetMenu />
+            {authData.isAuthenticated ? (
+              <div className="flex">
+                <div className="bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded">
+                  {formatWallet(authData.username)}
+                </div>
                 <button
-                  className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 mr-8"
+                  className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform -ml-2 mr-8"
                   onClick={logoff}
                 >
-                  Unbind wallet
+                  <Exit />
                 </button>
               </div>
-              :
+            ) : (
               <button
                 className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 mr-8"
                 onClick={handleConnectWallet}
               >
                 Connect wallet
               </button>
-            }
+            )}
           </div>
         </div>
       </header>
@@ -162,7 +161,7 @@ export default function Home() {
           <div className="self-start pl-40 h-8">{streamingText}</div>
         </div>
       </main>
-      <Footer/>
+      <Footer />
     </>
   );
 }
