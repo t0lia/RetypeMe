@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Twitter } from "@/app/public/icons/twitter";
 import { useEffect, useState } from "react";
 import RestApiService from "@/app/api/rest-api-service";
+import { TWITTER_LINK } from "@/app/constants/links";
 
 export default function Footer() {
   const [version, setVersion] = useState("");
@@ -21,7 +22,7 @@ export default function Footer() {
       <div className="flex justify-between">
         <Link
           className="fill-current text-gray-600 hover:text-black pl-2"
-          href="https://x.com/retypemexyz"
+          href={TWITTER_LINK}
           target="_blank"
         >
           <Twitter width={18} height={20} />
