@@ -2,7 +2,6 @@ export function Twitter({ width = 32, height = 32 }) {
   return (
     <>
       <svg
-        // className="fill-current text-gray-600 hover:text-black"
         viewBox="0 0 300 300.251"
         width={width}
         height={height}

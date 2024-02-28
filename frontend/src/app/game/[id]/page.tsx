@@ -87,8 +87,6 @@ const GamePage = () => {
       stat.users.find((user) => user.userId === localStorage.getItem("userId"))
         ?.progress === 100
     ) {
-      // setTxSuccessful(false); // check if it is in the right place?
-
       // Start the New game
       setStartBtnText("New Game");
     }
@@ -168,7 +166,7 @@ const GamePage = () => {
       localStorage.getItem("walletId") ?? ""
     );
 
-    setUserStats([]); // shoul it be here?
+    setUserStats([]);
   }
 
   function checkEqualHandler(e: React.ChangeEvent<HTMLInputElement>) {
@@ -304,11 +302,11 @@ const GamePage = () => {
     }
   }
 
-  function lastEnteredWordIsCorrect() {
-    const enteredWords = inputRef.current?.value.trim().split(" ") ?? [];
-    const lastEnteredWord = enteredWords[enteredWords.length - 1];
-    return completedWords[completedWords.length - 1] === lastEnteredWord;
-  }
+  // function lastEnteredWordIsCorrect() {
+  //   const enteredWords = inputRef.current?.value.trim().split(" ") ?? [];
+  //   const lastEnteredWord = enteredWords[enteredWords.length - 1];
+  //   return completedWords[completedWords.length - 1] === lastEnteredWord;
+  // }
 
   useEffect(() => {
     const sessionId: string = window.location.href.split("/").pop() as string;

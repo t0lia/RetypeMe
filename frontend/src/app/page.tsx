@@ -11,6 +11,7 @@ import Footer from "./components/footer/footer";
 import { Twitter } from "./public/icons/twitter";
 import RestApiService from "./api/rest-api-service";
 import { Exit } from "./public/icons/exit";
+import { TWITTER_LINK } from "./constants/links";
 
 export default function Home() {
   const [streamingText, setStreamingText] = useState("");
@@ -58,9 +59,6 @@ export default function Home() {
   useEffect(() => {
     setIsSmallScreen(window.innerWidth < 768);
   });
-  // useLayoutEffect(() => {
-  //   setIsSmallScreen(window.innerWidth < 768);
-  // });
 
   useEffect(() => {
     const texts = [
@@ -101,11 +99,7 @@ export default function Home() {
           <div className="h-8 mb-16">{streamingText}</div>
           <div className="self-center">Join us:</div>
           <div className="self-center">
-            <Link
-              className=" pl-2"
-              href="https://x.com/retypemexyz"
-              target="_blank"
-            >
+            <Link className=" pl-2" href={TWITTER_LINK} target="_blank">
               <Twitter width={36} height={40} />
             </Link>{" "}
           </div>
