@@ -59,9 +59,6 @@ export default function Home() {
   useEffect(() => {
     setIsSmallScreen(window.innerWidth < 768);
   });
-  // useLayoutEffect(() => {
-  //   setIsSmallScreen(window.innerWidth < 768);
-  // });
 
   useEffect(() => {
     const texts = [
