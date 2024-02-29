@@ -1,7 +1,8 @@
+import React from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
 
-export default function DropdownFaucetMenu() {
+function DropdownFaucetMenu() {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -41,3 +42,5 @@ export default function DropdownFaucetMenu() {
     </DropdownMenu.Root>
   );
 }
+
+export default React.memo(DropdownFaucetMenu);
