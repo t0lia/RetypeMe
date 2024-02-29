@@ -1,11 +1,11 @@
-import Link from "next/link";
+import React, { useEffect, useState } from "react";
 
-import { Twitter } from "@/app/public/icons/twitter";
-import { useEffect, useState } from "react";
+import Link from "next/link";
 import RestApiService from "@/app/api/rest-api-service";
+import { Twitter } from "@/app/public/icons/twitter";
 import { TWITTER_LINK } from "@/app/constants/links";
 
-export default function Footer() {
+function Footer() {
   const [version, setVersion] = useState("");
 
   useEffect(() => {
@@ -32,3 +32,5 @@ export default function Footer() {
     </footer>
   );
 }
+
+export default React.memo(Footer);
