@@ -15,9 +15,9 @@ import { handleCreateNewGameSession } from "@/app/helpers/create-new-game-sessio
 
 import GamePageHeader from "@/app/components/game-page-header/gamePageHeader";
 import CopyButton from "@/app/components/copy-button/copyButton";
+import ProgressBar from "@/app/components/progress-bar/progressBar";
 
 import "./page.css";
-import ProgressBar from "@/app/components/progress-bar/progressBar";
 
 const GamePage = () => {
   const [textVisible, setTextVisible] = useState(false);
@@ -130,6 +130,22 @@ const GamePage = () => {
 
     userIdFromStorage && setIngameUserId(userIdFromStorage);
     walletIdFromStorage && setIngameWalletId(walletIdFromStorage);
+
+    const sessionId: string = window.location.href.split("/").pop() as string;
+    sessionStorage.setItem("sessionId", sessionId);
+
+    if (!localStorage.getItem("userId")) {
+      localStorage.setItem("userId", crypto.randomUUID());
+    }
+
+    wsApiServiceRef.current = new WsApiService(
+      sessionId,
+      localStorage.getItem("userId") ?? "",
+      localStorage.getItem("walletId") ?? "",
+      onCountDownReceived,
+      onStatisticReceived,
+      onRacePrepareInfoReceived
+    );
   }, []);
 
   useEffect(() => {
@@ -305,24 +321,6 @@ const GamePage = () => {
   //   const lastEnteredWord = enteredWords[enteredWords.length - 1];
   //   return completedWords[completedWords.length - 1] === lastEnteredWord;
   // }
-
-  useEffect(() => {
-    const sessionId: string = window.location.href.split("/").pop() as string;
-    sessionStorage.setItem("sessionId", sessionId);
-
-    if (!localStorage.getItem("userId")) {
-      localStorage.setItem("userId", crypto.randomUUID());
-    }
-
-    wsApiServiceRef.current = new WsApiService(
-      sessionId,
-      localStorage.getItem("userId") ?? "",
-      localStorage.getItem("walletId") ?? "",
-      onCountDownReceived,
-      onStatisticReceived,
-      onRacePrepareInfoReceived
-    );
-  }, []);
 
   const onClickConnectButton = useCallback(
     async function () {
