@@ -15,11 +15,11 @@ import { withdrawWinnings } from "@/app/contract-utils/claim-winnings";
 import { handleCreateNewGameSession } from "@/app/helpers/create-new-game-session";
 
 import GamePageHeader from "@/app/components/game-page-header/gamePageHeader";
+import CopyButton from "@/app/components/copy-button/copyButton";
 
 import "./page.css";
 
 const GamePage = () => {
-  const [copied, setCopied] = useState(false);
   const [textVisible, setTextVisible] = useState(false);
   const [startBtnText, setStartBtnText] = useState("Start game");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -120,11 +120,9 @@ const GamePage = () => {
     }
   }
 
-  const handleCopy = () => {
+  const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  }, []);
 
   useEffect(() => {
     const userIdFromStorage = localStorage.getItem("userId");
@@ -527,14 +525,7 @@ const GamePage = () => {
               );
             }
           })}
-        <div className="absolute left-3 bottom-3 ">
-          <button
-            className="ml-5 mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
-            onClick={handleCopy}
-          >
-            {copied ? "Copied!" : "Click to copy game URL"}
-          </button>
-        </div>
+        <CopyButton handleCopy={handleCopy} />
       </main>
     </>
   );
