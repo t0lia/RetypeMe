@@ -14,7 +14,6 @@ function GamePageHeader({
   isGameEnded,
   onClickConnectButton,
 }: IGamePageHeaderProps) {
-  console.log("rerender");
   return (
     <header className="flex h-16 justify-end items-center p-4">
       {ingameWalletId !== null && ingameWalletId !== "" ? (
