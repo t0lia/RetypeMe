@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import WsApiService, {
   CountDown,
@@ -13,6 +13,8 @@ import { connectWallet } from "@/app/helpers";
 import { userDeposit } from "@/app/contract-utils/user-deposit";
 import { withdrawWinnings } from "@/app/contract-utils/claim-winnings";
 import { handleCreateNewGameSession } from "@/app/helpers/create-new-game-session";
+
+import GamePageHeader from "@/app/components/game-page-header/gamePageHeader";
 
 import "./page.css";
 
@@ -41,9 +43,7 @@ const GamePage = () => {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const params = useParams();
   const router = useRouter();
-  const id = params.id;
   const wsApiServiceRef = useRef<WsApiService | null>(null);
 
   const formattedText = gameText
@@ -326,18 +326,21 @@ const GamePage = () => {
     );
   }, []);
 
-  async function onClickConnectButton() {
-    const walletAddress = await connectWallet();
-    if (walletAddress) {
-      setIngameWalletId(walletAddress);
-      localStorage.setItem("walletId", walletAddress);
+  const onClickConnectButton = useCallback(
+    async function () {
+      const walletAddress = await connectWallet();
+      if (walletAddress) {
+        setIngameWalletId(walletAddress);
+        localStorage.setItem("walletId", walletAddress);
 
-      wsApiServiceRef.current?.join(
-        localStorage.getItem("userId") ?? "",
-        localStorage.getItem("walletId") ?? ""
-      );
-    }
-  }
+        wsApiServiceRef.current?.join(
+          localStorage.getItem("userId") ?? "",
+          localStorage.getItem("walletId") ?? ""
+        );
+      }
+    },
+    [connectWallet, wsApiServiceRef]
+  );
 
   async function handleUserDeposit() {
     const response = await userDeposit();
@@ -356,30 +359,12 @@ const GamePage = () => {
 
   return (
     <>
-      <header className="flex h-16 justify-end items-center p-4">
-        {ingameWalletId != null && ingameWalletId != "" ? (
-          <button
-            disabled={isButtonDisabled}
-            className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-              isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-          >
-            {formatWallet(ingameWalletId)}
-          </button>
-        ) : (
-          <button
-            disabled={isButtonDisabled || isGameEnded}
-            onClick={onClickConnectButton}
-            className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-              isButtonDisabled || isGameEnded
-                ? "opacity-50 cursor-not-allowed"
-                : ""
-            }`}
-          >
-            Connect wallet
-          </button>
-        )}
-      </header>
+      <GamePageHeader
+        ingameWalletId={ingameWalletId}
+        isGameEnded={isGameEnded}
+        isButtonDisabled={isButtonDisabled}
+        onClickConnectButton={onClickConnectButton}
+      />
       <main className="flex flex-col items-center min-[h-screen-h-16] py-2">
         <div className="flex flex-col gap-2 mb-3">
           <p>Progress</p>
@@ -457,8 +442,8 @@ const GamePage = () => {
                 );
               })}
         </div>
-        {ingameWalletId != null &&
-        ingameWalletId != "" &&
+        {ingameWalletId !== null &&
+        ingameWalletId !== "" &&
         !txSuccessful &&
         sessionStat?.users?.every((driver) => driver.walletId) &&
         sessionStat?.users?.length > 1 ? (
