@@ -1,23 +1,25 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import WsApiService, {
   CountDown,
   DriverMetrics,
   RaceStatistic,
 } from "@/app/api/ws-api-service";
-import { formatWallet } from "@/app/helpers";
 import { connectWallet } from "@/app/helpers";
 import { userDeposit } from "@/app/contract-utils/user-deposit";
-import { withdrawWinnings } from "@/app/contract-utils/claim-winnings";
 import { handleCreateNewGameSession } from "@/app/helpers/create-new-game-session";
+
+import GamePageHeader from "@/app/components/game-page-header/gamePageHeader";
+import CopyButton from "@/app/components/copy-button/copyButton";
+import ProgressBar from "@/app/components/progress-bar/progressBar";
+import ClaimWinningsButton from "@/app/components/claim-winnings-button/claimWinningsButton";
 
 import "./page.css";
 
 const GamePage = () => {
-  const [copied, setCopied] = useState(false);
   const [textVisible, setTextVisible] = useState(false);
   const [startBtnText, setStartBtnText] = useState("Start game");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -31,8 +33,6 @@ const GamePage = () => {
   const [ingameUserId, setIngameUserId] = useState("");
   const [ingameWalletId, setIngameWalletId] = useState("");
   const [txSuccessful, setTxSuccessful] = useState(false);
-  const [successfulWithdrawlWinnings, setSuccessfulWithdrawlWinnings] =
-    useState(false);
   const [keyStrokeCount, setKeyStrokeCount] = useState(0);
   const [sessionStat, setSessionStat] = useState<RaceStatistic>({
     id: "",
@@ -41,9 +41,7 @@ const GamePage = () => {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const params = useParams();
   const router = useRouter();
-  const id = params.id;
   const wsApiServiceRef = useRef<WsApiService | null>(null);
 
   const formattedText = gameText
@@ -120,11 +118,9 @@ const GamePage = () => {
     }
   }
 
-  const handleCopy = () => {
+  const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  }, []);
 
   useEffect(() => {
     const userIdFromStorage = localStorage.getItem("userId");
@@ -132,6 +128,22 @@ const GamePage = () => {
 
     userIdFromStorage && setIngameUserId(userIdFromStorage);
     walletIdFromStorage && setIngameWalletId(walletIdFromStorage);
+
+    const sessionId: string = window.location.href.split("/").pop() as string;
+    sessionStorage.setItem("sessionId", sessionId);
+
+    if (!localStorage.getItem("userId")) {
+      localStorage.setItem("userId", crypto.randomUUID());
+    }
+
+    wsApiServiceRef.current = new WsApiService(
+      sessionId,
+      localStorage.getItem("userId") ?? "",
+      localStorage.getItem("walletId") ?? "",
+      onCountDownReceived,
+      onStatisticReceived,
+      onRacePrepareInfoReceived
+    );
   }, []);
 
   useEffect(() => {
@@ -308,36 +320,21 @@ const GamePage = () => {
   //   return completedWords[completedWords.length - 1] === lastEnteredWord;
   // }
 
-  useEffect(() => {
-    const sessionId: string = window.location.href.split("/").pop() as string;
-    sessionStorage.setItem("sessionId", sessionId);
+  const onClickConnectButton = useCallback(
+    async function () {
+      const walletAddress = await connectWallet();
+      if (walletAddress) {
+        setIngameWalletId(walletAddress);
+        localStorage.setItem("walletId", walletAddress);
 
-    if (!localStorage.getItem("userId")) {
-      localStorage.setItem("userId", crypto.randomUUID());
-    }
-
-    wsApiServiceRef.current = new WsApiService(
-      sessionId,
-      localStorage.getItem("userId") ?? "",
-      localStorage.getItem("walletId") ?? "",
-      onCountDownReceived,
-      onStatisticReceived,
-      onRacePrepareInfoReceived
-    );
-  }, []);
-
-  async function onClickConnectButton() {
-    const walletAddress = await connectWallet();
-    if (walletAddress) {
-      setIngameWalletId(walletAddress);
-      localStorage.setItem("walletId", walletAddress);
-
-      wsApiServiceRef.current?.join(
-        localStorage.getItem("userId") ?? "",
-        localStorage.getItem("walletId") ?? ""
-      );
-    }
-  }
+        wsApiServiceRef.current?.join(
+          localStorage.getItem("userId") ?? "",
+          localStorage.getItem("walletId") ?? ""
+        );
+      }
+    },
+    [connectWallet, wsApiServiceRef]
+  );
 
   async function handleUserDeposit() {
     const response = await userDeposit();
@@ -346,119 +343,23 @@ const GamePage = () => {
     }
   }
 
-  async function handleClaimWinnings() {
-    const response = await withdrawWinnings();
-    console.log(response);
-    if (response && response.status === 1) {
-      setSuccessfulWithdrawlWinnings(true);
-    }
-  }
-
   return (
     <>
-      <header className="flex h-16 justify-end items-center p-4">
-        {ingameWalletId != null && ingameWalletId != "" ? (
-          <button
-            disabled={isButtonDisabled}
-            className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-              isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-          >
-            {formatWallet(ingameWalletId)}
-          </button>
-        ) : (
-          <button
-            disabled={isButtonDisabled || isGameEnded}
-            onClick={onClickConnectButton}
-            className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-              isButtonDisabled || isGameEnded
-                ? "opacity-50 cursor-not-allowed"
-                : ""
-            }`}
-          >
-            Connect wallet
-          </button>
-        )}
-      </header>
+      <GamePageHeader
+        ingameWalletId={ingameWalletId}
+        isGameEnded={isGameEnded}
+        isButtonDisabled={isButtonDisabled}
+        onClickConnectButton={onClickConnectButton}
+      />
       <main className="flex flex-col items-center min-[h-screen-h-16] py-2">
-        <div className="flex flex-col gap-2 mb-3">
-          <p>Progress</p>
-          {userStats.length > 0
-            ? userStats.map((driver) => (
-                <div
-                  key={driver.userId}
-                  className="w-[700px] relative bg-gray-300 border-2 border-gray-500 rounded-sm h-8 overflow-hidden"
-                >
-                  <div
-                    key={driver.userId}
-                    className="bg-blue-300 h-full transition-all duration-200"
-                    style={{ width: `${driver.progress}%` }}
-                  >
-                    <span className="ml-1">
-                      {sessionStat.users.map((userSession) => {
-                        if (userSession.userId === driver.userId)
-                          return userSession.walletId
-                            ? formatWallet(userSession.walletId)
-                            : formatWallet(driver.userId);
-                      })}
-                      {driver.userId === ingameUserId && "(you)"}
-                    </span>
-                  </div>
-                  <span className="absolute right-0 top-0 mr-1">
-                    {driver.progress === 100 && driver.place === 1 && (
-                      <>
-                        <span>🎉 CPM: </span>
-                        <b className="font-semibold">{driver.cpm}</b>
-                        <span> Place: 🥇</span>
-                      </>
-                    )}
-                    {driver.progress === 100 && driver.place === 2 && (
-                      <>
-                        <span>🎉 CPM: </span>
-                        <b className="font-semibold">{driver.cpm}</b>
-                        <span> Place: 🥈</span>
-                      </>
-                    )}
-                    {driver.progress === 100 && driver.place === 3 && (
-                      <>
-                        <span>🎉 CPM: </span>
-                        <b className="font-semibold">{driver.cpm}</b>
-                        <span> Place: 🥉</span>
-                      </>
-                    )}
-                    {driver.progress === 100 && driver.place > 3 && (
-                      <>
-                        <span>CPM: </span>
-                        <b className="font-semibold">{driver.cpm}</b>
-                        <span>
-                          {" "}
-                          Place: <b>{driver.place} 😭</b>
-                        </span>
-                      </>
-                    )}
-                  </span>
-                </div>
-              ))
-            : sessionStat?.users?.map((driver) => {
-                return (
-                  <div
-                    className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8"
-                    key={driver.userId}
-                  >
-                    <span className="ml-1">
-                      {driver.userId === ingameUserId && ingameWalletId
-                        ? formatWallet(ingameWalletId)
-                        : formatWallet(
-                            driver.walletId ? driver.walletId : driver.userId
-                          )}{" "}
-                      {driver.userId === ingameUserId ? "(you)" : ""}
-                    </span>
-                  </div>
-                );
-              })}
-        </div>
-        {ingameWalletId != null &&
-        ingameWalletId != "" &&
+        <ProgressBar
+          ingameUserId={ingameUserId}
+          sessionStat={sessionStat}
+          userStats={userStats}
+          ingameWalletId={ingameWalletId}
+        />
+        {ingameWalletId !== null &&
+        ingameWalletId !== "" &&
         !txSuccessful &&
         sessionStat?.users?.every((driver) => driver.walletId) &&
         sessionStat?.users?.length > 1 ? (
@@ -522,34 +423,13 @@ const GamePage = () => {
           onKeyDown={handleKeyDown}
           autoComplete="off"
         ></input>
-        {ingameWalletId &&
-          userStats.every((driver) => driver.walletId) &&
-          txSuccessful &&
-          userStats.map((driver) => {
-            if (
-              driver.place === 1 &&
-              driver.userId === ingameUserId &&
-              !successfulWithdrawlWinnings
-            ) {
-              return (
-                <button
-                  key={driver.userId}
-                  className="mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 animation-pulse"
-                  onClick={handleClaimWinnings}
-                >
-                  Claim winnings 🏆
-                </button>
-              );
-            }
-          })}
-        <div className="absolute left-3 bottom-3 ">
-          <button
-            className="ml-5 mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
-            onClick={handleCopy}
-          >
-            {copied ? "Copied!" : "Click to copy game URL"}
-          </button>
-        </div>
+        <ClaimWinningsButton
+          userStats={userStats}
+          ingameUserId={ingameUserId}
+          ingameWalletId={ingameWalletId}
+          txSuccessful={txSuccessful}
+        />
+        <CopyButton handleCopy={handleCopy} />
       </main>
     </>
   );
