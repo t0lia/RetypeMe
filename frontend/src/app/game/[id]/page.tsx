@@ -10,12 +10,12 @@ import WsApiService, {
 } from "@/app/api/ws-api-service";
 import { connectWallet } from "@/app/helpers";
 import { userDeposit } from "@/app/contract-utils/user-deposit";
-import { withdrawWinnings } from "@/app/contract-utils/claim-winnings";
 import { handleCreateNewGameSession } from "@/app/helpers/create-new-game-session";
 
 import GamePageHeader from "@/app/components/game-page-header/gamePageHeader";
 import CopyButton from "@/app/components/copy-button/copyButton";
 import ProgressBar from "@/app/components/progress-bar/progressBar";
+import ClaimWinningsButton from "@/app/components/claim-winnings-button/claimWinningsButton";
 
 import "./page.css";
 
@@ -33,8 +33,6 @@ const GamePage = () => {
   const [ingameUserId, setIngameUserId] = useState("");
   const [ingameWalletId, setIngameWalletId] = useState("");
   const [txSuccessful, setTxSuccessful] = useState(false);
-  const [successfulWithdrawlWinnings, setSuccessfulWithdrawlWinnings] =
-    useState(false);
   const [keyStrokeCount, setKeyStrokeCount] = useState(0);
   const [sessionStat, setSessionStat] = useState<RaceStatistic>({
     id: "",
@@ -345,14 +343,6 @@ const GamePage = () => {
     }
   }
 
-  async function handleClaimWinnings() {
-    const response = await withdrawWinnings();
-    console.log(response);
-    if (response && response.status === 1) {
-      setSuccessfulWithdrawlWinnings(true);
-    }
-  }
-
   return (
     <>
       <GamePageHeader
@@ -433,26 +423,12 @@ const GamePage = () => {
           onKeyDown={handleKeyDown}
           autoComplete="off"
         ></input>
-        {ingameWalletId &&
-          userStats.every((driver) => driver.walletId) &&
-          txSuccessful &&
-          userStats.map((driver) => {
-            if (
-              driver.place === 1 &&
-              driver.userId === ingameUserId &&
-              !successfulWithdrawlWinnings
-            ) {
-              return (
-                <button
-                  key={driver.userId}
-                  className="mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 animation-pulse"
-                  onClick={handleClaimWinnings}
-                >
-                  Claim winnings 🏆
-                </button>
-              );
-            }
-          })}
+        <ClaimWinningsButton
+          userStats={userStats}
+          ingameUserId={ingameUserId}
+          ingameWalletId={ingameWalletId}
+          txSuccessful={txSuccessful}
+        />
         <CopyButton handleCopy={handleCopy} />
       </main>
     </>
