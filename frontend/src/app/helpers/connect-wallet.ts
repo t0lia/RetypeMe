@@ -17,8 +17,6 @@ export async function connectWallet() {
 
 Wallet: ${address}
 
-Current time: ${new Date().toLocaleString()}
-
 Nonce: ${nonce}`;
       const signature = await window.ethereum.request({
         method: "personal_sign",
