@@ -18,6 +18,7 @@ import ProgressBar from "@/app/components/progress-bar/progressBar";
 import ClaimWinningsButton from "@/app/components/claim-winnings-button/claimWinningsButton";
 
 import "./page.css";
+import StartDepositButton from "@/app/components/start-deposit-button/startDepositButton";
 
 const GamePage = () => {
   const [textVisible, setTextVisible] = useState(false);
@@ -238,26 +239,6 @@ const GamePage = () => {
           progress
         );
 
-        // setCompletedWords((prevCompletedWords) => {
-        //   const enteredWords = enteredText.split(" ");
-        //   const lastEnteredWord = enteredWords.pop();
-
-        //   if (
-        //     lastEnteredWord &&
-        //     initialGameText.includes(lastEnteredWord) &&
-        //     (
-        //       initialGameText.match(
-        //         new RegExp(`\\b${lastEnteredWord}\\b`, "g")
-        //       ) || []
-        //     ).length >
-        //       prevCompletedWords.filter((word) => word === lastEnteredWord)
-        //         .length
-        //   ) {
-        //     return [...prevCompletedWords, lastEnteredWord];
-        //   }
-
-        //   return prevCompletedWords;
-        // });
         setCompletedWords((prevCompletedWords) => {
           const enteredWords = enteredText.split(" ");
           const lastEnteredWord = enteredWords.pop();
@@ -291,10 +272,9 @@ const GamePage = () => {
     }
   }
 
-  function handleKeyDown(e: any) {
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (
       e.key === "Backspace" &&
-      // lastEnteredWordIsCorrect() &&
       inputRef.current &&
       initialGameText.startsWith(inputRef.current.value)
     ) {
@@ -313,12 +293,6 @@ const GamePage = () => {
       setGameText(initialGameText);
     }
   }
-
-  // function lastEnteredWordIsCorrect() {
-  //   const enteredWords = inputRef.current?.value.trim().split(" ") ?? [];
-  //   const lastEnteredWord = enteredWords[enteredWords.length - 1];
-  //   return completedWords[completedWords.length - 1] === lastEnteredWord;
-  // }
 
   const onClickConnectButton = useCallback(
     async function () {
@@ -358,28 +332,15 @@ const GamePage = () => {
           userStats={userStats}
           ingameWalletId={ingameWalletId}
         />
-        {ingameWalletId !== null &&
-        ingameWalletId !== "" &&
-        !txSuccessful &&
-        sessionStat?.users?.every((driver) => driver.walletId) &&
-        sessionStat?.users?.length > 1 ? (
-          <button
-            className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
-            onClick={handleUserDeposit}
-          >
-            Deposit 0.1 Matic
-          </button>
-        ) : (
-          <button
-            className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
-              isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={() => handleStartGame()}
-            disabled={isButtonDisabled}
-          >
-            {startBtnText}
-          </button>
-        )}
+        <StartDepositButton
+          ingameWalletId={ingameWalletId}
+          txSuccessful={txSuccessful}
+          sessionStat={sessionStat}
+          handleUserDeposit={handleUserDeposit}
+          isButtonDisabled={isButtonDisabled}
+          handleStartGame={handleStartGame}
+          startBtnText={startBtnText}
+        />
         {textVisible && (
           <div className="relative" onClick={handleClickFormattedText}>
             <div
