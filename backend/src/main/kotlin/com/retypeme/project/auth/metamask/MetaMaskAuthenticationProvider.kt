@@ -41,7 +41,13 @@ class MetaMaskAuthenticationProvider : AbstractUserDetailsAuthenticationProvider
         MetaMaskAuthenticationRequest::class.java.isAssignableFrom(authentication)
     fun isSignatureValid(signature: String, address: String, nonce: Int): Boolean {
         // Compose the message with nonce
-        val message = "Signing a message to login: $nonce"
+        val message = """
+    RetypeMe uses cryptographic signatures instead of passwords to verify that you are the owner of this address.
+
+    Wallet: $address
+
+    Nonce: $nonce
+""".trimIndent()
 
         // Extract the ‘r’, ‘s’ and ‘v’ components
         val signatureBytes = Numeric.hexStringToByteArray(signature)
