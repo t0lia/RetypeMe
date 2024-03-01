@@ -13,18 +13,18 @@ export default class apidomainservice {
   }
 
   public getWebSocketUrl(): string {
-    if (process.env.NODE_ENV === "production" && this.uiDomain !== "localhost") {
-      let domain = this.domains.get(this.uiDomain);
-      return `wss://${domain}/api/ws`;
+    let domain = this.domains.get(this.uiDomain);
+    if (domain === undefined) {
+      return `ws://localhost:8080/api`;
     }
-    return `${process.env.API_WS}/api/ws`;
+    return `wss://${domain}/api/ws`;
   }
 
   public getRestUrl(): string {
-    if (process.env.NODE_ENV === "production" && this.uiDomain !== "localhost") {
-      let domain = this.domains.get(this.uiDomain);
-      return `https://${domain}/api`;
+    let domain = this.domains.get(this.uiDomain);
+    if (domain === undefined) {
+      return `http://localhost:8080/api`;
     }
-    return `${process.env.API_REST}/api`;
+    return `https://${domain}/api`;
   }
 }
