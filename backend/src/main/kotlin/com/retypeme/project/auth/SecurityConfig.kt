@@ -5,6 +5,7 @@ import com.retypeme.project.auth.metamask.MetaMaskAuthenticationSuccessHandler
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.ProviderManager
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
@@ -54,8 +56,11 @@ class SecurityConfig(val userRepository: UserRepository) {
             .authorizeHttpRequests { customizer ->
                 customizer.requestMatchers("/**").permitAll().anyRequest().authenticated()
             }
-            .formLogin { customizer -> customizer.loginProcessingUrl("/login").permitAll() }
-            .logout { customizer -> customizer.logoutUrl("/logout") }
+            .formLogin { customizer -> customizer.loginProcessingUrl("/login")
+                .permitAll() }
+            .logout { customizer -> customizer.logoutUrl("/logout")
+                .logoutSuccessHandler((HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)))
+            }
             .csrf { obj: CsrfConfigurer<HttpSecurity> -> obj.disable() }
             .addFilterBefore(
                 authenticationFilter(authenticationManager),

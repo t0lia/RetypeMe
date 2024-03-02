@@ -69,7 +69,6 @@ export default class RestApiService {
     }).then((response) => {
       if (response.ok) {
         console.log('Login successful');
-        window.location.href = response.url;
       } else {
         console.log('Login error');
       }
