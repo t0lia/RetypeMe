@@ -14,10 +14,14 @@ export default class ApiDomainService {
   private getUrl(isWebSocket: boolean): string {
     console.log("domain: " + this.uiDomain);
     let domain = this.domains.get(this.uiDomain);
+    let api = ""
     if (domain === undefined) {
-      return isWebSocket? "ws://localhost:8080/api/ws" : "http://localhost:8080/api";
+      api = isWebSocket ? "ws://localhost:8080/api/ws" : "http://localhost:8080/api";
+    } else {
+      api = isWebSocket ? `wss://${domain}/api/ws` : `https://${domain}/api`;
     }
-    return isWebSocket? `wss://${domain}/api/ws` : `https://${domain}/api`;
+    console.log("api url: " + api);
+    return api;
   }
 
   getWebSocketUrl(): string {
