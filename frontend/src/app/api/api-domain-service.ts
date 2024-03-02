@@ -12,18 +12,11 @@ export default class ApiDomainService {
   }
 
   private getUrl(isWebSocket: boolean): string {
-    if (
-      process.env.NODE_ENV === "production" &&
-      this.uiDomain !== "localhost"
-    ) {
-      let domain = this.domains.get(this.uiDomain);
-      return `${isWebSocket ? "wss" : "https"}://${domain}/api${
-        isWebSocket ? "/ws" : ""
-      }`;
+    let domain = this.domains.get(this.uiDomain);
+    if (domain === undefined) {
+      return isWebSocket? "ws://localhost:8080/api/ws" : "http://localhost:8080/api";
     }
-    return `${isWebSocket ? process.env.API_WS : process.env.API_REST}/api${
-      isWebSocket ? "/ws" : ""
-    }`;
+    return isWebSocket? `wss://${domain}/api/ws` : `https://${domain}/api`;
   }
 
   getWebSocketUrl(): string {
