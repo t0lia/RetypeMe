@@ -1,0 +1,14 @@
+---
+- name: Get Maven Version on Localhost
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+
+  tasks:
+    - name: Check Maven version
+      command: mvn -version
+      register: mvn_version_output
+
+    - name: Print Maven Version
+      debug:
+        msg: "{{ mvn_version_output.stdout_lines }}"
