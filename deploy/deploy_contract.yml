@@ -1,14 +1,14 @@
 ---
-- name: Get Maven Version on Localhost
+- name: Get Gradle Version on Localhost
   hosts: localhost
   connection: local
   gather_facts: yes
 
   tasks:
-    - name: Check Maven version
-      command: mvn -version
-      register: mvn_version_output
+    - name: Check Gradle version
+      command: '../backend/gradlew -v'
+      register: gradle_version_output
 
-    - name: Print Maven Version
+    - name: Print Gradle Version
       debug:
-        msg: "{{ mvn_version_output.stdout_lines }}"
+        msg: "{{ gradle_version_output.stdout_lines }}"
