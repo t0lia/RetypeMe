@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Deploy contract') {
             steps {
-                sh "ansible-playbook deploy/deploy_contract.yml"
+                sh "/var/lib/jenkins/.local/bin/ansible-playbook deploy/deploy_contract.yml"
             }
         }
     }
