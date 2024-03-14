@@ -13,7 +13,8 @@ pipeline {
                 }
         stage('Deploy contract') {
             steps {
-                sh "/var/lib/jenkins/.local/bin/ansible-playbook deploy/deploy_contract.yml"
+                sh "echo $CONTRACT_CHAIN_ID"
+//                 sh "/var/lib/jenkins/.local/bin/ansible-playbook deploy/deploy_contract.yml"
             }
         }
     }
