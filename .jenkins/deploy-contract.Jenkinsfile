@@ -10,7 +10,12 @@ pipeline {
                                 sh '''
                                 # Export secrets from file to environment variables
                                 set -a  # automatically export all variables
-                                . $ENV_FILE
+                                if [ -f "$ENV_FILE" ]; then
+                                    . "$ENV_FILE"
+                                else
+                                    echo "Environment file not found: $ENV_FILE"
+                                    exit 1
+                                fi
                                 set +a
                                 # Now you can use the environment variables in your CLI programs
                                 echo $CONTRACT_ADDRESS
