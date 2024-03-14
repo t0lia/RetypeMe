@@ -11,7 +11,7 @@ pipeline {
                                 # Export secrets from file to environment variables
                                 set -a  # automatically export all variables
                                 if [ -f "$ENV_FILE" ]; then
-                                    . "$ENV_FILE"
+                                    . "$ENV_FILE" > /dev/null 2>&1
                                 else
                                     echo "Environment file not found: $ENV_FILE"
                                     exit 1
