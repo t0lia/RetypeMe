@@ -1,14 +1,16 @@
 ---
-- name: Get Gradle Version on Localhost
+- name: Run deploy contract
   hosts: localhost
   connection: local
   gather_facts: yes
 
   tasks:
-    - name: Check Gradle version
-      command: '../backend/gradlew -v'
-      register: gradle_version_output
+    - name: Run Maven
+      command: 'mvn clean package -DskipTests spring-boot:run -q'
+      register: mvn_output
+      args:
+        chdir: "../backend/"
 
-    - name: Print Gradle Version
+    - name: Print Maven output
       debug:
-        msg: "{{ gradle_version_output.stdout_lines }}"
+        msg: "{{ mvn_output.stdout_lines }}"
