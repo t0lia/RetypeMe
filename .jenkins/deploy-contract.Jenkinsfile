@@ -6,7 +6,7 @@ pipeline {
                     steps {
                         withCredentials([file(credentialsId: 'env', variable: 'ENV_FILE')]) {
                             script {
-                                sh 'set -o allexport; source $ENV_FILE; set +o allexport;'
+                                sh 'bash -c "set -o allexport; source $ENV_FILE; set +o allexport"'
                             }
                         }
                     }
