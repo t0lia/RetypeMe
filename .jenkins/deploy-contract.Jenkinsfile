@@ -1,7 +1,6 @@
 pipeline {
     agent any
 
-    stages {
         stages {
                 stage('Load Secrets') {
                     steps {
@@ -21,13 +20,6 @@ pipeline {
                     }
                 }
                 }
-
-//         stage('Deploy contract') {
-//             steps {
-//                 sh "/var/lib/jenkins/.local/bin/ansible-playbook deploy/deploy_contract.yml"
-//             }
-//         }
-    }
 }
 
 
