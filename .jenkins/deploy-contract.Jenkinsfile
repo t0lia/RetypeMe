@@ -4,8 +4,10 @@ pipeline {
     stages {
         stage('Deploy contract') {
             steps {
-                sh "/var/lib/jenkins/.local/bin/ansible-playbook deploy/deploy_contract.yml"
+                sh "set -o allexport; source /var/lib/jenkins/workspace/.env; set +o allexport;ansible-playbook deploy/deploy_contract.yml"
             }
         }
     }
 }
+
+
