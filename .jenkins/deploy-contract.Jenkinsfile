@@ -10,7 +10,7 @@ pipeline {
                                 sh '''
                                 # Export secrets from file to environment variables
                                 set -a  # automatically export all variables
-                                source $ENV_FILE
+                                . $ENV_FILE
                                 set +a
                                 # Now you can use the environment variables in your CLI programs
                                 echo $CONTRACT_ADDRESS
