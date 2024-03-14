@@ -2,15 +2,26 @@ pipeline {
     agent any
 
     stages {
-        stage('Read Env File') {
+        stages {
+                stage('Load Secrets') {
                     steps {
-                        withCredentials([file(credentialsId: 'env', variable: 'ENV_FILE')]) {
-                            script {
-                                sh 'set -o allexport; source $ENV_FILE; set +o allexport; echo $CONTRACT_CHAIN_ID'
+                        script {
+                            // Assuming your secret file is stored as a 'Secret File' credential with ID 'env-file-secret'
+                            withCredentials([file(credentialsId: 'env', variable: 'ENV_FILE')]) {
+                                sh '''
+                                # Export secrets from file to environment variables
+                                set -a  # automatically export all variables
+                                source $ENV_FILE
+                                set +a
+                                # Now you can use the environment variables in your CLI programs
+                                echo $CONTRACT_ADDRESS
+                                '''
                             }
                         }
                     }
                 }
+                }
+
 //         stage('Deploy contract') {
 //             steps {
 //                 sh "/var/lib/jenkins/.local/bin/ansible-playbook deploy/deploy_contract.yml"
