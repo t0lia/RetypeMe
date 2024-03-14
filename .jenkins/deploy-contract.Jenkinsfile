@@ -11,10 +11,10 @@ pipeline {
                         }
                     }
                 }
-        stage('Deploy contract') {
-            steps {
+//         stage('Deploy contract') {
+//             steps {
 //                 sh "/var/lib/jenkins/.local/bin/ansible-playbook deploy/deploy_contract.yml"
-            }
+//             }
         }
     }
 }
