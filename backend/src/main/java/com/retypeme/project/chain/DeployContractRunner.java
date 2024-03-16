@@ -40,19 +40,14 @@ public class DeployContractRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-
-
         Chain chain = lookup(network);
         logger.info("Deploying contract to network: " + chain.getName());
         NetworkProvider provider = new InfuraProvider(chain, apikey);
 
-        System.out.println(apikey);
+        HelloWorld contract = deploy(provider, privateKey);
 
-//        HelloWorld contract = deploy(provider, privateKey);
-
-//        String contractAddress = contract.getContractAddress();
-//        logger.info("Contract deployed at address: " + contractAddress);
-
+        String contractAddress = contract.getContractAddress();
+        logger.info("Contract deployed at address: " + contractAddress);
     }
 
     private HelloWorld deploy(NetworkProvider provider, String privateKey) throws Exception {
