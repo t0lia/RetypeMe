@@ -1,8 +1,8 @@
-package com.retypeme.project.chain.seed;
+package com.retypeme.project.chain.provider;
 
 import org.web3j.protocol.http.HttpService;
 
-public interface ChainSeed {
+public interface NetworkProvider {
 
     int getChainId();
 

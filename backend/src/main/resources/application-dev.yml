@@ -1,0 +1,5 @@
+contract:
+  address: "0x"
+  private-key: "0x"
+  network-url: ""
+  chain-id: 1

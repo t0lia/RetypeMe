@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class EthContractApplication {
+public class DeployContractApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(EthContractApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(DeployContractApplication.class, args);
+    }
 
 }

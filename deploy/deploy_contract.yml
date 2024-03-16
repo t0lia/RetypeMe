@@ -5,8 +5,9 @@
   gather_facts: yes
 
   tasks:
-    - name: Run Maven
-      command: 'mvn clean package -DskipTests spring-boot:run -q'
+    - name: Run Maven with spring profile gen
+      command: "mvn clean package -DskipTests spring-boot:run -Dspring-boot.run.profiles=gen -q"
+
       register: mvn_output
       args:
         chdir: "../backend/"
