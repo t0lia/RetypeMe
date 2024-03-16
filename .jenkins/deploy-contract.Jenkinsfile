@@ -1,5 +1,11 @@
 pipeline {
     agent any
+    parameters {
+        choice(name: 'network', choices: ['polygon-mumbai', 'sepolia'])
+    }
+    environment {
+        CONTRACT_NETWORK = "${params.network}"
+    }
     stages {
         stage('Deploy Contract') {
             steps {
