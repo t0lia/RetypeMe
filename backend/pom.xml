@@ -14,7 +14,7 @@
     <name>eth-contract</name>
     <description>Smart contract</description>
     <properties>
-        <java.version>21</java.version>
+        <java.version>17</java.version>
 
         <web3j.version>4.10.0</web3j.version>
     </properties>
