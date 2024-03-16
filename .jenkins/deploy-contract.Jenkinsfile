@@ -11,7 +11,7 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'JASYPT_ENCRYPTOR_PASSWORD_GEN', variable: 'JASYPT_ENCRYPTOR_PASSWORD')]) {
                     sh '''
-                    ansible-playbook deploy/deploy_contract.yml
+                    /var/lib/jenkins/.local/bin/ansible-playbook deploy/deploy_contract.yml
                     '''
                 }
             }
