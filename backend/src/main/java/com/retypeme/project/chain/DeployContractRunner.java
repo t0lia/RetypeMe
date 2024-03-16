@@ -4,7 +4,7 @@ import static com.retypeme.project.chain.provider.Chain.lookup;
 import static org.web3j.tx.Contract.GAS_LIMIT;
 import static org.web3j.tx.ManagedTransaction.GAS_PRICE;
 
-import com.retypeme.project.chain.contract.HelloWorld;
+import com.retypeme.project.chain.contract.GamingContract;
 import com.retypeme.project.chain.provider.Chain;
 import com.retypeme.project.chain.provider.InfuraProvider;
 import com.retypeme.project.chain.provider.NetworkProvider;
@@ -44,19 +44,19 @@ public class DeployContractRunner implements CommandLineRunner {
         logger.info("Deploying contract to network: " + chain.getName());
         NetworkProvider provider = new InfuraProvider(chain, apikey);
 
-        HelloWorld contract = deploy(provider, privateKey);
+        GamingContract contract = deploy(provider, privateKey);
 
         String contractAddress = contract.getContractAddress();
         logger.info("Contract deployed at address: " + contractAddress);
     }
 
-    private HelloWorld deploy(NetworkProvider provider, String privateKey) throws Exception {
+    private GamingContract deploy(NetworkProvider provider, String privateKey) throws Exception {
         Credentials credentials = Credentials.create(privateKey);
         Web3j web3j = Web3j.build(provider.getHttpServer());
         TransactionManager tm =
             new RawTransactionManager(web3j, credentials, provider.getChainId());
         StaticGasProvider staticGasProvider = new StaticGasProvider(GAS_PRICE, GAS_LIMIT);
-        return HelloWorld.deploy(web3j, tm, staticGasProvider).send();
+        return GamingContract.deploy(web3j, tm, staticGasProvider).send();
     }
 
 }
