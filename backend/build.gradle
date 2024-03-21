@@ -20,6 +20,10 @@ repositories {
     mavenCentral()
 }
 
+springBoot {
+    mainClass = "com.retypeme.project.BackendApplicationKt"
+}
+
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-web"
