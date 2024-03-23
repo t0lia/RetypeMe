@@ -11,7 +11,7 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'JASYPT_ENCRYPTOR_PASSWORD_UAT', variable: 'JASYPT_ENCRYPTOR_PASSWORD')]) {
                     sh '''
-                    /var/lib/jenkins/.local/bin/ansible-playbook -i .idea/inventory.yml --extra-vars "version=${VERSION}" deploy/deploy_uat.yml
+                    /var/lib/jenkins/.local/bin/ansible-playbook -i /var/lib/jenkins/inventory.yml --extra-vars "version=${VERSION}" deploy/deploy_uat.yml
                     '''
                 }
             }
