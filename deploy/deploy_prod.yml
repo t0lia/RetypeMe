@@ -1,0 +1,30 @@
+---
+- name: Run deploy contract
+  hosts: prod
+  gather_facts: yes
+
+  tasks:
+    - name: Debug profile variable
+      debug:
+        var: profile
+
+    - name: Debug version variable
+      debug:
+        var: version
+
+    - name: ensure directory retypeme exists
+      file:
+        path: /home/wheel/retypeme
+        state: directory
+        mode: 0755
+
+    - name: render docker-compose file
+      template:
+        src: templates/docker-compose.yml.j2
+        dest: /home/wheel/retypeme/docker-compose.yml
+        mode: 0644
+
+    - name: pull and restart containers
+      shell: docker-compose pull && docker-compose down && docker-compose up -d && docker image prune -a -f
+      args:
+        chdir: /home/wheel/retypeme

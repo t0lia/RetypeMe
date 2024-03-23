@@ -7,11 +7,11 @@ pipeline {
         VERSION = "${params.VERSION}"
     }
     stages {
-        stage('Deploy to PROD') {
+        stage('Deploy to UAT') {
             steps {
-                withCredentials([string(credentialsId: 'JASYPT_ENCRYPTOR_PASSWORD_PROD', variable: 'JASYPT_ENCRYPTOR_PASSWORD')]) {
+                withCredentials([string(credentialsId: 'JASYPT_ENCRYPTOR_PASSWORD_UAT', variable: 'JASYPT_ENCRYPTOR_PASSWORD')]) {
                     sh '''
-                    /var/lib/jenkins/.local/bin/ansible-playbook -i .idea/inventory.yml --extra-vars "version=${VERSION}" deploy/deploy_prod.yml
+                    /var/lib/jenkins/.local/bin/ansible-playbook -i .idea/inventory.yml --extra-vars "version=${VERSION}" deploy/deploy_uat.yml
                     '''
                 }
             }
