@@ -1,0 +1,17 @@
+---
+- name: Run deploy contract
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+
+  tasks:
+    - name: Run Maven with spring profile gen
+      command: "mvn clean package -DskipTests spring-boot:run -Dspring-boot.run.profiles=gen -q"
+
+      register: mvn_output
+      args:
+        chdir: "../backend/"
+
+    - name: Print Maven output
+      debug:
+        msg: "{{ mvn_output.stdout_lines }}"

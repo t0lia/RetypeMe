@@ -1,0 +1,16 @@
+contract:
+  address: "0xf813b4e5d34079ebcc59adf39a7782ad989891fe"
+  private-key: ENC(tc9Qyw9RXSMl/9yT5ceV28QKusFbmWVN4zRYWuOQJqS6eviCSf+CZ/E8WsMQaHI/1yLCu8smsMXEm2UcFEblKsRW49eHiosSGtnE9QZFaHNcHySDJXMYGDWyKPbwsZO8KcS+CHwbz37YmNvMHd22BQ==)
+  network: "polygon-mumbai"
+  apikey: ENC(fdDEEvNy9zcDFDqE/++vzICGAdPjuPQAdamPet9vcp40tVjqJT0D1M/WKpIJCg6fgfMlZRlTyjNku4larRvjk81i8Y4XhmgYB5z4SoP6vPY=)
+  chain-id: 80001
+
+management:
+  endpoints:
+    web:
+      cors:
+        allowed-origins: "http://localhost:3000,http://localhost:3001"
+
+application:
+  cors:
+    allowed-origins: "http://localhost:3000,http://localhost:3001"
