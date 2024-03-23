@@ -1,0 +1,12 @@
+spring:
+  main:
+    banner-mode: "off"
+logging:
+  level:
+    org.springframework: OFF
+    com.ulisesbocchio: OFF
+
+contract:
+  private-key: ENC(09T4XPHqjoowdRHneMK/4ezKgnZUXSRL41ulqjKZpvkmbbYR+dDUNm27uq1k+866/5oOqQaMZgze2gdwqh5eeU6ZBfdcAR2TsRs17MPXBKmw30zTe5ZcXasjdwrwghPFIpxSRxA9w57C5dmoNyw0/A==)
+  network: "polygon-mumbai"
+  apikey: ENC(uGP2BJGUcrC0pGXerZyqXAPXtL29WpS3XR71DALUgUTeOlLyo8Ai70Y0SIw+AsgkHQ90hCZS0uAo9BnI42YTm9rxv4Ng2WoGj7NXoquAbJk=)

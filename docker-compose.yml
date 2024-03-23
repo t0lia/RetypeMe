@@ -10,7 +10,8 @@ services:
       dockerfile: backend/Dockerfile
       context: .
     environment:
-      APPLICATION_CORS_ALLOWED_ORIGINS: "http://localhost:3000,http://localhost:3001"
+      SPRING_PROFILES_ACTIVE: "dev"
+      JASYPT_ENCRYPTOR_PASSWORD: ${JASYPT_ENCRYPTOR_PASSWORD}
 
   ui:
     image: retypeme/retypeme-frontend:latest

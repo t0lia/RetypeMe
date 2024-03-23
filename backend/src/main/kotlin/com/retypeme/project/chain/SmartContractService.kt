@@ -1,5 +1,6 @@
 package com.retypeme.project.chain
 
+import com.retypeme.project.chain.contract.GamingContract
 import com.retypeme.project.messaging.WinnerFinishedEvent
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -24,8 +25,12 @@ class SmartContractService {
     @Value("\${contract.private-key}")
     private val privateKey: String? = null
 
-    @Value("\${contract.network-url}")
-    private val networkUrl: String? = null
+    @Value("\${contract.network}")
+    private val network: String? = null
+
+    @Value("\${contract.apikey}")
+    private val apikey: String? = null
+
 
     @Value("\${contract.chain-id}")
     private val chainId: Long? = null
@@ -34,6 +39,7 @@ class SmartContractService {
     private val logger = LoggerFactory.getLogger(SmartContractService::class.java)
 
     fun getBalance(): BigInteger {
+        val networkUrl = getNetworkUrl()
         val web3 = Web3j.build(InfuraHttpService(networkUrl))
 
         val balance = web3.ethGetBalance(contractAddress, DefaultBlockParameterName.LATEST).send()
@@ -42,8 +48,10 @@ class SmartContractService {
         return balance.balance
     }
 
+    private fun getNetworkUrl() = "https://$network.infura.io/v3/$apikey"
+
     fun getNetworkVersion(): String {
-        val web3 = Web3j.build(InfuraHttpService(networkUrl))
+        val web3 = Web3j.build(InfuraHttpService(getNetworkUrl()))
 
         val version = web3.netVersion().send()
         logger.info("Network version: " + version.netVersion)
@@ -59,7 +67,7 @@ class SmartContractService {
     fun endGame(sessionId: String, winnerId: String) {
         logger.info("finishing game: $sessionId, winner: $winnerId")
 
-        val web3 = Web3j.build(InfuraHttpService(networkUrl))
+        val web3 = Web3j.build(InfuraHttpService(getNetworkUrl()))
 
         val transactionManager = RawTransactionManager(web3, Credentials.create(privateKey), chainId ?: 80001);
 
