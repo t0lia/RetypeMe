@@ -13,15 +13,11 @@ management:
       exposure:
         include: "health,info"
       cors:
-        allowed-origins: "http://localhost:3000"
         allowed-methods: "*"
         allowed-headers: "*"
   endpoint:
     health:
       show-details: always
-application:
-  cors:
-    allowed-origins: "http://localhost:3000"
 
 contract:
   address: "0x"
