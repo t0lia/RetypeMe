@@ -65,6 +65,6 @@ jobs:
           push: true
           tags: retypeme/retypeme-frontend:${{ env.newTag }}, retypeme/retypeme-frontend:latest
 
-      - name: Call server endpoint
-        run: |
-          curl -X POST -u username:${{ secrets.WEBHOOK_PASSWORD }} http://apozdniakov.com:8090/restart_script
+#      - name: Call server endpoint
+#        run: |
+#          curl -X POST -u username:${{ secrets.WEBHOOK_PASSWORD }} http://apozdniakov.com:8090/restart_script
