@@ -1,0 +1,18 @@
+version: '2'
+services:
+
+  api:
+    image: retypeme/retypeme-backend:{{ version }}
+    restart: always
+    ports:
+      - "8082:8080"
+
+    environment:
+      SPRING_PROFILES_ACTIVE: "{{ profile }}"
+      JASYPT_ENCRYPTOR_PASSWORD: "{{ jasypt_password }}"
+
+  ui:
+    image: retypeme/retypeme-frontend:{{ version }}
+    restart: always
+    ports:
+      - "3001:3000"
