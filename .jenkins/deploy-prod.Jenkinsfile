@@ -1,7 +1,7 @@
 pipeline {
     agent any
     parameters {
-        string(name: 'VERSION', defaultValue: '1.0.0', description: 'Application version number')
+        string(name: 'VERSION', defaultValue: 'latest', description: 'Application version number')
     }
     environment {
         VERSION = "${params.VERSION}"
