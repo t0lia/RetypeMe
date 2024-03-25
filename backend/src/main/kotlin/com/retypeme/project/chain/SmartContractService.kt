@@ -71,7 +71,7 @@ class SmartContractService {
 
         val transactionManager = RawTransactionManager(web3, Credentials.create(privateKey), chainId ?: 80001);
 
-        val contract = GamingContract.load(contractAddress, web3, transactionManager, DefaultGasProvider())
+        val contract: GamingContract = GamingContract.load(contractAddress, web3, transactionManager, DefaultGasProvider())
 
         logger.info("call endGame with parameters: session-id: $sessionId, winner-id: $winnerId")
         val transaction: TransactionReceipt = contract.endGame(prepareSessionKey(sessionId), winnerId).send()
