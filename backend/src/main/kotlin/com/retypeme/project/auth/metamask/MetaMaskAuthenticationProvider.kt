@@ -39,6 +39,7 @@ class MetaMaskAuthenticationProvider : AbstractUserDetailsAuthenticationProvider
 
     override fun supports(authentication: Class<*>?): Boolean =
         MetaMaskAuthenticationRequest::class.java.isAssignableFrom(authentication)
+
     fun isSignatureValid(signature: String, address: String, nonce: Int): Boolean {
         // Compose the message with nonce
         val message = """

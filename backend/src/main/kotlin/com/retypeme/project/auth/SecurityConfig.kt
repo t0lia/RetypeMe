@@ -56,8 +56,6 @@ class SecurityConfig(val userRepository: UserRepository) {
             .authorizeHttpRequests { customizer ->
                 customizer.requestMatchers("/**").permitAll().anyRequest().authenticated()
             }
-            .formLogin { customizer -> customizer.loginProcessingUrl("/login")
-                .permitAll() }
             .logout { customizer -> customizer.logoutUrl("/logout")
                 .logoutSuccessHandler((HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)))
             }

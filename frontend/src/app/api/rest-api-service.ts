@@ -60,11 +60,8 @@ export default class RestApiService {
   async sendLoginData(address: string, signature: string) {
     await fetch(`${this.apiUrl}/login`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: new URLSearchParams({
-        address: encodeURIComponent(address),
-        signature: encodeURIComponent(signature),
-      }),
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({address, signature}),
       credentials: 'include'
     }).then((response) => {
       if (response.ok) {
