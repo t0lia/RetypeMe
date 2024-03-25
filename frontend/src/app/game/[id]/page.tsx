@@ -8,17 +8,17 @@ import WsApiService, {
   DriverMetrics,
   RaceStatistic,
 } from "@/app/api/ws-api-service";
-import { connectWallet } from "@/app/helpers";
 import { userDeposit } from "@/app/contract-utils/user-deposit";
 import { handleCreateNewGameSession } from "@/app/helpers/create-new-game-session";
+import { useAccount, useAccountEffect } from "wagmi";
 
 import GamePageHeader from "@/app/components/game-page-header/gamePageHeader";
 import CopyButton from "@/app/components/copy-button/copyButton";
 import ProgressBar from "@/app/components/progress-bar/progressBar";
 import ClaimWinningsButton from "@/app/components/claim-winnings-button/claimWinningsButton";
+import StartDepositButton from "@/app/components/start-deposit-button/startDepositButton";
 
 import "./page.css";
-import StartDepositButton from "@/app/components/start-deposit-button/startDepositButton";
 
 const GamePage = () => {
   const [textVisible, setTextVisible] = useState(false);
@@ -40,14 +40,22 @@ const GamePage = () => {
     users: [],
   });
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
+  const { address } = useAccount();
   const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
   const wsApiServiceRef = useRef<WsApiService | null>(null);
-
   const formattedText = gameText
     .split("")
     .map((char, index) => <span key={index}>{char}</span>);
+
+  useAccountEffect({
+    onConnect(data) {
+      setIngameWalletId(data.address);
+    },
+    onDisconnect() {
+      setIngameWalletId("");
+    },
+  });
 
   function returnFocusOnClick(e: React.MouseEvent<HTMLDivElement>): void {
     e.stopPropagation();
@@ -125,10 +133,11 @@ const GamePage = () => {
 
   useEffect(() => {
     const userIdFromStorage = localStorage.getItem("userId");
-    const walletIdFromStorage = localStorage.getItem("walletId");
 
     userIdFromStorage && setIngameUserId(userIdFromStorage);
-    walletIdFromStorage && setIngameWalletId(walletIdFromStorage);
+    if (address) {
+      setIngameWalletId(address);
+    }
 
     const sessionId: string = window.location.href.split("/").pop() as string;
     sessionStorage.setItem("sessionId", sessionId);
@@ -140,12 +149,12 @@ const GamePage = () => {
     wsApiServiceRef.current = new WsApiService(
       sessionId,
       localStorage.getItem("userId") ?? "",
-      localStorage.getItem("walletId") ?? "",
+      address ?? "",
       onCountDownReceived,
       onStatisticReceived,
       onRacePrepareInfoReceived
     );
-  }, []);
+  }, [ingameWalletId]);
 
   useEffect(() => {
     const handleKeyDown = () => {
@@ -176,7 +185,7 @@ const GamePage = () => {
 
     wsApiServiceRef.current?.register(
       localStorage.getItem("userId") ?? "",
-      localStorage.getItem("walletId") ?? ""
+      ingameWalletId ?? ""
     );
 
     setUserStats([]);
@@ -294,22 +303,6 @@ const GamePage = () => {
     }
   }
 
-  const onClickConnectButton = useCallback(
-    async function () {
-      const walletAddress = await connectWallet();
-      if (walletAddress) {
-        setIngameWalletId(walletAddress);
-        localStorage.setItem("walletId", walletAddress);
-
-        wsApiServiceRef.current?.join(
-          localStorage.getItem("userId") ?? "",
-          localStorage.getItem("walletId") ?? ""
-        );
-      }
-    },
-    [connectWallet, wsApiServiceRef]
-  );
-
   async function handleUserDeposit() {
     const response = await userDeposit();
     if (response && response.status === 1) {
@@ -323,7 +316,6 @@ const GamePage = () => {
         ingameWalletId={ingameWalletId}
         isGameEnded={isGameEnded}
         isButtonDisabled={isButtonDisabled}
-        onClickConnectButton={onClickConnectButton}
       />
       <main className="flex flex-col items-center min-[h-screen-h-16] py-2">
         <ProgressBar

@@ -3,24 +3,19 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-import { connectWallet, formatWallet } from "./helpers";
 import { handleCreateNewGameSession } from "./helpers/create-new-game-session";
 
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 import Footer from "./components/footer/footer";
+import ConnectButton from "./components/connect-button/connectButton";
 import { Twitter } from "./public/icons/twitter";
-import RestApiService from "./api/rest-api-service";
-import { Exit } from "./public/icons/exit";
+
 import { TWITTER_LINK } from "./constants/links";
 
 export default function Home() {
   const [streamingText, setStreamingText] = useState("");
   const [textIndex, setTextIndex] = useState(0);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [authData, setAuthData] = useState({
-    username: null,
-    isAuthenticated: false,
-  });
 
   const router = useRouter();
 
@@ -32,29 +27,6 @@ export default function Home() {
       router.push(`/game/${data.id}`);
     }
   }
-
-  async function handleConnectWallet() {
-    await connectWallet();
-    const authResponse: any = await new RestApiService().fetchAuthData();
-    setAuthData(authResponse);
-    const walletAddress = authResponse.username;
-    if (walletAddress) {
-      localStorage.setItem("walletId", walletAddress);
-    }
-  }
-  async function logoff() {
-    await new RestApiService().logout();
-    localStorage.removeItem("walletId");
-    const authResponse: any = await new RestApiService().fetchAuthData();
-    setAuthData(authResponse);
-  }
-
-  useEffect(() => {
-    const authResponse: any = new RestApiService().fetchAuthData();
-    authResponse.then((auth: any) => {
-      setAuthData(auth);
-    });
-  }, []);
 
   useEffect(() => {
     setIsSmallScreen(window.innerWidth < 768);
@@ -101,7 +73,7 @@ export default function Home() {
           <div className="self-center">
             <Link className=" pl-2" href={TWITTER_LINK} target="_blank">
               <Twitter width={36} height={40} />
-            </Link>{" "}
+            </Link>
           </div>
         </div>
       </main>
@@ -109,7 +81,7 @@ export default function Home() {
   }
 
   return (
-    <>
+    <div className="px-2 flex flex-col h-screen">
       <header>
         <div className="flex justify-between h-16 items-center">
           <div className="relative ml-8">
@@ -121,26 +93,7 @@ export default function Home() {
 
           <div className="flex flex-row gap-5">
             <DropDownFaucetMenu />
-            {authData.isAuthenticated ? (
-              <div className="flex">
-                <div className="bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded">
-                  {formatWallet(authData.username)}
-                </div>
-                <button
-                  className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform -ml-2 mr-8"
-                  onClick={logoff}
-                >
-                  <Exit />
-                </button>
-              </div>
-            ) : (
-              <button
-                className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 mr-8"
-                onClick={handleConnectWallet}
-              >
-                Connect wallet
-              </button>
-            )}
+            <ConnectButton />
           </div>
         </div>
       </header>
@@ -156,6 +109,6 @@ export default function Home() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
