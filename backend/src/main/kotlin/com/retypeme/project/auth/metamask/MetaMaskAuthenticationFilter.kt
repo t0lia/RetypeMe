@@ -7,6 +7,10 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
+import java.util.stream.Collectors
+import com.fasterxml.jackson.databind.ObjectMapper
+
+
 
 class MetaMaskAuthenticationFilter : AbstractAuthenticationProcessingFilter(AntPathRequestMatcher("/login", "POST")) {
 
@@ -18,8 +22,11 @@ class MetaMaskAuthenticationFilter : AbstractAuthenticationProcessingFilter(AntP
     }
 
     private fun getAuthRequest(request: HttpServletRequest): UsernamePasswordAuthenticationToken {
-        val address = obtainAddress(request) ?: ""
-        val signature = obtainSignature(request) ?: ""
+        val body: String = request.reader.lines().collect(Collectors.joining(System.lineSeparator()))
+        val map = ObjectMapper().readValue(body, Map::class.java)
+
+        val address = map["address"] as String
+        val signature = map["signature"] as String
         return MetaMaskAuthenticationRequest(address, signature)
     }
 
