@@ -1,6 +1,11 @@
 package com.retypeme.project.auth.metamask
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.moonstoneid.siwe.SiweMessage
+import com.moonstoneid.siwe.error.SiweException
 import com.retypeme.project.auth.UserRepository
+import com.retypeme.project.auth.VerificationRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -8,25 +13,25 @@ import org.springframework.security.authentication.dao.AbstractUserDetailsAuthen
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
-import org.web3j.crypto.Keys
-import org.web3j.crypto.Sign
-import org.web3j.utils.Numeric
-import java.math.BigInteger
-import java.security.SignatureException
 
 @Component
 class MetaMaskAuthenticationProvider : AbstractUserDetailsAuthenticationProvider() {
+
     @Autowired
     private lateinit var userRepository: UserRepository
 
     @Throws(AuthenticationException::class)
-    override fun additionalAuthenticationChecks(userDetails: UserDetails, authentication: UsernamePasswordAuthenticationToken) {
-        val metamaskAuthenticationRequest = authentication as MetaMaskAuthenticationRequest
-        val metamaskUserDetails = userDetails as MetaMaskUserDetails
+    override fun additionalAuthenticationChecks(userDetails: UserDetails, auth: UsernamePasswordAuthenticationToken) {
+        auth as MetaMaskAuthenticationRequest
 
-        if (!isSignatureValid(authentication.credentials.toString(), metamaskAuthenticationRequest.getAddress(), metamaskUserDetails.nonce)) {
-            logger.debug("Authentication failed: signature is not valid")
-            throw BadCredentialsException("Signature is not valid")
+        val verificationRequest: VerificationRequest = jacksonObjectMapper().readValue(auth.getVerificationBody())
+        val message: SiweMessage = SiweMessage.Parser().parse(verificationRequest.message);
+
+//        (userDetails as MetaMaskUserDetails).nonce -- need to take nonce from user details
+        try {
+            message.verify(message.domain, message.nonce, verificationRequest.signature)
+        } catch (e: SiweException) {
+            throw BadCredentialsException("Signature is not valid", e)
         }
     }
 
@@ -34,42 +39,7 @@ class MetaMaskAuthenticationProvider : AbstractUserDetailsAuthenticationProvider
     override fun retrieveUser(username: String?, authentication: UsernamePasswordAuthenticationToken): UserDetails {
         val auth = authentication as MetaMaskAuthenticationRequest
         val user = userRepository.getUser(auth.getAddress())
-        return MetaMaskUserDetails(auth.getAddress(), auth.getSignature(), user.nonce)
+        return MetaMaskUserDetails(auth.getAddress(), auth.getVerificationBody(), user.nonce)
     }
 
-    override fun supports(authentication: Class<*>?): Boolean =
-        MetaMaskAuthenticationRequest::class.java.isAssignableFrom(authentication)
-
-    fun isSignatureValid(signature: String, address: String, nonce: Int): Boolean {
-        // Compose the message with nonce
-        val message = """
-    RetypeMe uses cryptographic signatures instead of passwords to verify that you are the owner of this address.
-
-    Wallet: $address
-
-    Nonce: $nonce
-""".trimIndent()
-
-        // Extract the ‘r’, ‘s’ and ‘v’ components
-        val signatureBytes = Numeric.hexStringToByteArray(signature)
-        var v = signatureBytes[64]
-        if (v < 27) {
-            v = (v + 27).toByte()
-        }
-        val r = signatureBytes.copyOfRange(0, 32)
-        val s = signatureBytes.copyOfRange(32, 64)
-        val data = Sign.SignatureData(v, r, s)
-
-        // Retrieve public key
-        val publicKey: BigInteger = try {
-            Sign.signedPrefixedMessageToKey(message.toByteArray(), data)
-        } catch (e: SignatureException) {
-            logger.debug("Failed to recover public key", e)
-            return false
-        }
-
-        // Get recovered address and compare with the initial address
-        val recoveredAddress = "0x" + Keys.getAddress(publicKey)
-        return address.equals(recoveredAddress, ignoreCase = true)
-    }
 }
