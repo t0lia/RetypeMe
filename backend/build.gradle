@@ -33,11 +33,15 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect"
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0"
     implementation "com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5"
+    implementation("com.moonstoneid:siwe-java:1.0.5") {
+        exclude group: 'org.slf4j', module: 'slf4j-simple'
+    }
     implementation("org.openapitools:openapi-generator:7.1.0") {
         exclude group: "org.slf4j", module: "slf4j-simple"
         exclude group: "ch.qos.logback", module: "logback-classic"
     }
     implementation "javax.xml.bind:jaxb-api:2.2.4"
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0'
     implementation "org.web3j:core:4.10.3"
     implementation "org.web3j:parity:4.10.3"
     implementation "org.web3j:crypto:4.10.3"

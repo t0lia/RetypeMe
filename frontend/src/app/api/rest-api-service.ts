@@ -53,7 +53,7 @@ export default class RestApiService {
   };
 
   async getNonce(address: string) {
-    return await fetch(`${this.apiUrl}/nonce/${address}`, {credentials: 'include'})
+    return await fetch(`${this.apiUrl}/nonce`, {credentials: 'include'})
       .then(response => response.text());
   };
 

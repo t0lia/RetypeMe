@@ -10,5 +10,5 @@ class MetaMaskAuthenticationRequest(address: String, signature: String): Usernam
 
     fun getAddress(): String = principal as String
 
-    fun getSignature(): String = credentials as String
+    fun getVerificationBody(): String = credentials as String
 }
