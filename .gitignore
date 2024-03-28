@@ -41,3 +41,6 @@ out/
 
 # Environment variables in subdirectories are ignored by default
 **/.env
+.env*.production
+.env.production
+*.env*
