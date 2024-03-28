@@ -1,6 +1,5 @@
-version: '2'
+version: "2"
 services:
-
   api:
     image: retypeme/retypeme-backend:latest
     restart: always
@@ -11,7 +10,7 @@ services:
       context: .
     environment:
       SPRING_PROFILES_ACTIVE: "dev"
-      JASYPT_ENCRYPTOR_PASSWORD: ${JASYPT_ENCRYPTOR_PASSWORD}
+      JASYPT_ENCRYPTOR_PASSWORD: "U19c20OkGztWRj8d7HXY"
 
   ui:
     image: retypeme/retypeme-frontend:latest
