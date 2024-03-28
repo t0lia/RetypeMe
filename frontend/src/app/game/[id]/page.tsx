@@ -313,7 +313,6 @@ const GamePage = () => {
   return (
     <>
       <GamePageHeader
-        ingameWalletId={ingameWalletId}
         isGameEnded={isGameEnded}
         isButtonDisabled={isButtonDisabled}
       />
