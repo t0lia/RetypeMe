@@ -3,7 +3,14 @@
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { polygonMumbai } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ConnectKitProvider, getDefaultConfig } from "connectkit";
+import {
+  ConnectKitProvider,
+  getDefaultConfig,
+  SIWEConfig,
+  SIWEProvider,
+} from "connectkit";
+import { SiweMessage } from "siwe";
+import ApiDomainService from "@/app/api/api-domain-service";
 
 const config = createConfig(
   getDefaultConfig({
@@ -37,11 +44,68 @@ const config = createConfig(
 
 const queryClient = new QueryClient();
 
+const siweConfig: SIWEConfig = {
+  createMessage: ({ nonce, address, chainId }) => {
+    const domain = window.location.host;
+    const uri = window.location.origin;
+    console.log("uri", uri);
+    console.log("domain", domain);
+    console.log("createMessage", nonce, address, chainId);
+    const siweMessage = new SiweMessage({
+      version: "1",
+      domain,
+      uri,
+      address,
+      chainId,
+      nonce,
+      // Human-readable ASCII assertion that the user will sign, and it must not contain `\n`.
+      statement: "Sign in With Ethereum.",
+    });
+    console.log(siweMessage);
+    return siweMessage.prepareMessage();
+  },
+
+  getNonce: async () => {
+    const apiUrl = new ApiDomainService().getRestUrl();
+    return fetch(`${apiUrl}/nonce`, {
+      credentials: "include",
+    }).then((res) => res.text());
+  },
+
+  verifyMessage: async ({ message, signature }) => {
+    const apiUrl = new ApiDomainService().getRestUrl();
+    return fetch(`${apiUrl}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ message, signature }),
+    }).then((res) => res.ok);
+  },
+
+  getSession: async () => {
+    const apiUrl = new ApiDomainService().getRestUrl();
+    return fetch(`${apiUrl}/siwe/session`, {
+      credentials: "include",
+    }).then((res) => (res.ok ? res.json() : null));
+  },
+
+  signOut: async () => {
+    const apiUrl = new ApiDomainService().getRestUrl();
+    return fetch(`${apiUrl}/logout`, {
+      credentials: "include",
+    }).then((res) => res.ok);
+  },
+};
+
 export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <ConnectKitProvider>{children}</ConnectKitProvider>
+        <SIWEProvider {...siweConfig}>
+          <ConnectKitProvider>{children}</ConnectKitProvider>
+        </SIWEProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
