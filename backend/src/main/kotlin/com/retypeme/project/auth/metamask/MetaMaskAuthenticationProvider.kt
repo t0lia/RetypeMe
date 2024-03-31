@@ -23,12 +23,13 @@ class MetaMaskAuthenticationProvider : AbstractUserDetailsAuthenticationProvider
     @Throws(AuthenticationException::class)
     override fun additionalAuthenticationChecks(userDetails: UserDetails, auth: UsernamePasswordAuthenticationToken) {
         auth as MetaMaskAuthenticationRequest
+        userDetails as MetaMaskUserDetails
 
         val verificationRequest: VerificationRequest = jacksonObjectMapper().readValue(auth.getVerificationBody())
         val message: SiweMessage = SiweMessage.Parser().parse(verificationRequest.message);
 
-//        (userDetails as MetaMaskUserDetails).nonce -- need to take nonce from user details
         try {
+//            message.verify(message.domain, userDetails.nonce, verificationRequest.signature)
             message.verify(message.domain, message.nonce, verificationRequest.signature)
         } catch (e: SiweException) {
             throw BadCredentialsException("Signature is not valid", e)
