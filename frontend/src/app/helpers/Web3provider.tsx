@@ -10,6 +10,7 @@ const queryClient = new QueryClient();
 
 const wagmiConfig = createConfig(
   getDefaultConfig({
+    ssr: true,
     chains: [polygonMumbai],
     transports: {
       [polygonMumbai.id]: http(
