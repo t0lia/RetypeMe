@@ -10,7 +10,7 @@ services:
       context: .
     environment:
       SPRING_PROFILES_ACTIVE: "dev"
-      JASYPT_ENCRYPTOR_PASSWORD: "U19c20OkGztWRj8d7HXY"
+      JASYPT_ENCRYPTOR_PASSWORD: "{{ jasypt_password }}"
 
   ui:
     image: retypeme/retypeme-frontend:latest
