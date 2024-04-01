@@ -3,8 +3,6 @@ import { SIWEConfig } from "connectkit";
 
 import ApiDomainService from "../api/api-domain-service";
 
-const apiUrl = new ApiDomainService().getRestUrl();
-
 export const siweConfig: SIWEConfig = {
   createMessage: ({ nonce, address, chainId }) => {
     const domain = window.location.host;
@@ -28,12 +26,14 @@ export const siweConfig: SIWEConfig = {
   },
 
   getNonce: async () => {
+    const apiUrl = new ApiDomainService().getRestUrl();
     return fetch(`${apiUrl}/nonce`, {
       credentials: "include",
     }).then((res) => res.text());
   },
 
   verifyMessage: async ({ message, signature }) => {
+    const apiUrl = new ApiDomainService().getRestUrl();
     return fetch(`${apiUrl}/login`, {
       method: "POST",
       headers: {
@@ -45,12 +45,14 @@ export const siweConfig: SIWEConfig = {
   },
 
   getSession: async () => {
+    const apiUrl = new ApiDomainService().getRestUrl();
     return fetch(`${apiUrl}/siwe/session`, {
       credentials: "include",
     }).then((res) => (res.ok ? res.json() : null));
   },
 
   signOut: async () => {
+    const apiUrl = new ApiDomainService().getRestUrl();
     return fetch(`${apiUrl}/logout`, {
       credentials: "include",
     }).then((res) => res.ok);
