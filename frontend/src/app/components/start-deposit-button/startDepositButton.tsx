@@ -1,7 +1,8 @@
+import { useSIWE } from "connectkit";
+import { useAccount } from "wagmi";
 import { RaceStatistic } from "@/app/api/ws-api-service";
 
 interface IStartDepositButton {
-  ingameWalletId: string | null;
   txSuccessful: boolean;
   sessionStat: RaceStatistic;
   isButtonDisabled: boolean;
@@ -11,7 +12,6 @@ interface IStartDepositButton {
 }
 
 export default function StartDepositButton({
-  ingameWalletId,
   txSuccessful,
   sessionStat,
   handleUserDeposit,
@@ -19,12 +19,18 @@ export default function StartDepositButton({
   handleStartGame,
   startBtnText,
 }: IStartDepositButton) {
+  const { isSignedIn, signIn } = useSIWE();
+  const { isConnected } = useAccount();
+
   const showDepositButton =
-    ingameWalletId !== null &&
-    ingameWalletId !== "" &&
+    isSignedIn &&
     !txSuccessful &&
     sessionStat?.users?.every((driver) => driver.walletId) &&
     sessionStat?.users?.length > 1;
+
+  async function signInWithEthereum() {
+    await signIn();
+  }
 
   return (
     <>
@@ -40,10 +46,20 @@ export default function StartDepositButton({
           className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
             isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
           }`}
-          onClick={() => handleStartGame()}
+          onClick={() => {
+            if (!isSignedIn && isConnected) {
+              signInWithEthereum();
+            }
+            if (isSignedIn) {
+              handleStartGame();
+            }
+            if (!isSignedIn && !isConnected) {
+              handleStartGame();
+            }
+          }}
           disabled={isButtonDisabled}
         >
-          {startBtnText}
+          {!isSignedIn && isConnected ? "Please Sign In" : `${startBtnText}`}
         </button>
       )}
     </>
