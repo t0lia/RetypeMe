@@ -32,6 +32,14 @@ function DropdownFaucetMenu() {
               Polygon faucet
             </DropdownMenu.Item>
           </Link>
+          <Link
+            href="https://faucet.trade/polygon-amoy-matic-faucet"
+            target="_blank"
+          >
+            <DropdownMenu.Item className="hover:bg-gray-300 group text-sm leading-none rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1">
+              Faucet trade
+            </DropdownMenu.Item>
+          </Link>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
