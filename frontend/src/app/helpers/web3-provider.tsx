@@ -1,7 +1,7 @@
 "use client";
 
 import { WagmiProvider, createConfig, http } from "wagmi";
-import { polygonMumbai } from "wagmi/chains";
+import { polygonAmoy } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig, SIWEProvider } from "connectkit";
 import { siweConfig } from "./siwe-config";
@@ -11,10 +11,10 @@ const queryClient = new QueryClient();
 const wagmiConfig = createConfig(
   getDefaultConfig({
     ssr: true,
-    chains: [polygonMumbai],
+    chains: [polygonAmoy],
     transports: {
-      [polygonMumbai.id]: http(
-        `https://polygon-mumbai.infura.io/v3/${process.env.NEXT_PUBLIC_ENV_LOCAL_INFURA_API_KEY}`
+      [polygonAmoy.id]: http(
+        `https://polygon-amoy.infura.io/v3/${process.env.NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY}`
       ),
     },
 

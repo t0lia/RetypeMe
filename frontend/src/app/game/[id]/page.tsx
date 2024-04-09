@@ -324,7 +324,6 @@ const GamePage = () => {
           ingameWalletId={ingameWalletId}
         />
         <StartDepositButton
-          ingameWalletId={ingameWalletId}
           txSuccessful={txSuccessful}
           sessionStat={sessionStat}
           handleUserDeposit={handleUserDeposit}
