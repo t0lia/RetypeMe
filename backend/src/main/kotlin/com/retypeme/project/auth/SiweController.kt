@@ -11,7 +11,7 @@ class SiweController {
         val context = SecurityContextHolder.getContext()
         val authentication = context.authentication
         if (authentication.name.startsWith("0x")) {
-            return SiweSession(authentication.name, 80001)
+            return SiweSession(authentication.name, 80002)
         }
         return SiweSession(null,null)
     }
