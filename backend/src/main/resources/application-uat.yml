@@ -1,9 +1,9 @@
 contract:
   address: "0xf813b4e5d34079ebcc59adf39a7782ad989891fe"
   private-key: ENC(4F38/ymuKeIPOMIEiKilkCT2n0PHroL+6cOvsqm3lQ851Ezv8WupESEdtrTkSw2p1USbnY/OO1Pdoq8w7PxzOnKenhDTYOCEBT+L06rQRkH6CWLncBBvuD3e9ualApPwQCFkvqlWsNUt09cG2ebdCw==)
-  network: "polygon-mumbai"
+  network: "polygon-amoy"
   apikey: ENC(maY86NPvqY1CtyH+l61AD0D5k7Y6Ao10VhuWuQMtAUJWPe3JrKC7HadriCSADShW7mOdwB809yZMMTLujZ6lgZQ4T9y+kaGo/R98ikQvZAE=)
-  chain-id: 80001
+  chain-id: 80002
 management:
   endpoints:
     web:
