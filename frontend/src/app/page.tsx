@@ -91,7 +91,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex flex-row gap-5">
+          <div className="flex flex-row">
             <DropDownFaucetMenu />
             <ConnectButton />
           </div>
