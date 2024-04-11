@@ -7,7 +7,7 @@ function DropdownFaucetMenu() {
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <button
-          className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded"
+          className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded mr-3"
           aria-label="Customise options"
         >
           Claim Testnet Tokens:
