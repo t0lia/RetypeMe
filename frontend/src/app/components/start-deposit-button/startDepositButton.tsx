@@ -39,7 +39,7 @@ export default function StartDepositButton({
           className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
           onClick={handleUserDeposit}
         >
-          Deposit 0.1 Matic
+          Deposit 0.001 Matic/Eth
         </button>
       ) : (
         <button

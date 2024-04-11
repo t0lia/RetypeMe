@@ -28,7 +28,7 @@ contract GamingContract {
     constructor() {
         owner = msg.sender;
         commissionRate = 20;
-        fixedDepositAmount =  0.1 ether;
+        fixedDepositAmount =  0.001 ether;
     }
 
     function deposit(uint256 sessionId) external payable {

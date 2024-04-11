@@ -8,7 +8,7 @@ export async function userDeposit() {
 
     const signer = await provider.getSigner();
     const connectedContract = gameContract.connect(signer);
-    const amountInWei = parseEther("0.1");
+    const amountInWei = parseEther("0.001");
     const sessionId = sessionStorage.getItem("sessionId");
 
     if (!sessionId) {
