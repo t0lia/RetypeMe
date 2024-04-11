@@ -1,7 +1,7 @@
 import { BrowserProvider, Contract } from "ethers";
 
 let provider;
-const address = "0xf813b4e5d34079ebcc59adf39a7782ad989891fe";
+const address = "0xb3c33b58de859a5e06aff62c9d66319c256218da";
 
 if (typeof window !== "undefined") {
   provider = new BrowserProvider(window.ethereum);
