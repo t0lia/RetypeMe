@@ -1,6 +1,10 @@
 import { useSIWE } from "connectkit";
 import { useAccount } from "wagmi";
 import { RaceStatistic } from "@/app/api/ws-api-service";
+import {
+  CHAIN_ID_AMOY_DECIMAL,
+  CHAIN_ID_BLAST_SEPOLIA_DECIMAL,
+} from "@/app/constants/contract-constants";
 
 interface IStartDepositButton {
   txSuccessful: boolean;
@@ -20,7 +24,7 @@ export default function StartDepositButton({
   startBtnText,
 }: IStartDepositButton) {
   const { isSignedIn, signIn } = useSIWE();
-  const { isConnected } = useAccount();
+  const { isConnected, chainId } = useAccount();
 
   const showDepositButton =
     isSignedIn &&
@@ -39,7 +43,13 @@ export default function StartDepositButton({
           className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
           onClick={handleUserDeposit}
         >
-          Deposit 0.001 Matic/Eth
+          {`Deposit 0.001 ${
+            chainId === CHAIN_ID_BLAST_SEPOLIA_DECIMAL
+              ? "ETH"
+              : chainId === CHAIN_ID_AMOY_DECIMAL
+              ? "Matic"
+              : ""
+          }`}
         </button>
       ) : (
         <button
