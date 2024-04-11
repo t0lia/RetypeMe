@@ -24,13 +24,13 @@ function ConnectButton({ isButtonDisabled, isGameEnded }: ConnectButtonProps) {
         return (
           <>
             {userChain.chainId && (
-              <button
+              <div
                 onClick={openSwitchNetworks}
                 className="bg-gray-600 rounded py-2 px-4 -mr-2 text-gray-100 font-bold"
               >
                 {supportedChains.find((c) => c.id === userChain.chainId)
                   ?.name || "Unsupported Chain"}
-              </button>
+              </div>
             )}
             <button
               onClick={isButtonDisabled || isGameEnded ? () => {} : show}
