@@ -1,9 +1,7 @@
 contract:
-  address: "0xb3c33b58de859a5e06aff62c9d66319c256218da"
   private-key: ENC(4F38/ymuKeIPOMIEiKilkCT2n0PHroL+6cOvsqm3lQ851Ezv8WupESEdtrTkSw2p1USbnY/OO1Pdoq8w7PxzOnKenhDTYOCEBT+L06rQRkH6CWLncBBvuD3e9ualApPwQCFkvqlWsNUt09cG2ebdCw==)
-  network: "polygon-amoy"
   apikey: ENC(maY86NPvqY1CtyH+l61AD0D5k7Y6Ao10VhuWuQMtAUJWPe3JrKC7HadriCSADShW7mOdwB809yZMMTLujZ6lgZQ4T9y+kaGo/R98ikQvZAE=)
-  chain-id: 80002
+  chains: 80002,168587773
 management:
   endpoints:
     web:

@@ -17,24 +17,13 @@ import org.web3j.tx.gas.DefaultGasProvider
 import java.math.BigInteger
 
 @Service
-class SmartContractService {
-
-    @Value("\${contract.address}")
-    private val contractAddress: String? = null
+class SmartContractService(val chainService: ChainService) {
 
     @Value("\${contract.private-key}")
     private val privateKey: String? = null
 
-    @Value("\${contract.network}")
-    private val network: String? = null
-
     @Value("\${contract.apikey}")
     private val apikey: String? = null
-
-
-    @Value("\${contract.chain-id}")
-    private val chainId: Long? = null
-
 
     private val logger = LoggerFactory.getLogger(SmartContractService::class.java)
 
@@ -42,13 +31,13 @@ class SmartContractService {
         val networkUrl = getNetworkUrl()
         val web3 = Web3j.build(InfuraHttpService(networkUrl))
 
-        val balance = web3.ethGetBalance(contractAddress, DefaultBlockParameterName.LATEST).send()
+        val balance = web3.ethGetBalance(chainService.getAddress(), DefaultBlockParameterName.LATEST).send()
         logger.info("Balance: " + balance.balance)
 
         return balance.balance
     }
 
-    private fun getNetworkUrl() = "https://$network.infura.io/v3/$apikey"
+    private fun getNetworkUrl() = "https://${chainService.getChainName()}.infura.io/v3/$apikey"
 
     fun getNetworkVersion(): String {
         val web3 = Web3j.build(InfuraHttpService(getNetworkUrl()))
@@ -69,9 +58,10 @@ class SmartContractService {
 
         val web3 = Web3j.build(InfuraHttpService(getNetworkUrl()))
 
-        val transactionManager = RawTransactionManager(web3, Credentials.create(privateKey), chainId ?: 80001);
+        val transactionManager = RawTransactionManager(web3, Credentials.create(privateKey), chainService.getChainId());
 
-        val contract: GamingContract = GamingContract.load(contractAddress, web3, transactionManager, DefaultGasProvider())
+        val contract: GamingContract =
+            GamingContract.load(chainService.getAddress(), web3, transactionManager, DefaultGasProvider())
 
         logger.info("call endGame with parameters: session-id: $sessionId, winner-id: $winnerId")
         val transaction: TransactionReceipt = contract.endGame(prepareSessionKey(sessionId), winnerId).send()

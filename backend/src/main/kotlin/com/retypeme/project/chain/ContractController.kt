@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class ContractController {
+class ContractController(val chainService: ChainService) {
 
-    @Value("\${contract.address}")
-    private val contractAddress: String? = null
+    @Value("\${contract.chains}")
+    private lateinit var chains: List<Int>
 
     @RequestMapping("/contract/abi")
     fun abi(): String {
@@ -18,6 +18,28 @@ class ContractController {
 
     @RequestMapping("/contract/address")
     fun address(): String? {
-        return contractAddress;
+        return chainService.getAddress()
+    }
+
+    @RequestMapping("/contract/id")
+    fun id(): Long? {
+        return chainService.getChainId()
+    }
+
+    @RequestMapping("/contract/name")
+    fun name(): String? {
+        return chainService.getChainName()
+    }
+
+
+    @RequestMapping("/contract/chain")
+    fun chain(): List<ChainItemConfig> {
+        println("chains: $chains")
+        return chainService.getChains()
+    }
+
+    @RequestMapping("/contract/chains")
+    fun chains(): List<Int> {
+        return chains
     }
 }
