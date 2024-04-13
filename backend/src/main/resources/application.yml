@@ -3,7 +3,7 @@ server:
   servlet:
     context-path: /api
     session:
-      timeout: 1m
+      timeout: 4320m
       cookie:
         http-only: true
         secure: true
