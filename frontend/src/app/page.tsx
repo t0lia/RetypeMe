@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-import { handleCreateNewGameSession } from "./helpers/create-new-game-session";
+import handleCreateNewGameSession from "./helpers/create-new-game-session";
 
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 import Footer from "./components/footer/footer";

@@ -39,8 +39,8 @@ class MetaMaskAuthenticationProvider : AbstractUserDetailsAuthenticationProvider
     @Throws(AuthenticationException::class)
     override fun retrieveUser(username: String?, authentication: UsernamePasswordAuthenticationToken): UserDetails {
         val auth = authentication as MetaMaskAuthenticationRequest
-        val user = userRepository.getUser(auth.getAddress())
-        return MetaMaskUserDetails(auth.getAddress(), auth.getVerificationBody(), user.nonce)
+        val user = userRepository.getUser(auth.getId())
+        return MetaMaskUserDetails(auth.getId(), auth.getVerificationBody(), user.nonce)
     }
 
 }

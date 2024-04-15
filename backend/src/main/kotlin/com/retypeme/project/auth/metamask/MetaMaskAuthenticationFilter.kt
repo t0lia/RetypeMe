@@ -30,7 +30,7 @@ class MetaMaskAuthenticationFilter : AbstractAuthenticationProcessingFilter(AntP
         val verificationData: VerificationRequest = jacksonObjectMapper().readValue(verificationBody)
         val message: SiweMessage = SiweMessage.Parser().parse(verificationData.message);
 
-        return MetaMaskAuthenticationRequest(message.address, verificationBody)
+        return MetaMaskAuthenticationRequest(message.address + "|" + message.chainId, verificationBody)
     }
 
 }

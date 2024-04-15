@@ -1,11 +1,12 @@
 import RestApiService from "@/app/api/rest-api-service";
 
-interface SessionsData {
+export interface SessionsData {
   id: string;
+  chain: number;
   players: number;
 }
 
-export async function handleCreateNewGameSession(): Promise<SessionsData | null> {
+export default async function handleCreateNewGameSession(): Promise<SessionsData | null> {
   try {
     const data: SessionsData = await new RestApiService().create<SessionsData>({
       players: 2,

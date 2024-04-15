@@ -1,16 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import {useCallback, useEffect, useRef, useState} from "react";
+import {useRouter} from "next/navigation";
 
 import WsApiService, {
   CountDown,
   DriverMetrics,
   RaceStatistic,
 } from "@/app/api/ws-api-service";
-import { userDeposit } from "@/app/contract-utils/user-deposit";
-import { handleCreateNewGameSession } from "@/app/helpers/create-new-game-session";
-import { useAccount, useAccountEffect } from "wagmi";
+import {userDeposit} from "@/app/contract-utils/user-deposit";
+import handleCreateNewGameSession from "@/app/helpers/create-new-game-session";
+import {useAccount, useAccountEffect} from "wagmi";
 
 import GamePageHeader from "@/app/components/game-page-header/gamePageHeader";
 import CopyButton from "@/app/components/copy-button/copyButton";
@@ -19,6 +19,7 @@ import ClaimWinningsButton from "@/app/components/claim-winnings-button/claimWin
 import StartDepositButton from "@/app/components/start-deposit-button/startDepositButton";
 
 import "./page.css";
+import RestApiService from "@/app/api/rest-api-service";
 
 const GamePage = () => {
   const [textVisible, setTextVisible] = useState(false);
@@ -37,10 +38,11 @@ const GamePage = () => {
   const [keyStrokeCount, setKeyStrokeCount] = useState(0);
   const [sessionStat, setSessionStat] = useState<RaceStatistic>({
     id: "",
+    errors: [],
     users: [],
   });
 
-  const { address } = useAccount();
+  const {address} = useAccount();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const wsApiServiceRef = useRef<WsApiService | null>(null);
@@ -81,6 +83,7 @@ const GamePage = () => {
     setUserStats(
       stat.users.map((driverMetrics: DriverMetrics) => ({
         sessionId: driverMetrics.sessionId,
+        chain: driverMetrics.chain,
         userId: driverMetrics.userId,
         walletId: driverMetrics.walletId,
         progress: driverMetrics.progress,
@@ -146,14 +149,33 @@ const GamePage = () => {
       localStorage.setItem("userId", crypto.randomUUID());
     }
 
-    wsApiServiceRef.current = new WsApiService(
-      sessionId,
-      localStorage.getItem("userId") ?? "",
-      address ?? "",
-      onCountDownReceived,
-      onStatisticReceived,
-      onRacePrepareInfoReceived
-    );
+    let restApiService = new RestApiService();
+    console.log("sessionId", sessionId);
+    restApiService.getGameSession(sessionId).then((session) => {
+      const sessionChain = session.chain;
+      restApiService.getSiweSession().then((siweSession) => {
+        const userChain = siweSession.chainId;
+        if (userChain === null) {
+          alert("Ready to race? Sign in to get started!");
+          window.location.href = "/";
+        } else if (userChain !== sessionChain) {
+          alert("You are on the wrong chain. Please switch to the correct chain to play the game.");
+          window.location.href = "/";
+        } else {
+          wsApiServiceRef.current = new WsApiService(
+            sessionId,
+            localStorage.getItem("userId") ?? "",
+            address ?? "",
+            onCountDownReceived,
+            onStatisticReceived,
+            onRacePrepareInfoReceived
+          );
+        }
+      });
+
+    });
+
+
   }, [ingameWalletId]);
 
   useEffect(() => {
@@ -197,7 +219,7 @@ const GamePage = () => {
     const enteredTextLength = enteredText.length;
 
     const newTextStyles = Array.from(
-      { length: enteredTextLength },
+      {length: enteredTextLength},
       (_, i) => "black"
     );
 
@@ -259,10 +281,10 @@ const GamePage = () => {
             if (
               lastEnteredIndex !== -1 &&
               lastEnteredIndex ===
-                initialGameText
-                  .split(" ")
-                  .filter((word) => prevCompletedWords.includes(word))
-                  .join(" ").length
+              initialGameText
+                .split(" ")
+                .filter((word) => prevCompletedWords.includes(word))
+                .join(" ").length
             ) {
               return [...prevCompletedWords, lastEnteredWord];
             }
@@ -341,7 +363,7 @@ const GamePage = () => {
               {formattedText.map((char, index) => (
                 <span
                   key={crypto.randomUUID()}
-                  style={{ color: textInputStyles[index] }}
+                  style={{color: textInputStyles[index]}}
                 >
                   {textInputStyles.length < 1 && index === 0 && (
                     <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
@@ -380,7 +402,7 @@ const GamePage = () => {
           ingameWalletId={ingameWalletId}
           txSuccessful={txSuccessful}
         />
-        <CopyButton handleCopy={handleCopy} />
+        <CopyButton handleCopy={handleCopy}/>
       </main>
     </>
   );

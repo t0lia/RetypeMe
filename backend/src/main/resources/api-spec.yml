@@ -79,6 +79,8 @@ components:
       properties:
         id:
           type: string
+        chain:
+          type: integer
         players:
           type: integer
     Players:

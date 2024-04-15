@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 class Race(
     val id: String,
+    val chain: Int,
     var text: String,
     val capacity: Int,
     var startedAt: LocalDateTime?,

@@ -22,7 +22,7 @@ class ContractController(val chainService: ChainService) {
     }
 
     @RequestMapping("/contract/id")
-    fun id(): Long? {
+    fun id(): Int? {
         return chainService.getChainId()
     }
 

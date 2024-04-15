@@ -58,7 +58,7 @@ class SmartContractService(val chainService: ChainService) {
 
         val web3 = Web3j.build(InfuraHttpService(getNetworkUrl()))
 
-        val transactionManager = RawTransactionManager(web3, Credentials.create(privateKey), chainService.getChainId());
+        val transactionManager = RawTransactionManager(web3, Credentials.create(privateKey), chainService.getChainId().toLong());
 
         val contract: GamingContract =
             GamingContract.load(chainService.getAddress(), web3, transactionManager, DefaultGasProvider())

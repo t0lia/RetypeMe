@@ -1,5 +1,6 @@
 package com.retypeme.project.racing.repository
 
+import com.retypeme.project.chain.ChainService
 import com.retypeme.project.messaging.GameEventPublisher
 import com.retypeme.project.racing.model.Race
 import com.retypeme.project.racing.controller.DriverMetrics
@@ -14,15 +15,17 @@ const val REGISTERED = "registered"
 @Component
 class RaceRepository(
     private val dateTimeProvider: DateTimeProvider,
-    private val gameEventPublisher: GameEventPublisher
+    private val gameEventPublisher: GameEventPublisher,
+    private val chainService: ChainService
+
 ) {
 
     private val openRaces: MutableMap<String, Race> = mutableMapOf()
 
-    fun createRace(id: String, users: Int): Race {
+    fun createRace(id: String, chain:Int, users: Int): Race {
         val now: LocalDateTime = dateTimeProvider.now()
         val usersList: MutableList<DriverMetrics> = mutableListOf()
-        val session = Race(id, "", users, null, now, usersList)
+        val session = Race(id, chain, "", users, null, now, usersList)
         openRaces[session.id] = session
         return session
     }
@@ -37,14 +40,21 @@ class RaceRepository(
         session.text = text
     }
 
-    fun updateRegistration(sessionId: String, userId: String, walletId: String, state: String): Unit {
+    fun updateRegistration(sessionId: String, chain:Int, userId: String, walletId: String, state: String): List<String> {
         val race: Race = getSessionById(sessionId)
+        if(race.chain != chain) {
+            val expected = chainService.getChainById(race.chain).name
+            val actual = chainService.getChainById(chain).name
+            val msg = "Session is created for different chain, expected: $expected, got: $actual"
+            return mutableListOf(msg);
+        }
         if (state == JOINED) {
             join(sessionId, userId, walletId)
         }
         if (state == REGISTERED) {
             register(race, userId, sessionId)
         }
+        return mutableListOf()
     }
 
     private fun register(race: Race, userId: String, sessionId: String) {
