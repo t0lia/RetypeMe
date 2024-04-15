@@ -8,5 +8,5 @@ import java.util.concurrent.ConcurrentHashMap
 class UserRepository {
     private val users: MutableMap<String, User> = ConcurrentHashMap()
 
-    fun getUser(address: String): User = users.computeIfAbsent(address) { User(it) }
+    fun getUser(id: String): User = users.computeIfAbsent(id) { User(it) }
 }

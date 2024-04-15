@@ -1,7 +1,13 @@
 import ApiDomainService from "@/app/api/api-domain-service";
+import {SessionsData} from "@/app/helpers/create-new-game-session";
 
 type PlayersInput = {
   players: number;
+};
+
+type SiweSession = {
+  address: string;
+  chainId: number;
 };
 
 export default class RestApiService {
@@ -11,6 +17,7 @@ export default class RestApiService {
     this.apiUrl = new ApiDomainService().getRestUrl();
   }
 
+
   async create<T>(players: PlayersInput): Promise<T> {
     const res = await fetch(`${this.apiUrl}/sessions`, {
       method: "POST",
@@ -18,10 +25,24 @@ export default class RestApiService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(players),
+      credentials: 'include',
     });
 
     const data = await res.json();
     return data as T;
+  }
+
+  async getGameSession(id: string): Promise<SessionsData> {
+    const res = await fetch(`${this.apiUrl}/sessions/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: 'include',
+    });
+
+    const data = await res.json();
+    return data as SessionsData;
   }
 
   async join<T>(id: string, userId: string | null): Promise<T> {
@@ -31,6 +52,7 @@ export default class RestApiService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({userId: userId}),
+      credentials: 'include',
     });
 
     const data = await res.json();
@@ -55,6 +77,13 @@ export default class RestApiService {
   async getNonce(address: string) {
     return await fetch(`${this.apiUrl}/nonce`, {credentials: 'include'})
       .then(response => response.text());
+  };
+
+  async getSiweSession():Promise<SiweSession> {
+    const apiUrl = new ApiDomainService().getRestUrl();
+    return fetch(`${apiUrl}/siwe/session`, {
+      credentials: "include",
+    }).then((res) => (res.ok ? res.json() : null));
   };
 
   async sendLoginData(address: string, signature: string) {

@@ -7,10 +7,14 @@ import org.springframework.stereotype.Service
 class ChainService(private val configReaderService: ConfigReaderService) {
 
     @Value("\${contract.chains}")
-    private lateinit var chains: List<Long>
+    private lateinit var chains: List<Int>
 
     fun getChains(): List<ChainItemConfig> {
         return configReaderService.readChainConfig().chains
+    }
+
+    fun getChainById(id: Int): ChainItemConfig {
+        return getChains().first { it.id == id }
     }
 
     fun getMainChain(): ChainItemConfig {
@@ -22,7 +26,7 @@ class ChainService(private val configReaderService: ConfigReaderService) {
         return getMainChain().contract
     }
 
-    fun getChainId(): Long {
+    fun getChainId(): Int {
         return getMainChain().id
     }
 

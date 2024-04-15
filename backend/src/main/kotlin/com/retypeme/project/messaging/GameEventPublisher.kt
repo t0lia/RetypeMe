@@ -10,9 +10,9 @@ class GameEventPublisher(private val applicationEventPublisher: ApplicationEvent
 
     private val logger = LoggerFactory.getLogger(GameEventPublisher::class.java)
 
-    fun publishRaceCreated(id: String, users: Int) {
+    fun publishRaceCreated(id: String, chain: Int, users: Int) {
         logger.info("publishRaceReady session id: $id users: $users")
-        applicationEventPublisher.publishEvent(RaceCreatedEvent(this, id, users))
+        applicationEventPublisher.publishEvent(RaceCreatedEvent(this, id, chain, users))
     }
 
     fun publishRaceReady(id: String, users: MutableList<String>) {

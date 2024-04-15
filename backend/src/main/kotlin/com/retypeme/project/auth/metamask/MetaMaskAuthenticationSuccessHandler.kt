@@ -17,7 +17,7 @@ class MetaMaskAuthenticationSuccessHandler(private val userRepository: UserRepos
         request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication
     ) {
         val principal: MetaMaskUserDetails = authentication.principal as MetaMaskUserDetails
-        val user: User = userRepository.getUser(principal.address)
+        val user: User = userRepository.getUser(principal.id)
         user.changeNonce()
         response.status = HttpServletResponse.SC_OK
     }

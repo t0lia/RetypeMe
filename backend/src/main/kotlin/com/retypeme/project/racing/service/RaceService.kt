@@ -15,17 +15,25 @@ class RaceService(private val repository: RaceRepository) {
 
     @EventListener
     fun onSessionReady(event: RaceCreatedEvent) {
-        repository.createRace(event.id, event.userCount)
+        repository.createRace(event.id, event.chain, event.userCount)
     }
 
     fun updateRegistration(info: RacerRegistrationIncomingInfo): RaceStatistic {
-        repository.updateRegistration(info.sessionId, info.userId, info.walletId, info.state)
-        return getRegistration(info.sessionId)
+        val errors: List<String> =
+            repository.updateRegistration(info.sessionId, info.chain, info.userId, info.walletId, info.state)
+        if (errors.isEmpty()) {
+            return getRegistration(info.sessionId)
+        }
+        return getError(errors, info.sessionId)
     }
 
     fun updateProgress(driverMetrics: DriverMetrics): RaceStatistic {
         repository.updateProgress(driverMetrics.sessionId, driverMetrics.userId, driverMetrics.progress)
         return getStat(driverMetrics.sessionId)
+    }
+
+    fun getError(errors: List<String>, sessionId: String): RaceStatistic {
+        return RaceStatistic(sessionId, errors = errors)
     }
 
     fun getRegistration(sessionId: String): RaceStatistic {

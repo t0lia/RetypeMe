@@ -12,7 +12,6 @@ export default class ApiDomainService {
   }
 
   private getUrl(isWebSocket: boolean): string {
-    console.log("domain: " + this.uiDomain);
     let domain = this.domains.get(this.uiDomain);
     let api = ""
     if (domain === undefined) {
@@ -20,7 +19,6 @@ export default class ApiDomainService {
     } else {
       api = isWebSocket ? `wss://${domain}/api/ws` : `https://${domain}/api`;
     }
-    console.log("api url: " + api);
     return api;
   }
 
