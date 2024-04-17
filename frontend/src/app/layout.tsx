@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   keywords: ["blind typing", "type racer", "monkey type", "klavogonki"],
 };
 
+const walletConnectProjectId = process.env
+  .ENV_LOCAL_WALLETCONNECT_PROJECT_ID as string;
+
 export default function RootLayout({
   children,
 }: {
@@ -21,7 +24,9 @@ export default function RootLayout({
     <html lang="en" className={`${inter.className} h-screen`}>
       <body className="flex flex-col h-full">
         <div className="max-w-[1440px] self-center w-full flex flex-col h-screen">
-          <Web3Provider>{children}</Web3Provider>
+          <Web3Provider walletConnectProjectId={walletConnectProjectId}>
+            {children}
+          </Web3Provider>
         </div>
       </body>
     </html>
