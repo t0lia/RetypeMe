@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -11,26 +12,59 @@ import ConnectButton from "./components/connect-button/connectButton";
 import { Twitter } from "./public/icons/twitter";
 
 import { TWITTER_LINK } from "./constants/links";
+import { useModal, useSIWE } from "connectkit";
+import { useAccount } from "wagmi";
 
 export default function Home() {
   const [streamingText, setStreamingText] = useState("");
   const [textIndex, setTextIndex] = useState(0);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [buttonText, setButtonText] = useState("Connect Wallet");
 
   const router = useRouter();
+  const { isSignedIn } = useSIWE();
+  const { isConnected } = useAccount();
+  const { setOpen, openSIWE } = useModal();
 
-  async function handleTryDuelModeButton() {
-    const data = await handleCreateNewGameSession();
-    localStorage.setItem("userId", crypto.randomUUID());
-
-    if (data) {
-      router.push(`/game/${data.id}`);
+  useEffect(() => {
+    if (isConnected && !isSignedIn) {
+      setButtonText("Please Sign In");
+    } else if (isConnected && isSignedIn) {
+      setButtonText("Try Duel Mode");
+    } else {
+      setButtonText("Connect Wallet");
     }
-  }
+  }, [isConnected, isSignedIn]);
 
   useEffect(() => {
     setIsSmallScreen(window.innerWidth < 768);
   });
+
+  async function startGameSessionAfterSigIn() {
+    if (isConnected && isSignedIn) {
+      const data = await handleCreateNewGameSession();
+      localStorage.setItem("userId", crypto.randomUUID());
+
+      if (data) {
+        router.push(`/game/${data.id}`);
+      }
+    }
+  }
+
+  async function handleTryDuelModeButton() {
+    try {
+      if (!isSignedIn && isConnected) {
+        openSIWE(true);
+        setOpen(false);
+      }
+      if (!isConnected) {
+        setOpen(true);
+      }
+      startGameSessionAfterSigIn();
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   useEffect(() => {
     const texts = [
@@ -103,7 +137,7 @@ export default function Home() {
             className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
             onClick={handleTryDuelModeButton}
           >
-            Try Duel Mode
+            {buttonText}
           </button>
           <div className="self-start pl-40 h-8">{streamingText}</div>
         </div>

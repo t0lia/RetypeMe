@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { ConnectKitButton, useChains, useModal } from "connectkit";
+import { ConnectKitButton, useChains, useModal, useSIWE } from "connectkit";
 import { useAccount, useBalance } from "wagmi";
 import { formatUnits } from "viem";
 
@@ -10,34 +10,40 @@ interface ConnectButtonProps {
 
 function ConnectButton({ isButtonDisabled, isGameEnded }: ConnectButtonProps) {
   const supportedChains = useChains();
-  const userChain = useAccount();
-  const userAddress = useAccount();
+  const { address, chainId, isConnected } = useAccount();
   const { openSwitchNetworks, setOpen } = useModal();
-
   const { data, isError, isLoading } = useBalance({
-    address: userAddress.address,
-    chainId: userChain.chainId,
+    address: address,
+    chainId: chainId,
   });
+  const { signIn, isSignedIn } = useSIWE();
+
+  async function signInAfterConnect() {
+    try {
+      setOpen(false);
+      if (data) await signIn();
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
-    if (userChain.chainId) {
-      setOpen(false);
-    }
-  }, [userChain.chainId]);
+    if (!isSignedIn && isConnected && chainId) signInAfterConnect();
+  }, [chainId, isConnected]);
 
   return (
     <ConnectKitButton.Custom>
       {({ isConnected, show, truncatedAddress, ensName }) => {
         return (
           <>
-            {userChain.chainId && (
+            {chainId && (
               <>
                 <button
                   onClick={openSwitchNetworks}
                   className="bg-gray-600 rounded py-2 px-4 -mr-2 text-gray-100 font-bold"
                 >
-                  {supportedChains.find((c) => c.id === userChain.chainId)
-                    ?.name || "Unsupported Chain"}
+                  {supportedChains.find((c) => c.id === chainId)?.name ||
+                    "Unsupported Chain"}
                 </button>
                 {isLoading && (
                   <div className="bg-gray-600 rounded py-2 px-4 -mr-2 text-gray-100 font-bold">
