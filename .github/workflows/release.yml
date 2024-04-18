@@ -65,5 +65,5 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: retypeme/retypeme-frontend:${{ env.newTag }}, retypeme/retypeme-frontend:latest
-          build-args:
-            NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY: ${{ secrets.NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY }}
+          build-args: |
+            "NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY: ${{ secrets.NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY }}"
