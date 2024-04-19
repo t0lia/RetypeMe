@@ -14,6 +14,7 @@ import { Twitter } from "./public/icons/twitter";
 import { TWITTER_LINK } from "./constants/links";
 import { useModal, useSIWE } from "connectkit";
 import { useAccount } from "wagmi";
+import { Button } from "./components/ui/button";
 
 export default function Home() {
   const [streamingText, setStreamingText] = useState("");
@@ -133,12 +134,13 @@ export default function Home() {
       </header>
       <main className="h-screen flex flex-col">
         <div className="flex flex-col flex-1 justify-center items-center gap-20">
-          <button
-            className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
+          <Button
+            // className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
+            className="transform active:translate-y-0.5"
             onClick={handleTryDuelModeButton}
           >
             {buttonText}
-          </button>
+          </Button>
           <div className="self-start pl-40 h-8">{streamingText}</div>
         </div>
       </main>

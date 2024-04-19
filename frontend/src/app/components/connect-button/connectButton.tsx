@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { ConnectKitButton, useChains, useModal, useSIWE } from "connectkit";
 import { useAccount, useBalance } from "wagmi";
 import { formatUnits } from "viem";
+import { Button } from "@/app/components/ui/button";
 
 interface ConnectButtonProps {
   isButtonDisabled?: boolean;
@@ -38,41 +39,44 @@ function ConnectButton({ isButtonDisabled, isGameEnded }: ConnectButtonProps) {
           <>
             {chainId && (
               <>
-                <button
+                <Button
+                  className="-mr-2"
                   onClick={openSwitchNetworks}
-                  className="bg-gray-600 rounded py-2 px-4 -mr-2 text-gray-100 font-bold"
+                  // className="bg-gray-600 rounded py-2 px-4 -mr-2 text-gray-100 font-bold"
                 >
                   {supportedChains.find((c) => c.id === chainId)?.name ||
                     "Unsupported Chain"}
-                </button>
+                </Button>
                 {isLoading && (
-                  <div className="bg-gray-600 rounded py-2 px-4 -mr-2 text-gray-100 font-bold">
+                  <div className="bg-slate-900 text-slate-50  dark:bg-slate-50 dark:text-slate-900 py-2 px-4 -mr-2">
                     Fetching balance…
                   </div>
                 )}
                 {isError && (
-                  <div className="bg-gray-600 rounded py-2 px-4 -mr-2 text-gray-100 font-bold">
+                  <div className="bg-slate-900 text-slate-50  dark:bg-slate-50 dark:text-slate-900 py-2 px-4 -mr-2">
                     Error fetching balance
                   </div>
                 )}
                 {data && (
-                  <div className="bg-gray-600 rounded py-2 px-4 -mr-2 text-gray-100 font-bold">
+                  // <div className="bg-gray-600 rounded py-2 px-4 -mr-2 text-gray-100 font-bold">
+                  <div className="bg-slate-900 text-slate-50  dark:bg-slate-50 dark:text-slate-900 py-2 px-4 -mr-2">
                     {formatUnits(data!.value, data!.decimals).slice(0, 5)}{" "}
                     {data?.symbol}
                   </div>
                 )}
               </>
             )}
-            <button
+            <Button
               onClick={isButtonDisabled || isGameEnded ? () => {} : show}
-              className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
+              // className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
+              className={` ${
                 isButtonDisabled || isGameEnded
                   ? "opacity-50 cursor-not-allowed"
                   : ""
               }`}
             >
               {isConnected ? ensName ?? truncatedAddress : "Connect Wallet"}
-            </button>
+            </Button>
           </>
         );
       }}
