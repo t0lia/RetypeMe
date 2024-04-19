@@ -1,16 +1,19 @@
 "use client";
 
-import {useCallback, useEffect, useRef, useState} from "react";
-import {useRouter} from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import WsApiService, {
   CountDown,
   DriverMetrics,
   RaceStatistic,
 } from "@/app/api/ws-api-service";
-import {userDeposit} from "@/app/contract-utils/user-deposit";
+import RestApiService from "@/app/api/rest-api-service";
 import handleCreateNewGameSession from "@/app/helpers/create-new-game-session";
-import {useAccount, useAccountEffect} from "wagmi";
+
+import { userDeposit } from "@/app/contract-utils/user-deposit";
+import { useAccount, useAccountEffect } from "wagmi";
+import { useModal, useSIWE } from "connectkit";
 
 import GamePageHeader from "@/app/components/game-page-header/gamePageHeader";
 import CopyButton from "@/app/components/copy-button/copyButton";
@@ -19,7 +22,6 @@ import ClaimWinningsButton from "@/app/components/claim-winnings-button/claimWin
 import StartDepositButton from "@/app/components/start-deposit-button/startDepositButton";
 
 import "./page.css";
-import RestApiService from "@/app/api/rest-api-service";
 
 const GamePage = () => {
   const [textVisible, setTextVisible] = useState(false);
@@ -33,7 +35,7 @@ const GamePage = () => {
   const [gameText, setGameText] = useState("");
   const [initialGameText, setInitialGameText] = useState("");
   const [ingameUserId, setIngameUserId] = useState("");
-  const [ingameWalletId, setIngameWalletId] = useState("");
+  const [ingameWalletId, setIngameWalletId] = useState<string>("");
   const [txSuccessful, setTxSuccessful] = useState(false);
   const [keyStrokeCount, setKeyStrokeCount] = useState(0);
   const [sessionStat, setSessionStat] = useState<RaceStatistic>({
@@ -42,7 +44,9 @@ const GamePage = () => {
     users: [],
   });
 
-  const {address} = useAccount();
+  const { openSwitchNetworks, setOpen } = useModal();
+  const { isSignedIn } = useSIWE();
+  const { address, chainId } = useAccount();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const wsApiServiceRef = useRef<WsApiService | null>(null);
@@ -150,33 +154,29 @@ const GamePage = () => {
     }
 
     let restApiService = new RestApiService();
-    console.log("sessionId", sessionId);
+
     restApiService.getGameSession(sessionId).then((session) => {
       const sessionChain = session.chain;
       restApiService.getSiweSession().then((siweSession) => {
         const userChain = siweSession.chainId;
         if (userChain === null) {
-          alert("Ready to race? Sign in to get started!");
-          window.location.href = "/";
-        } else if (userChain !== sessionChain) {
-          alert("You are on the wrong chain. Please switch to the correct chain to play the game.");
-          window.location.href = "/";
-        } else {
-          wsApiServiceRef.current = new WsApiService(
-            sessionId,
-            localStorage.getItem("userId") ?? "",
-            address ?? "",
-            onCountDownReceived,
-            onStatisticReceived,
-            onRacePrepareInfoReceived
-          );
+          setOpen(true);
         }
+        if (userChain !== sessionChain) {
+          openSwitchNetworks();
+        }
+
+        wsApiServiceRef.current = new WsApiService(
+          sessionId,
+          localStorage.getItem("userId") ?? "",
+          address as string,
+          onCountDownReceived,
+          onStatisticReceived,
+          onRacePrepareInfoReceived
+        );
       });
-
     });
-
-
-  }, [ingameWalletId]);
+  }, [ingameWalletId, isSignedIn, chainId]);
 
   useEffect(() => {
     const handleKeyDown = () => {
@@ -197,6 +197,10 @@ const GamePage = () => {
   }, [textIsBlurred, keyStrokeCount]);
 
   async function handleStartGame() {
+    if (!address) {
+      setOpen(true);
+      return;
+    }
     if (startBtnText === "New Game") {
       const data = await handleCreateNewGameSession();
       if (data) {
@@ -207,7 +211,7 @@ const GamePage = () => {
 
     wsApiServiceRef.current?.register(
       localStorage.getItem("userId") ?? "",
-      ingameWalletId ?? ""
+      ingameWalletId
     );
 
     setUserStats([]);
@@ -219,7 +223,7 @@ const GamePage = () => {
     const enteredTextLength = enteredText.length;
 
     const newTextStyles = Array.from(
-      {length: enteredTextLength},
+      { length: enteredTextLength },
       (_, i) => "black"
     );
 
@@ -281,10 +285,10 @@ const GamePage = () => {
             if (
               lastEnteredIndex !== -1 &&
               lastEnteredIndex ===
-              initialGameText
-                .split(" ")
-                .filter((word) => prevCompletedWords.includes(word))
-                .join(" ").length
+                initialGameText
+                  .split(" ")
+                  .filter((word) => prevCompletedWords.includes(word))
+                  .join(" ").length
             ) {
               return [...prevCompletedWords, lastEnteredWord];
             }
@@ -326,6 +330,13 @@ const GamePage = () => {
   }
 
   async function handleUserDeposit() {
+    const restApiService = new RestApiService();
+    const sessionChainId = (await restApiService.getGameSession(sessionStat.id))
+      .chain;
+    if (chainId !== sessionChainId) {
+      openSwitchNetworks();
+      return;
+    }
     const response = await userDeposit();
     if (response && response.status === 1) {
       setTxSuccessful(true);
@@ -363,7 +374,7 @@ const GamePage = () => {
               {formattedText.map((char, index) => (
                 <span
                   key={crypto.randomUUID()}
-                  style={{color: textInputStyles[index]}}
+                  style={{ color: textInputStyles[index] }}
                 >
                   {textInputStyles.length < 1 && index === 0 && (
                     <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
@@ -402,7 +413,7 @@ const GamePage = () => {
           ingameWalletId={ingameWalletId}
           txSuccessful={txSuccessful}
         />
-        <CopyButton handleCopy={handleCopy}/>
+        <CopyButton handleCopy={handleCopy} />
       </main>
     </>
   );

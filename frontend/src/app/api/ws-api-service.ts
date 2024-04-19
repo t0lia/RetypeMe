@@ -1,4 +1,4 @@
-import {Client, Message} from "@stomp/stompjs";
+import { Client, Message } from "@stomp/stompjs";
 import ApiDomainService from "@/app/api/api-domain-service";
 import RestApiService from "@/app/api/rest-api-service";
 
@@ -40,8 +40,7 @@ export default class WsApiService {
   ) {
     const API_URL: string = new ApiDomainService().getWebSocketUrl();
     this.sessionId = sessionId;
-    this.stompClient = new Client({brokerURL: API_URL});
-
+    this.stompClient = new Client({ brokerURL: API_URL });
 
     this.stompClient.onConnect = (frame) => {
       console.log("Connected: " + frame);
@@ -53,7 +52,10 @@ export default class WsApiService {
           if (stat.errors.length > 0) {
             const error = stat.errors.join("\n");
             this.stompClient.deactivate().then(() => {
-              console.log("To initiate the session, please ensure you're logged in to the correct network.\n" + error);
+              console.log(
+                "To initiate the session, please ensure you're logged in to the correct network.\n" +
+                  error
+              );
               window.location.href = "/";
             });
           } else {
@@ -92,7 +94,7 @@ export default class WsApiService {
       sessionId: this.sessionId,
       chain: this.chain,
       userId: userId,
-      walletId: walletId ?? "",
+      walletId: walletId,
       cpm: 0,
       progress: progress,
       place: 0,
@@ -114,7 +116,13 @@ export default class WsApiService {
 
   public register(userId: string, walletId: string): void {
     console.log("ws: session register user:" + userId);
-    this.sendUserState(userId, walletId, this.sessionId, this.chain, "registered");
+    this.sendUserState(
+      userId,
+      walletId,
+      this.sessionId,
+      this.chain,
+      "registered"
+    );
   }
 
   private sendUserState(
