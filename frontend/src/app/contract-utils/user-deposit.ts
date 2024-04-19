@@ -1,10 +1,10 @@
 import { gameContract, provider } from "../contracts/game-contract";
 import { parseEther, id } from "ethers";
-import { changeNetwork } from "../helpers/change-network";
+// import { changeNetwork } from "../helpers/change-network";
 
 export async function userDeposit() {
   try {
-    await changeNetwork();
+    // await changeNetwork();
 
     const signer = await provider.getSigner();
     const connectedContract = gameContract.connect(signer);
