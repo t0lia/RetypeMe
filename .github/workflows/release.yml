@@ -16,6 +16,7 @@ jobs:
       - name: Display build number
         run: |
           echo "Build number: ${{ github.run_number }}"
+
       - name: Increment patch version
         id: increment_patch_version
         run: |
@@ -64,7 +65,5 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: retypeme/retypeme-frontend:${{ env.newTag }}, retypeme/retypeme-frontend:latest
-
-#      - name: Call server endpoint
-#        run: |
-#          curl -X POST -u username:${{ secrets.WEBHOOK_PASSWORD }} http://apozdniakov.com:8090/restart_script
+          build-args: |
+            NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY=${{ secrets.NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY }}
