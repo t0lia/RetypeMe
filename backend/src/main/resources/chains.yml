@@ -2,6 +2,9 @@ chains:
   - id: 80001
     name: polygon-mumbai
     contract: "0xb3c33b58de859a5e06aff62c9d66319c256218da"
+  - id: 534351
+    name: scroll-sepolia
+    contract: "0xf813b4e5d34079ebcc59adf39a7782ad989891fe"
   - id: 80002
     name: polygon-amoy
     contract: "0xb3aa754f1664719489fb10e0c5f9b98d8ac232b9"
