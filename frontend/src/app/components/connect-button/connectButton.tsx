@@ -32,6 +32,22 @@ function ConnectButton({ isButtonDisabled, isGameEnded }: ConnectButtonProps) {
     if (!isSignedIn && isConnected && chainId) signInAfterConnect();
   }, [chainId, isConnected]);
 
+  let userBalanceValue;
+  if (data) {
+    userBalanceValue = `${formatUnits(data!.value, data!.decimals).slice(
+      0,
+      5
+    )} ${data?.symbol}`;
+  }
+
+  const userBalance = (
+    <div className="inline-flex items-center justify-center whitespace-nowrap bg-primary text-primary-foreground text-sm font-medium py-2 px-4 -mr-2 h-10">
+      {isLoading && "Fetching balance…"}
+      {isError && "Error fetching balance"}
+      {data && userBalanceValue}
+    </div>
+  );
+
   return (
     <ConnectKitButton.Custom>
       {({ isConnected, show, truncatedAddress, ensName }) => {
@@ -39,36 +55,15 @@ function ConnectButton({ isButtonDisabled, isGameEnded }: ConnectButtonProps) {
           <>
             {chainId && (
               <>
-                <Button
-                  className="-mr-2"
-                  onClick={openSwitchNetworks}
-                  // className="bg-gray-600 rounded py-2 px-4 -mr-2 text-gray-100 font-bold"
-                >
+                <Button className="-mr-2" onClick={openSwitchNetworks}>
                   {supportedChains.find((c) => c.id === chainId)?.name ||
                     "Unsupported Chain"}
                 </Button>
-                {isLoading && (
-                  <div className="bg-slate-900 text-slate-50  dark:bg-slate-50 dark:text-slate-900 py-2 px-4 -mr-2">
-                    Fetching balance…
-                  </div>
-                )}
-                {isError && (
-                  <div className="bg-slate-900 text-slate-50  dark:bg-slate-50 dark:text-slate-900 py-2 px-4 -mr-2">
-                    Error fetching balance
-                  </div>
-                )}
-                {data && (
-                  // <div className="bg-gray-600 rounded py-2 px-4 -mr-2 text-gray-100 font-bold">
-                  <div className="bg-slate-900 text-slate-50  dark:bg-slate-50 dark:text-slate-900 py-2 px-4 -mr-2">
-                    {formatUnits(data!.value, data!.decimals).slice(0, 5)}{" "}
-                    {data?.symbol}
-                  </div>
-                )}
+                {userBalance}
               </>
             )}
             <Button
               onClick={isButtonDisabled || isGameEnded ? () => {} : show}
-              // className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
               className={` ${
                 isButtonDisabled || isGameEnded
                   ? "opacity-50 cursor-not-allowed"

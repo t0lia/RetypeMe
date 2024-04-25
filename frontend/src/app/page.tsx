@@ -137,7 +137,6 @@ export default function Home() {
       <main className="h-screen flex flex-col">
         <div className="flex flex-col flex-1 justify-center items-center gap-20">
           <Button
-            // className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
             className="transform active:translate-y-0.5"
             onClick={handleTryDuelModeButton}
           >
