@@ -1,69 +1,102 @@
-import React from "react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import * as React from "react";
 import Link from "next/link";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuPortal,
+  DropdownMenuGroup,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/app/components/ui/dropdown-menu";
+import { Button } from "../ui/button";
 
 function DropdownFaucetMenu() {
   return (
-    <DropdownMenu.Root>
-      <DropdownMenu.Trigger asChild>
-        <button
-          className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded mr-3"
-          aria-label="Customise options"
-        >
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button className="mr-3" aria-label="Customise options">
           Claim Testnet Tokens:
-        </button>
-      </DropdownMenu.Trigger>
+        </Button>
+      </DropdownMenuTrigger>
 
-      <DropdownMenu.Portal>
-        <DropdownMenu.Content
-          className="w-48 bg-white rounded-md p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)] will-change-[opacity,transform] data-[side=top]:animate-slideDownAndFade data-[side=right]:animate-slideLeftAndFade data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade"
-          sideOffset={5}
-        >
-          <DropdownMenu.Group>
-            <DropdownMenu.Label className="text-sm px-3 py-1">
+      <DropdownMenuPortal>
+        <DropdownMenuContent sideOffset={5}>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className="text-sm px-3 py-1">
+              ETH Scroll Sepolia
+            </DropdownMenuLabel>
+            <Link href="https://scroll.faucetme.pro/" target="_blank">
+              <DropdownMenuItem className="flex items-center cursor-pointer pl-[25px]">
+                Faucetme
+              </DropdownMenuItem>
+            </Link>
+
+            <Link
+              href="https://bwarelabs.com/faucets/scroll-testnet"
+              target="_blank"
+            >
+              <DropdownMenuItem className="flex items-center cursor-pointer pl-[25px]">
+                BWARE Labs
+              </DropdownMenuItem>
+            </Link>
+
+            <Link href="htthttps://www.l2faucet.com/scroll" target="_blank">
+              <DropdownMenuItem className="flex items-center cursor-pointer pl-[25px]">
+                L2faucet
+              </DropdownMenuItem>
+            </Link>
+          </DropdownMenuGroup>
+
+          <DropdownMenuSeparator className="h-[1px] bg-gray-300 m-[4px]" />
+
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className="text-sm px-3 py-1">
               Matic Polygon Amoy
-            </DropdownMenu.Label>
+            </DropdownMenuLabel>
             <Link
               href="https://www.alchemy.com/faucets/polygon-amoy"
               target="_blank"
             >
-              <DropdownMenu.Item className="hover:bg-gray-300 group text-sm leading-none rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1">
+              <DropdownMenuItem className="flex items-center cursor-pointer pl-[25px]">
                 Alchemy faucet
-              </DropdownMenu.Item>
+              </DropdownMenuItem>
             </Link>
             <Link href="https://faucet.polygon.technology/" target="_blank">
-              <DropdownMenu.Item className="hover:bg-gray-300 group text-sm leading-none rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1">
+              <DropdownMenuItem className="flex items-center cursor-pointer pl-[25px]">
                 Polygon faucet
-              </DropdownMenu.Item>
+              </DropdownMenuItem>
             </Link>
             <Link
               href="https://faucet.trade/polygon-amoy-matic-faucet"
               target="_blank"
             >
-              <DropdownMenu.Item className="hover:bg-gray-300 group text-sm leading-none rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1">
+              <DropdownMenuItem className="flex items-center cursor-pointer pl-[25px]">
                 Faucet trade
-              </DropdownMenu.Item>
+              </DropdownMenuItem>
             </Link>
-          </DropdownMenu.Group>
+          </DropdownMenuGroup>
 
-          <DropdownMenu.Separator className="h-[1px] bg-gray-300 m-[4px]" />
+          <DropdownMenuSeparator className="h-[1px] bg-gray-300 m-[4px]" />
 
-          <DropdownMenu.Group>
-            <DropdownMenu.Label className="text-sm px-3 py-1">
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className="text-sm px-3 py-1">
               ETH Blast Sepolia
-            </DropdownMenu.Label>
+            </DropdownMenuLabel>
             <Link
               href="https://blastapi.io/faucets/blastl2-testnet"
               target="_blank"
             >
-              <DropdownMenu.Item className="hover:bg-gray-300 group text-sm leading-none rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1">
+              <DropdownMenuItem className="flex items-center cursor-pointer pl-[25px]">
                 Blastapi faucet
-              </DropdownMenu.Item>
+              </DropdownMenuItem>
             </Link>
-          </DropdownMenu.Group>
-        </DropdownMenu.Content>
-      </DropdownMenu.Portal>
-    </DropdownMenu.Root>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenuPortal>
+    </DropdownMenu>
   );
 }
 
