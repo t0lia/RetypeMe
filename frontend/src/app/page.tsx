@@ -121,9 +121,9 @@ export default function Home() {
       <header>
         <div className="flex justify-between h-16 items-center">
           <div className="relative ml-8">
-            <div className="absolute w-80 h-10 -top-1.5 -left-4 bg-gradient-to-br from-pink-400 via-pink-500 to-purple-800 rounded-full p-4 filter blur-sm rotate-[-1.5deg]"></div>
+            <div className="absolute w-40 h-10 -top-1.5 -left-4 bg-gradient-to-br from-pink-400 via-pink-500 to-purple-800 rounded-full p-4 filter blur-sm rotate-[-1.5deg]"></div>
             <div className="relative z-10 font-semibold text-white">
-              Polygon Amoy & Blast Sepolia Testnet
+              We're on Testnet
             </div>
           </div>
 
