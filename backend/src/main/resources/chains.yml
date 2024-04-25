@@ -4,7 +4,7 @@ chains:
     contract: "0xb3c33b58de859a5e06aff62c9d66319c256218da"
   - id: 80002
     name: polygon-amoy
-    contract: "0xb3c33b58de859a5e06aff62c9d66319c256218da"
+    contract: "0xb3aa754f1664719489fb10e0c5f9b98d8ac232b9"
   - id: 31337
     name: sepolia
     contract: "0xb3c33b58de859a5e06aff62c9d66319c256218da"
