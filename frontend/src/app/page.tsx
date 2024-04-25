@@ -15,6 +15,7 @@ import { TWITTER_LINK } from "./constants/links";
 import { useModal, useSIWE } from "connectkit";
 import { useAccount } from "wagmi";
 import { Button } from "./components/ui/button";
+import ModeToggle from "./components/ui/toggle-theme-changer";
 
 export default function Home() {
   const [streamingText, setStreamingText] = useState("");
@@ -127,6 +128,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-row">
+            <ModeToggle />
             <DropDownFaucetMenu />
             <ConnectButton />
           </div>

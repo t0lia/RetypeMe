@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Web3Provider } from "./helpers/web3-provider";
 import "./globals.css";
+import { ThemeProvider } from "./helpers/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,13 +22,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.className} h-screen`}>
+    <html
+      lang="en"
+      className={`${inter.className} h-screen`}
+      suppressHydrationWarning
+    >
       <body className="flex flex-col h-full">
-        <div className="max-w-[1440px] self-center w-full flex flex-col h-screen">
-          <Web3Provider walletConnectProjectId={walletConnectProjectId}>
-            {children}
-          </Web3Provider>
-        </div>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="max-w-[1440px] self-center w-full flex flex-col h-screen">
+            <Web3Provider walletConnectProjectId={walletConnectProjectId}>
+              {children}
+            </Web3Provider>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );
