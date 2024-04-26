@@ -4,8 +4,10 @@ import { RaceStatistic } from "@/app/api/ws-api-service";
 import {
   CHAIN_ID_AMOY_DECIMAL,
   CHAIN_ID_BLAST_SEPOLIA_DECIMAL,
+  CHAIN_ID_SCROLL_SEPOLIA_DECIMAL,
 } from "@/app/constants/contract-constants";
 import { Button } from "@/app/components/ui/button";
+import getUserBalance from "@/app/contract-utils/get-user-balance";
 
 interface IStartDepositButton {
   txSuccessful: boolean;
@@ -27,24 +29,24 @@ export default function StartDepositButton({
   const { isSignedIn, signIn } = useSIWE();
   const { isConnected, chainId } = useAccount();
 
+  const userBalance = getUserBalance();
+
   const showDepositButton =
     isSignedIn &&
     !txSuccessful &&
     sessionStat?.users?.every((driver) => driver.walletId) &&
     sessionStat?.users?.length > 1;
 
-  async function signInWithEthereum() {
+  async function signInWithEthereum(): Promise<void> {
     await signIn();
   }
 
   return (
     <>
       {showDepositButton ? (
-        <Button
-          // className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
-          onClick={handleUserDeposit}
-        >
+        <Button onClick={handleUserDeposit}>
           {`Deposit 0.001 ${
+            chainId === CHAIN_ID_SCROLL_SEPOLIA_DECIMAL ||
             chainId === CHAIN_ID_BLAST_SEPOLIA_DECIMAL
               ? "ETH"
               : chainId === CHAIN_ID_AMOY_DECIMAL
@@ -54,7 +56,6 @@ export default function StartDepositButton({
         </Button>
       ) : (
         <Button
-          // className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
           className={`${
             isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
           }`}
@@ -72,6 +73,7 @@ export default function StartDepositButton({
           disabled={isButtonDisabled}
         >
           {!isSignedIn && isConnected ? "Please Sign In" : `${startBtnText}`}
+          {userBalance}
         </Button>
       )}
     </>

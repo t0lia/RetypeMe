@@ -12,7 +12,12 @@ import RestApiService from "@/app/api/rest-api-service";
 import handleCreateNewGameSession from "@/app/helpers/create-new-game-session";
 
 import { userDeposit } from "@/app/contract-utils/user-deposit";
-import { useAccount, useAccountEffect } from "wagmi";
+import {
+  useAccount,
+  useAccountEffect,
+  useReadContract,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 import { useModal, useSIWE } from "connectkit";
 
 import GamePageHeader from "@/app/components/game-page-header/gamePageHeader";
@@ -20,6 +25,10 @@ import CopyButton from "@/app/components/copy-button/copyButton";
 import ProgressBar from "@/app/components/progress-bar/progressBar";
 import ClaimWinningsButton from "@/app/components/claim-winnings-button/claimWinningsButton";
 import StartDepositButton from "@/app/components/start-deposit-button/startDepositButton";
+
+import { useWriteContract } from "wagmi";
+import { abi, contractAddress } from "../../contracts/game-contract";
+import { parseEther } from "viem";
 
 import "./page.css";
 
@@ -329,6 +338,13 @@ const GamePage = () => {
     }
   }
 
+  const { writeContract, data: hash } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
+  console.log("RECEIPT", isConfirming, isConfirmed, hash);
+
   async function handleUserDeposit() {
     const restApiService = new RestApiService();
     const sessionChainId = (await restApiService.getGameSession(sessionStat.id))
@@ -337,10 +353,41 @@ const GamePage = () => {
       openSwitchNetworks();
       return;
     }
-    const response = await userDeposit();
-    if (response && response.status === 1) {
-      setTxSuccessful(true);
+    // const { writeContract, data: hash } = useWriteContract();
+    async function deposit() {
+      writeContract({
+        abi,
+        address: contractAddress,
+        functionName: "deposit",
+        args: [],
+        value: parseEther("0.001"),
+      });
     }
+
+    try {
+      console.log("works");
+      const response = await deposit();
+      console.log("RESP", response);
+    } catch (error) {
+      console.log(error);
+    }
+    // async function userDeposit1() {
+    //   try {
+    //     writeContract({
+    //       abi,
+    //       address: contractAddress,
+    //       functionName: "deposit",
+    //       value: parseEther("0.001"),
+    //     });
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // }
+    // const response = await userDeposit1();
+    // console.log("response:", response);
+    // if (response && response.status === 1) {
+    //   setTxSuccessful(true);
+    // }
   }
 
   return (
