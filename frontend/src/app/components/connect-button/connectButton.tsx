@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { ConnectKitButton, useChains, useModal, useSIWE } from "connectkit";
 import { useAccount, useBalance } from "wagmi";
 import { formatUnits } from "viem";
+import { Button } from "@/app/components/ui/button";
 
 interface ConnectButtonProps {
   isButtonDisabled?: boolean;
@@ -31,6 +32,22 @@ function ConnectButton({ isButtonDisabled, isGameEnded }: ConnectButtonProps) {
     if (!isSignedIn && isConnected && chainId) signInAfterConnect();
   }, [chainId, isConnected]);
 
+  let userBalanceValue;
+  if (data) {
+    userBalanceValue = `${formatUnits(data!.value, data!.decimals).slice(
+      0,
+      5
+    )} ${data?.symbol}`;
+  }
+
+  const userBalance = (
+    <div className="inline-flex items-center justify-center whitespace-nowrap bg-primary text-primary-foreground text-sm font-medium py-2 px-4 -mr-2 h-10">
+      {isLoading && "Fetching balance…"}
+      {isError && "Error fetching balance"}
+      {data && userBalanceValue}
+    </div>
+  );
+
   return (
     <ConnectKitButton.Custom>
       {({ isConnected, show, truncatedAddress, ensName }) => {
@@ -38,41 +55,23 @@ function ConnectButton({ isButtonDisabled, isGameEnded }: ConnectButtonProps) {
           <>
             {chainId && (
               <>
-                <button
-                  onClick={openSwitchNetworks}
-                  className="bg-gray-600 rounded py-2 px-4 -mr-2 text-gray-100 font-bold"
-                >
+                <Button className="-mr-2" onClick={openSwitchNetworks}>
                   {supportedChains.find((c) => c.id === chainId)?.name ||
                     "Unsupported Chain"}
-                </button>
-                {isLoading && (
-                  <div className="bg-gray-600 rounded py-2 px-4 -mr-2 text-gray-100 font-bold">
-                    Fetching balance…
-                  </div>
-                )}
-                {isError && (
-                  <div className="bg-gray-600 rounded py-2 px-4 -mr-2 text-gray-100 font-bold">
-                    Error fetching balance
-                  </div>
-                )}
-                {data && (
-                  <div className="bg-gray-600 rounded py-2 px-4 -mr-2 text-gray-100 font-bold">
-                    {formatUnits(data!.value, data!.decimals).slice(0, 5)}{" "}
-                    {data?.symbol}
-                  </div>
-                )}
+                </Button>
+                {userBalance}
               </>
             )}
-            <button
+            <Button
               onClick={isButtonDisabled || isGameEnded ? () => {} : show}
-              className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
+              className={` ${
                 isButtonDisabled || isGameEnded
                   ? "opacity-50 cursor-not-allowed"
                   : ""
               }`}
             >
               {isConnected ? ensName ?? truncatedAddress : "Connect Wallet"}
-            </button>
+            </Button>
           </>
         );
       }}

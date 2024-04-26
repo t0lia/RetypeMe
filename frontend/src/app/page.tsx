@@ -14,6 +14,8 @@ import { Twitter } from "./public/icons/twitter";
 import { TWITTER_LINK } from "./constants/links";
 import { useModal, useSIWE } from "connectkit";
 import { useAccount } from "wagmi";
+import { Button } from "./components/ui/button";
+import ModeToggle from "./components/ui/toggle-theme-changer";
 
 export default function Home() {
   const [streamingText, setStreamingText] = useState("");
@@ -119,13 +121,14 @@ export default function Home() {
       <header>
         <div className="flex justify-between h-16 items-center">
           <div className="relative ml-8">
-            <div className="absolute w-80 h-10 -top-1.5 -left-4 bg-gradient-to-br from-pink-400 via-pink-500 to-purple-800 rounded-full p-4 filter blur-sm rotate-[-1.5deg]"></div>
+            <div className="absolute w-40 h-10 -top-1.5 -left-4 bg-gradient-to-br from-pink-400 via-pink-500 to-purple-800 rounded-full p-4 filter blur-sm rotate-[-1.5deg]"></div>
             <div className="relative z-10 font-semibold text-white">
-              Polygon Amoy & Blast Sepolia Testnet
+              We're on Testnet
             </div>
           </div>
 
           <div className="flex flex-row">
+            <ModeToggle />
             <DropDownFaucetMenu />
             <ConnectButton />
           </div>
@@ -133,12 +136,12 @@ export default function Home() {
       </header>
       <main className="h-screen flex flex-col">
         <div className="flex flex-col flex-1 justify-center items-center gap-20">
-          <button
-            className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5"
+          <Button
+            className="transform active:translate-y-0.5"
             onClick={handleTryDuelModeButton}
           >
             {buttonText}
-          </button>
+          </Button>
           <div className="self-start pl-40 h-8">{streamingText}</div>
         </div>
       </main>
