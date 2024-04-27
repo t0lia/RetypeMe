@@ -1,4 +1,5 @@
 import { type BaseError, useReadContract, useAccount } from "wagmi";
+import { formatEther } from "viem";
 import { abi, contractAddress } from "../contracts/game-contract";
 
 export default function getUserBalance() {
@@ -15,13 +16,13 @@ export default function getUserBalance() {
   });
 
   if (isPending) {
-    return <div>Loading...</div>;
+    return "Loading...";
   }
 
   if (error)
-    return (
-      <div>Error: {(error as BaseError).shortMessage || error.message}</div>
-    );
-  console.log(balance, balance?.toString());
-  return <div>Balance: {balance?.toString()}</div>;
+    return `Error: ${(error as BaseError).shortMessage || error.message}`;
+
+  const humanReadableBalance = formatEther(balance as bigint);
+
+  return `${humanReadableBalance} ETH`;
 }

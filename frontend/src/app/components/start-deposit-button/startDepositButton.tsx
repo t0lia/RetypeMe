@@ -29,8 +29,6 @@ export default function StartDepositButton({
   const { isSignedIn, signIn } = useSIWE();
   const { isConnected, chainId } = useAccount();
 
-  const userBalance = getUserBalance();
-
   const showDepositButton =
     isSignedIn &&
     !txSuccessful &&
@@ -73,7 +71,6 @@ export default function StartDepositButton({
           disabled={isButtonDisabled}
         >
           {!isSignedIn && isConnected ? "Please Sign In" : `${startBtnText}`}
-          {userBalance}
         </Button>
       )}
     </>
