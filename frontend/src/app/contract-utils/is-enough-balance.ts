@@ -20,6 +20,5 @@ export default function isEnoughBalance() {
 
   if (error)
     return `Error: ${(error as BaseError).shortMessage || error.message}`;
-  console.log("IS ENOUGHT:", isEnough);
   return isEnough;
 }

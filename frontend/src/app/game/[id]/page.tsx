@@ -11,11 +11,9 @@ import WsApiService, {
 import RestApiService from "@/app/api/rest-api-service";
 import handleCreateNewGameSession from "@/app/helpers/create-new-game-session";
 
-import { userDeposit } from "@/app/contract-utils/user-deposit";
 import {
   useAccount,
   useAccountEffect,
-  useReadContract,
   useWaitForTransactionReceipt,
 } from "wagmi";
 import { useModal, useSIWE } from "connectkit";
@@ -28,7 +26,7 @@ import StartDepositButton from "@/app/components/start-deposit-button/startDepos
 
 import { useWriteContract } from "wagmi";
 import { abi, contractAddress } from "../../contracts/game-contract";
-import { parseEther } from "viem";
+import { parseEther, keccak256, toBytes } from "viem";
 
 import "./page.css";
 
@@ -216,6 +214,27 @@ const GamePage = () => {
         router.push(`/game/${data.id}`);
       }
     }
+    const sessionId = sessionStorage.getItem("sessionId");
+    const hashSessionId = keccak256(toBytes(sessionId as string));
+    console.log(
+      "VIEM:",
+      keccak256(toBytes(sessionId as string)),
+      "SessionID",
+      sessionId
+    );
+    async function join() {
+      writeContract({
+        abi,
+        address: contractAddress,
+        functionName: "joinGame",
+        args: [hashSessionId],
+      });
+    }
+    try {
+      await join();
+    } catch (error) {
+      console.log(error);
+    }
     setIsButtonDisabled(true);
 
     wsApiServiceRef.current?.register(
@@ -343,7 +362,6 @@ const GamePage = () => {
     useWaitForTransactionReceipt({
       hash,
     });
-  console.log("RECEIPT", isConfirming, isConfirmed, hash);
 
   async function handleUserDeposit() {
     const restApiService = new RestApiService();
@@ -353,7 +371,6 @@ const GamePage = () => {
       openSwitchNetworks();
       return;
     }
-    // const { writeContract, data: hash } = useWriteContract();
     async function deposit() {
       writeContract({
         abi,
@@ -365,9 +382,7 @@ const GamePage = () => {
     }
 
     try {
-      console.log("works");
-      const response = await deposit();
-      console.log("RESP", response);
+      await deposit();
     } catch (error) {
       console.log(error);
     }
