@@ -1,16 +1,21 @@
 chains:
-  - id: 80001
-    name: polygon-mumbai
-    contract: "0xb3c33b58de859a5e06aff62c9d66319c256218da"
   - id: 534351
     name: scroll-sepolia
-    contract: "0xf813b4e5d34079ebcc59adf39a7782ad989891fe"
+    rpc: "https://sepolia-rpc.scroll.io"
+    infura: false
+    contract: "0x078869dd68d019900098b5b1006951ea7b3f01f2"
   - id: 80002
     name: polygon-amoy
-    contract: "0xb3aa754f1664719489fb10e0c5f9b98d8ac232b9"
+    rpc: "https://polygon-amoy.infura.io/v3"
+    infura: true
+    contract: "0x993558c22ebe07c96e8f85d1ef4318c513abff0d"
   - id: 31337
-    name: sepolia
-    contract: "0xb3c33b58de859a5e06aff62c9d66319c256218da"
+    name: etherium-sepolia
+    rpc: "https://sepolia.infura.io/v3"
+    infura: true
+    contract: "0x0000000000000000000000000000000000000000"
   - id: 168587773
     name: blast-sepolia
-    contract: "0xf813b4e5d34079ebcc59adf39a7782ad989891fe"
+    rpc: "https://blast-sepolia.infura.io/v3"
+    infura: true
+    contract: "0xb3c33b58de859a5e06aff62c9d66319c256218da"
