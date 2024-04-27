@@ -1,10 +1,12 @@
 import { BrowserProvider, Contract } from "ethers";
 
 let provider;
-export const contractAddress = "0xf813B4E5D34079EBCc59adf39A7782AD989891Fe";
-// Polygon(Amoy)    0x993558c22ebe07c96e8f85d1ef4318c513abff0d
-// Blast(Sepolia)   0xb3c33b58de859a5e06aff62c9d66319c256218da
-// Scroll(Sepolia)  0x078869dd68d019900098b5b1006951ea7b3f01f2
+export const contractAddress = "0x078869dd68d019900098b5b1006951ea7b3f01f2";
+export const polygonAmoyContractAddress =
+  "0x993558c22ebe07c96e8f85d1ef4318c513abff0d";
+export const blastSepoliaContractAddress =
+  "0xb3c33b58de859a5e06aff62c9d66319c256218da";
+
 if (typeof window !== "undefined") {
   provider = new BrowserProvider(window.ethereum);
 }
