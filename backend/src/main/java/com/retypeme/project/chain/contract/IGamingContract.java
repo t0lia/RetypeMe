@@ -79,23 +79,23 @@ public class IGamingContract extends Contract {
         return executeRemoteCallTransaction(function);
     }
 
-    public RemoteFunctionCall<BigInteger> getBalance() {
+    public RemoteFunctionCall<BigInteger> getBalance(String _user) {
         final Function function = new Function(FUNC_GETBALANCE, 
-                Arrays.<Type>asList(), 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _user)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
-    public RemoteFunctionCall<BigInteger> getMinDeposit() {
+    public RemoteFunctionCall<BigInteger> getMinDeposit(String _user) {
         final Function function = new Function(FUNC_GETMINDEPOSIT, 
-                Arrays.<Type>asList(), 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _user)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>() {}));
         return executeRemoteCallSingleValueReturn(function, BigInteger.class);
     }
 
-    public RemoteFunctionCall<Boolean> isEnoughBalance() {
+    public RemoteFunctionCall<Boolean> isEnoughBalance(String _user) {
         final Function function = new Function(FUNC_ISENOUGHBALANCE, 
-                Arrays.<Type>asList(), 
+                Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(160, _user)), 
                 Arrays.<TypeReference<?>>asList(new TypeReference<Bool>() {}));
         return executeRemoteCallSingleValueReturn(function, Boolean.class);
     }
