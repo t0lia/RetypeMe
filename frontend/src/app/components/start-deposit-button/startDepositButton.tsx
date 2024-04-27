@@ -7,7 +7,7 @@ import {
   CHAIN_ID_SCROLL_SEPOLIA_DECIMAL,
 } from "@/app/constants/contract-constants";
 import { Button } from "@/app/components/ui/button";
-import getUserBalance from "@/app/contract-utils/get-user-balance";
+import isEnoughBalance from "@/app/contract-utils/is-enough-balance";
 
 interface IStartDepositButton {
   txSuccessful: boolean;
@@ -28,10 +28,12 @@ export default function StartDepositButton({
 }: IStartDepositButton) {
   const { isSignedIn, signIn } = useSIWE();
   const { isConnected, chainId } = useAccount();
+  const isEnough = isEnoughBalance();
 
   const showDepositButton =
     isSignedIn &&
-    !txSuccessful &&
+    // !txSuccessful &&
+    !isEnough &&
     sessionStat?.users?.every((driver) => driver.walletId) &&
     sessionStat?.users?.length > 1;
 
