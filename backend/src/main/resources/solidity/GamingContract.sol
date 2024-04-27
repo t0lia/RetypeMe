@@ -9,16 +9,15 @@ interface IGamingContract {
 
     function joinGame(uint256 _sessionId) external;
 
-    function getBalance() external view returns (uint256);
+    function getBalance(address _user) external view returns (uint256);
 
-    function isEnoughBalance() external view returns (bool);
+    function isEnoughBalance(address _user) external view returns (bool);
 
-    function getMinDeposit() external view returns (uint256);
+    function getMinDeposit(address _user) external view returns (uint256);
 
     function endGame(uint256 _sessionId, address _winner) external;
 }
 
-// Main contract for RetypeMe
 contract GamingContract is IGamingContract {
     // declare constant default players count for duel mode
     uint256 public constant DUEL_PLAYERS_COUNT = 2;
@@ -46,11 +45,7 @@ contract GamingContract is IGamingContract {
     mapping(uint256 => GameSession) public gameSessions;
 
     event GameStarted(uint256 indexed sessionId);
-    event GameEnded(
-        uint256 indexed sessionId,
-        address winner,
-        uint256 winnings
-    );
+    event GameEnded(uint256 indexed sessionId, address winner, uint256 winnings);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not the owner");
@@ -67,26 +62,21 @@ contract GamingContract is IGamingContract {
         inGameUserBalances[msg.sender] += msg.value;
     }
 
-    function getBalance() external view returns (uint256) {
-        return inGameUserBalances[msg.sender];
+    function getBalance(address _user) external view returns (uint256) {
+        return inGameUserBalances[_user];
     }
 
-    function getMinDeposit() external view returns (uint256) {
+    function getMinDeposit(address _user) external view returns (uint256) {
         // if there is no enough balance, show min amount to deposit to be able to play a game
-        return
-            fixedDepositAmount > inGameUserBalances[msg.sender]
-                ? fixedDepositAmount - inGameUserBalances[msg.sender]
-                : 0;
+        return fixedDepositAmount > inGameUserBalances[_user] ? fixedDepositAmount - inGameUserBalances[_user] : 0;
     }
 
-    function isEnoughBalance() external view returns (bool) {
-        return inGameUserBalances[msg.sender] >= fixedDepositAmount;
+    function isEnoughBalance(address _user) external view returns (bool) {
+        return inGameUserBalances[_user] >= fixedDepositAmount;
     }
 
-    // EXAMPLE OF SESSION ID: 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02d1
+    // 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02d1
     function joinGame(uint256 _sessionId) external {
-        // address sender = msg.sender; DELETE because of gas economy
-
         // Check if the session already exists by checking a characteristic field, like sessionId
         if (gameSessions[_sessionId].sessionId == 0) {
             // This implies the session does not exist, so initialize it
@@ -96,25 +86,14 @@ contract GamingContract is IGamingContract {
             gameSessions[_sessionId].players = new address[](0);
             gameSessions[_sessionId].winner = address(0);
         }
-
         // Proceed with existing checks
         require(
-            gameSessions[_sessionId].players.length == 0 ||
-            gameSessions[_sessionId].players[0] != msg.sender,
+            gameSessions[_sessionId].players.length == 0 || gameSessions[_sessionId].players[0] != msg.sender,
             "Player already in the game"
         );
-        require(
-            gameSessions[_sessionId].players.length < DUEL_PLAYERS_COUNT,
-            "Game session is full"
-        );
-        require(
-            gameSessions[_sessionId].status == GameStatus.NOT_STARTED,
-            "Game session already started"
-        );
-        require(
-            inGameUserBalances[msg.sender] >= fixedDepositAmount,
-            "Insufficient balance"
-        );
+        require(gameSessions[_sessionId].players.length < DUEL_PLAYERS_COUNT, "Game session is full");
+        require(gameSessions[_sessionId].status == GameStatus.NOT_STARTED, "Game session already started");
+        require(inGameUserBalances[msg.sender] >= fixedDepositAmount, "Insufficient balance");
 
         // Lock sender balance
         inGameUserBalances[msg.sender] -= fixedDepositAmount;
@@ -133,14 +112,8 @@ contract GamingContract is IGamingContract {
     function endGame(uint256 _sessionId, address _winner) external onlyOwner {
         GameSession storage session = gameSessions[_sessionId];
         // check if the game is started state
-        require(
-            session.status == GameStatus.STARTED,
-            "Game not started or already ended"
-        );
-        require(
-            session.players.length == DUEL_PLAYERS_COUNT,
-            "Wrong number of players in the game session"
-        );
+        require(session.status == GameStatus.STARTED, "Game not started or already ended");
+        require(session.players.length == DUEL_PLAYERS_COUNT, "Wrong number of players in the game session");
         require(
             _winner == session.players[0] || _winner == session.players[1],
             "This address can't be the winner. It is not in the current game session."
@@ -162,11 +135,11 @@ contract GamingContract is IGamingContract {
 
     // I think NO need to make two withdraw fns, because it will always get amount from FE after reading state. (there will be input
     // with desirable amount and button "Max", it will check max balance and pass it to the withdraw fn)
-    function withdraw(uint256 amount) external {
+    function withdraw(uint256 _amount) external {
         address sender = msg.sender;
-        require(inGameUserBalances[sender] >= amount, "Insufficient balance");
-        inGameUserBalances[sender] -= amount;
-        payable(sender).transfer(amount);
+        require(inGameUserBalances[sender] >= _amount, "Insufficient balance");
+        inGameUserBalances[sender] -= _amount;
+        payable(sender).transfer(_amount);
     }
 
     function withdrawFundsFromContract() external onlyOwner {
@@ -183,19 +156,12 @@ contract GamingContract is IGamingContract {
         payable(owner).transfer(totalCommission); // THEN TRANSFER
     }
 
-    function changeCommissionRate(
-        uint256 _newCommissionRate
-    ) external onlyOwner {
-        require(
-            _newCommissionRate >= 0 && _newCommissionRate < 100,
-            "Enter valid number"
-        );
+    function changeCommissionRate(uint256 _newCommissionRate) external onlyOwner {
+        require(_newCommissionRate >= 0 && _newCommissionRate < 100, "Enter valid number");
         commissionRate = _newCommissionRate;
     }
 
-    function changeFixedDepositAmount(
-        uint256 _newFixedDepositAmount
-    ) external onlyOwner {
+    function changeFixedDepositAmount(uint256 _newFixedDepositAmount) external onlyOwner {
         require(_newFixedDepositAmount > 0, "Enter valid number");
         fixedDepositAmount = _newFixedDepositAmount;
     }

@@ -13,6 +13,10 @@ class ChainService(private val configReaderService: ConfigReaderService) {
         return configReaderService.readChainConfig().chains
     }
 
+    fun getChainByName(name: String): ChainItemConfig {
+        return getChains().first { it.name == name }
+    }
+
     fun getChainById(id: Int): ChainItemConfig {
         return getChains().first { it.id == id }
     }
