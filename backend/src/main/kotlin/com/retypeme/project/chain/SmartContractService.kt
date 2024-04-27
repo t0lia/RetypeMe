@@ -12,6 +12,7 @@ import org.web3j.crypto.Hash
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.response.TransactionReceipt
+import org.web3j.protocol.http.HttpService
 import org.web3j.protocol.infura.InfuraHttpService
 import org.web3j.tx.RawTransactionManager
 import org.web3j.tx.gas.DefaultGasProvider
@@ -38,7 +39,7 @@ class SmartContractService(val chainService: ChainService, val sessionService: S
         return balance.balance
     }
 
-    private fun getNetworkUrl(chainId: Int): String {
+    fun getNetworkUrl(chainId: Int): String {
         val chainConfig = chainService.getChainById(chainId)
         return if (chainConfig.infura) {
             "${chainConfig.rpc}/$apikey"
@@ -56,7 +57,9 @@ class SmartContractService(val chainService: ChainService, val sessionService: S
         logger.info("finishing game: $sessionId, winner: $winnerId")
         val session = sessionService.getSessionById(sessionId)
         val chainId: Int = session.chain ?: 0
-        val web3 = Web3j.build(InfuraHttpService(getNetworkUrl(chainId)))
+        val httpService =
+            if (chainId == 534351) HttpService(getNetworkUrl(chainId)) else InfuraHttpService(getNetworkUrl(chainId))
+        val web3 = Web3j.build(httpService)
 
         val transactionManager =
             RawTransactionManager(web3, Credentials.create(privateKey), chainService.getChainId().toLong());
