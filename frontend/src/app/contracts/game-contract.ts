@@ -2,8 +2,9 @@ import { BrowserProvider, Contract } from "ethers";
 
 let provider;
 export const contractAddress = "0xf813B4E5D34079EBCc59adf39A7782AD989891Fe";
-// export const contractAddress = "0xb3Aa754f1664719489fb10e0c5F9B98D8AC232b9";
-
+// Polygon(Amoy)    0x993558c22ebe07c96e8f85d1ef4318c513abff0d
+// Blast(Sepolia)   0xb3c33b58de859a5e06aff62c9d66319c256218da
+// Scroll(Sepolia)  0x078869dd68d019900098b5b1006951ea7b3f01f2
 if (typeof window !== "undefined") {
   provider = new BrowserProvider(window.ethereum);
 }
@@ -126,14 +127,14 @@ export const abi = [
   },
   {
     outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
-    inputs: [],
+    inputs: [{ name: "_user", internalType: "address", type: "address" }],
     name: "getBalance",
     stateMutability: "view",
     type: "function",
   },
   {
     outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
-    inputs: [],
+    inputs: [{ name: "_user", internalType: "address", type: "address" }],
     name: "getMinDeposit",
     stateMutability: "view",
     type: "function",
@@ -147,7 +148,7 @@ export const abi = [
   },
   {
     outputs: [{ name: "", internalType: "bool", type: "bool" }],
-    inputs: [],
+    inputs: [{ name: "_user", internalType: "address", type: "address" }],
     name: "isEnoughBalance",
     stateMutability: "view",
     type: "function",
@@ -175,7 +176,7 @@ export const abi = [
   },
   {
     outputs: [],
-    inputs: [{ name: "amount", internalType: "uint256", type: "uint256" }],
+    inputs: [{ name: "_amount", internalType: "uint256", type: "uint256" }],
     name: "withdraw",
     stateMutability: "nonpayable",
     type: "function",
