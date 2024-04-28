@@ -33,7 +33,7 @@ class SmartContractService(val chainService: ChainService, val sessionService: S
         val networkUrl = getNetworkUrl(chainId)
         val web3 = Web3j.build(InfuraHttpService(networkUrl))
 
-        val balance = web3.ethGetBalance(chainService.getAddress(), DefaultBlockParameterName.LATEST).send()
+        val balance = web3.ethGetBalance(chainService.getChainById(chainId).contract, DefaultBlockParameterName.LATEST).send()
         logger.info("Balance: " + balance.balance)
 
         return balance.balance
@@ -62,15 +62,22 @@ class SmartContractService(val chainService: ChainService, val sessionService: S
         val web3 = Web3j.build(httpService)
 
         val transactionManager =
-            RawTransactionManager(web3, Credentials.create(privateKey), chainService.getChainId().toLong());
+            RawTransactionManager(web3, Credentials.create(privateKey), chainId.toLong());
 
         val contract: GamingContract =
-            GamingContract.load(chainService.getAddress(), web3, transactionManager, DefaultGasProvider())
+            GamingContract.load(chainService.getChainById(chainId).contract, web3, transactionManager, DefaultGasProvider())
 
         logger.info("call endGame with parameters: session-id: $sessionId, winner-id: $winnerId")
-        val transaction: TransactionReceipt = contract.endGame(prepareSessionKey(sessionId), winnerId).send()
+        try {
+            val transaction: TransactionReceipt = contract.endGame(prepareSessionKey(sessionId), winnerId).send()
+            if (!transaction.isStatusOK) {
+                logger.error("Transaction failed: " + transaction.transactionHash)
+            }
+            logger.info("Transaction finished: " + transaction.transactionHash)
+        } catch (e: Exception) {
+            logger.error("Error while calling endGame: " + e.message)
+        }
 
-        logger.info("Transaction finished: " + transaction.transactionHash)
     }
 
     private fun prepareSessionKey(sessionId: String): BigInteger {

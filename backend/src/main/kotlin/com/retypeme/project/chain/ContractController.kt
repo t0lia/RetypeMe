@@ -16,20 +16,6 @@ class ContractController(val chainService: ChainService) {
         return AbiProvider().getAbi(GamingContract::class.java);
     }
 
-    @RequestMapping("/contract/address")
-    fun address(): String? {
-        return chainService.getAddress()
-    }
-
-    @RequestMapping("/contract/id")
-    fun id(): Int? {
-        return chainService.getChainId()
-    }
-
-    @RequestMapping("/contract/name")
-    fun name(): String? {
-        return chainService.getChainName()
-    }
 
 
     @RequestMapping("/contract/chain")
