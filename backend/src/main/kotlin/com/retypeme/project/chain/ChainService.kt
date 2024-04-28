@@ -21,20 +21,4 @@ class ChainService(private val configReaderService: ConfigReaderService) {
         return getChains().first { it.id == id }
     }
 
-    fun getMainChain(): ChainItemConfig {
-        val first = chains.first()
-        return getChains().first { it.id == first }
-    }
-
-    fun getAddress(): String {
-        return getMainChain().contract
-    }
-
-    fun getChainId(): Int {
-        return getMainChain().id
-    }
-
-    fun getChainName(): String {
-        return getMainChain().name
-    }
 }
