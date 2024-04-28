@@ -7,6 +7,7 @@ server:
       cookie:
         http-only: true
         secure: true
+        same-site: None
 management:
   info:
     git:
