@@ -1,7 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { withdrawWinnings } from "@/app/contract-utils/claim-winnings";
 import { DriverMetrics } from "@/app/api/ws-api-service";
+import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
+import {
+  useAccount,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
+import { contractAddress, abi } from "@/app/contracts/game-contract";
+import { parseEther } from "viem";
 
 interface IClaimWinningsButton {
   userStats: DriverMetrics[];
@@ -18,14 +25,34 @@ export default function ClaimWinningsButton({
 }: IClaimWinningsButton) {
   const [successfulWithdrawlWinnings, setSuccessfulWithdrawlWinnings] =
     useState(false);
+  const { balance, refetch } = getUserGameBalance();
+  const { writeContract, data: hash } = useWriteContract();
 
   async function handleClaimWinnings() {
-    const response = await withdrawWinnings();
-    console.log(response);
-    if (response && response.status === 1) {
-      setSuccessfulWithdrawlWinnings(true);
-    }
+    // const response = await withdrawWinnings();
+    // console.log(response);
+    // if (response && response.status === 1) {
+    //   setSuccessfulWithdrawlWinnings(true);
+    // }
+    const bigIntBalance = BigInt(balance.replace(" ETH", ""));
+    writeContract({
+      address: contractAddress,
+      abi,
+      functionName: "withdraw",
+      args: [bigIntBalance],
+    });
   }
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
+  useEffect(() => {
+    if (isConfirmed) {
+      setSuccessfulWithdrawlWinnings(true);
+      refetch();
+    }
+  }, [isConfirmed]);
 
   return (
     <>
@@ -44,7 +71,7 @@ export default function ClaimWinningsButton({
                 className="mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 animation-pulse"
                 onClick={handleClaimWinnings}
               >
-                Claim winnings 🏆
+                Claim winnings: ${balance} 🏆
               </button>
             );
           }
