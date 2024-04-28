@@ -2,7 +2,7 @@ import { type BaseError, useReadContract, useAccount } from "wagmi";
 import { formatEther } from "viem";
 import { abi, contractAddress } from "../contracts/game-contract";
 
-export default function getUserBalance() {
+export default function getUserGameBalance() {
   const { address } = useAccount();
   const {
     data: balance,

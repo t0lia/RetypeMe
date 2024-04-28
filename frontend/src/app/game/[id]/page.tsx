@@ -26,7 +26,7 @@ import StartDepositButton from "@/app/components/start-deposit-button/startDepos
 
 import { useWriteContract } from "wagmi";
 import { abi, contractAddress } from "../../contracts/game-contract";
-import { parseEther, keccak256, toBytes } from "viem";
+import { keccak256, toBytes } from "viem";
 
 import "./page.css";
 
@@ -209,7 +209,35 @@ const GamePage = () => {
     };
   }, [textIsBlurred, keyStrokeCount]);
 
-  async function handleStartGame() {
+  // async function handleStartGame() {
+  //   if (!address) {
+  //     setOpen(true);
+  //     return;
+  //   }
+  //   if (startBtnText === "New Game") {
+  //     const data = await handleCreateNewGameSession();
+  //     if (data) {
+  //       router.push(`/game/${data.id}`);
+  //     }
+  //   }
+  //   const sessionId = sessionStorage.getItem("sessionId");
+  //   const hashSessionId = keccak256(toBytes(sessionId as string));
+  //   console.log(
+  //     "VIEM:",
+  //     keccak256(toBytes(sessionId as string)),
+  //     "SessionID",
+  //     sessionId
+  //   );
+
+  //   writeContract({
+  //     abi,
+  //     address: contractAddress,
+  //     functionName: "joinGame",
+  //     args: [hashSessionId],
+  //   });
+  // }
+
+  const handleStartGame = useCallback(async () => {
     if (!address) {
       setOpen(true);
       return;
@@ -244,21 +272,23 @@ const GamePage = () => {
     // );
 
     // setUserStats([]);
-  }
+  }, [address, startBtnText, router]);
+
   useEffect(() => {
     if (isConfirmed) {
-      setIsButtonDisabled(true);
+      console.log("isConfirmed:", isConfirmed);
+      setTxSuccessful(true);
 
       wsApiServiceRef.current?.register(
         localStorage.getItem("userId") ?? "",
         ingameWalletId
       );
 
+      setIsButtonDisabled(true);
       setUserStats([]);
     }
   }, [isConfirmed]);
 
-  console.log("CONFIRMED", isConfirmed);
   function checkEqualHandler(e: React.ChangeEvent<HTMLInputElement>) {
     const enteredText = e.target.value;
 

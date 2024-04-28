@@ -1,3 +1,4 @@
+import React from "react";
 import { useModal, useSIWE } from "connectkit";
 import {
   useAccount,
@@ -25,7 +26,7 @@ interface IStartDepositButton {
   startBtnText: string;
 }
 
-export default function StartDepositButton({
+function StartDepositButton({
   txSuccessful,
   sessionStat,
   // handleUserDeposit,
@@ -34,21 +35,10 @@ export default function StartDepositButton({
   startBtnText,
 }: IStartDepositButton) {
   const { isSignedIn, signIn } = useSIWE();
-  const { isConnected, chainId } = useAccount();
+  const { isConnected, chainId, address } = useAccount();
   const isEnough = isEnoughBalance();
   const { openSwitchNetworks } = useModal();
   const { writeContract, data: hash } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash,
-    });
-
-  const showDepositButton =
-    isSignedIn &&
-    // !txSuccessful &&
-    !isEnough &&
-    sessionStat?.users?.every((driver) => driver.walletId) &&
-    sessionStat?.users?.length > 1;
 
   async function signInWithEthereum(): Promise<void> {
     await signIn();
@@ -58,6 +48,7 @@ export default function StartDepositButton({
     const restApiService = new RestApiService();
     const sessionChainId = (await restApiService.getGameSession(sessionStat.id))
       .chain;
+
     if (chainId !== sessionChainId) {
       openSwitchNetworks();
       return;
@@ -71,10 +62,32 @@ export default function StartDepositButton({
     });
   }
 
-  console.log("HASH", hash, "loading:", isConfirming, "DONE", isConfirmed);
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
+
+  const showDepositButton =
+    isSignedIn &&
+    !txSuccessful &&
+    !isEnough &&
+    sessionStat?.users?.every((driver) => driver.walletId) &&
+    sessionStat?.users?.length > 1;
+
+  const userStatus = sessionStat.users.find(
+    (user) => user.walletId === address
+  )?.state;
+
+  console.log("HASH", hash, "DONE", isConfirmed);
+  console.log(
+    "TEXT",
+    startBtnText,
+    "STAT",
+    sessionStat.users.find((user) => user.walletId === address)?.state
+  );
   return (
     <>
-      {showDepositButton ? (
+      {showDepositButton && !isConfirmed && userStatus !== "registered" ? (
         <Button onClick={handleUserDeposit}>
           {`Deposit 0.001 ${
             chainId === CHAIN_ID_SCROLL_SEPOLIA_DECIMAL ||
@@ -106,3 +119,5 @@ export default function StartDepositButton({
     </>
   );
 }
+
+export default React.memo(StartDepositButton);
