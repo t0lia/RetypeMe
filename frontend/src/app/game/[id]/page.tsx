@@ -11,8 +11,11 @@ import WsApiService, {
 import RestApiService from "@/app/api/rest-api-service";
 import handleCreateNewGameSession from "@/app/helpers/create-new-game-session";
 
-import { userDeposit } from "@/app/contract-utils/user-deposit";
-import { useAccount, useAccountEffect } from "wagmi";
+import {
+  useAccount,
+  useAccountEffect,
+  useWaitForTransactionReceipt,
+} from "wagmi";
 import { useModal, useSIWE } from "connectkit";
 
 import GamePageHeader from "@/app/components/game-page-header/gamePageHeader";
@@ -21,7 +24,12 @@ import ProgressBar from "@/app/components/progress-bar/progressBar";
 import ClaimWinningsButton from "@/app/components/claim-winnings-button/claimWinningsButton";
 import StartDepositButton from "@/app/components/start-deposit-button/startDepositButton";
 
+import { useWriteContract } from "wagmi";
+import { abi, contractAddress } from "../../contracts/game-contract";
+import { keccak256, toBytes } from "viem";
+
 import "./page.css";
+import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
 
 const GamePage = () => {
   const [textVisible, setTextVisible] = useState(false);
@@ -53,6 +61,12 @@ const GamePage = () => {
   const formattedText = gameText
     .split("")
     .map((char, index) => <span key={index}>{char}</span>);
+
+  const { writeContract, data: hash } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
 
   useAccountEffect({
     onConnect(data) {
@@ -196,7 +210,35 @@ const GamePage = () => {
     };
   }, [textIsBlurred, keyStrokeCount]);
 
-  async function handleStartGame() {
+  // async function handleStartGame() {
+  //   if (!address) {
+  //     setOpen(true);
+  //     return;
+  //   }
+  //   if (startBtnText === "New Game") {
+  //     const data = await handleCreateNewGameSession();
+  //     if (data) {
+  //       router.push(`/game/${data.id}`);
+  //     }
+  //   }
+  //   const sessionId = sessionStorage.getItem("sessionId");
+  //   const hashSessionId = keccak256(toBytes(sessionId as string));
+  //   console.log(
+  //     "VIEM:",
+  //     keccak256(toBytes(sessionId as string)),
+  //     "SessionID",
+  //     sessionId
+  //   );
+
+  //   writeContract({
+  //     abi,
+  //     address: contractAddress,
+  //     functionName: "joinGame",
+  //     args: [hashSessionId],
+  //   });
+  // }
+
+  const handleStartGame = useCallback(async () => {
     if (!address) {
       setOpen(true);
       return;
@@ -207,15 +249,47 @@ const GamePage = () => {
         router.push(`/game/${data.id}`);
       }
     }
-    setIsButtonDisabled(true);
-
-    wsApiServiceRef.current?.register(
-      localStorage.getItem("userId") ?? "",
-      ingameWalletId
+    const sessionId = sessionStorage.getItem("sessionId");
+    const hashSessionId = keccak256(toBytes(sessionId as string));
+    console.log(
+      "VIEM:",
+      keccak256(toBytes(sessionId as string)),
+      "SessionID",
+      sessionId
     );
 
-    setUserStats([]);
-  }
+    writeContract({
+      abi,
+      address: contractAddress,
+      functionName: "joinGame",
+      args: [hashSessionId],
+    });
+
+    // setIsButtonDisabled(true);
+
+    // wsApiServiceRef.current?.register(
+    //   localStorage.getItem("userId") ?? "",
+    //   ingameWalletId
+    // );
+
+    // setUserStats([]);
+  }, [address, startBtnText, router]);
+
+  const { refetch } = getUserGameBalance();
+  useEffect(() => {
+    if (isConfirmed) {
+      console.log("isConfirmed:", isConfirmed);
+      setTxSuccessful(true);
+
+      wsApiServiceRef.current?.register(
+        localStorage.getItem("userId") ?? "",
+        ingameWalletId
+      );
+      refetch();
+      setIsButtonDisabled(true);
+      setUserStats([]);
+    }
+  }, [isConfirmed]);
 
   function checkEqualHandler(e: React.ChangeEvent<HTMLInputElement>) {
     const enteredText = e.target.value;
@@ -225,6 +299,7 @@ const GamePage = () => {
     const newTextStyles = Array.from(
       { length: enteredTextLength },
       (_, i) => "black"
+      // (_, i) => "hsl(var(--primary))"
     );
 
     let hasMistake = false;
@@ -242,7 +317,8 @@ const GamePage = () => {
           });
         }
       } else if (enteredText[i] === initialGameText[i] && !hasMistake) {
-        newTextStyles[i] = "black";
+        // newTextStyles[i] = "black";
+        newTextStyles[i] = "hsl(var(--primary))";
       } else {
         newTextStyles[i] = "orangered";
       }
@@ -329,19 +405,24 @@ const GamePage = () => {
     }
   }
 
-  async function handleUserDeposit() {
-    const restApiService = new RestApiService();
-    const sessionChainId = (await restApiService.getGameSession(sessionStat.id))
-      .chain;
-    if (chainId !== sessionChainId) {
-      openSwitchNetworks();
-      return;
-    }
-    const response = await userDeposit();
-    if (response && response.status === 1) {
-      setTxSuccessful(true);
-    }
-  }
+  // async function handleUserDeposit() {
+  //   const restApiService = new RestApiService();
+  //   const sessionChainId = (await restApiService.getGameSession(sessionStat.id))
+  //     .chain;
+  //   if (chainId !== sessionChainId) {
+  //     openSwitchNetworks();
+  //     return;
+  //   }
+  //   writeContract({
+  //     address: contractAddress,
+  //     abi,
+  //     functionName: "deposit",
+  //     args: [],
+  //     value: parseEther("0.001"),
+  //   });
+  // }
+
+  // console.log("HASH", hash);
 
   return (
     <>
@@ -359,7 +440,7 @@ const GamePage = () => {
         <StartDepositButton
           txSuccessful={txSuccessful}
           sessionStat={sessionStat}
-          handleUserDeposit={handleUserDeposit}
+          // handleUserDeposit={handleUserDeposit}
           isButtonDisabled={isButtonDisabled}
           handleStartGame={handleStartGame}
           startBtnText={startBtnText}
@@ -377,11 +458,11 @@ const GamePage = () => {
                   style={{ color: textInputStyles[index] }}
                 >
                   {textInputStyles.length < 1 && index === 0 && (
-                    <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
+                    <div className="absolute w-0.5 h-6 -mb-1 bg-primary inline-block animate-cursor"></div>
                   )}
                   {char}
                   {textInputStyles.length === index + 1 && (
-                    <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
+                    <div className="absolute w-0.5 h-6 -mb-1 bg-primary inline-block animate-cursor"></div>
                   )}
                 </span>
               ))}

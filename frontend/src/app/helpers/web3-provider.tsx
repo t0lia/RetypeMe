@@ -18,8 +18,9 @@ export const Web3Provider = ({
   const wagmiConfig = createConfig(
     getDefaultConfig({
       ssr: true,
-      chains: [polygonAmoy, blastSepolia],
+      chains: [scrollSepolia, polygonAmoy, blastSepolia],
       transports: {
+        [scrollSepolia.id]: http("https://scroll-sepolia.public.blastapi.io"),
         [polygonAmoy.id]: http(
           `https://polygon-amoy.infura.io/v3/${process.env.NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY}`
         ),

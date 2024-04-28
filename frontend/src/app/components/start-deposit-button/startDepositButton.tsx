@@ -1,50 +1,104 @@
-import { useSIWE } from "connectkit";
-import { useAccount } from "wagmi";
+import React, { useEffect } from "react";
+import { useModal, useSIWE } from "connectkit";
+import {
+  useAccount,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 import { RaceStatistic } from "@/app/api/ws-api-service";
 import {
   CHAIN_ID_AMOY_DECIMAL,
   CHAIN_ID_BLAST_SEPOLIA_DECIMAL,
+  CHAIN_ID_SCROLL_SEPOLIA_DECIMAL,
 } from "@/app/constants/contract-constants";
 import { Button } from "@/app/components/ui/button";
+import isEnoughBalance from "@/app/contract-utils/is-enough-balance";
+import RestApiService from "@/app/api/rest-api-service";
+import { contractAddress, abi } from "@/app/contracts/game-contract";
+import { parseEther } from "viem";
+import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
 
 interface IStartDepositButton {
   txSuccessful: boolean;
   sessionStat: RaceStatistic;
   isButtonDisabled: boolean;
-  handleUserDeposit: () => void;
+  // handleUserDeposit: () => void;
   handleStartGame: () => void;
   startBtnText: string;
 }
 
-export default function StartDepositButton({
+function StartDepositButton({
   txSuccessful,
   sessionStat,
-  handleUserDeposit,
+  // handleUserDeposit,
   isButtonDisabled,
   handleStartGame,
   startBtnText,
 }: IStartDepositButton) {
   const { isSignedIn, signIn } = useSIWE();
-  const { isConnected, chainId } = useAccount();
+  const { isConnected, chainId, address } = useAccount();
+  const isEnough = isEnoughBalance();
+  const { openSwitchNetworks } = useModal();
+  const { writeContract, data: hash } = useWriteContract();
+
+  async function signInWithEthereum(): Promise<void> {
+    await signIn();
+  }
+
+  async function handleUserDeposit() {
+    const restApiService = new RestApiService();
+    const sessionChainId = (await restApiService.getGameSession(sessionStat.id))
+      .chain;
+
+    if (chainId !== sessionChainId) {
+      openSwitchNetworks();
+      return;
+    }
+    writeContract({
+      address: contractAddress,
+      abi,
+      functionName: "deposit",
+      args: [],
+      value: parseEther("0.001"),
+    });
+  }
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
+
+  const { refetch } = getUserGameBalance();
+  useEffect(() => {
+    if (isConfirmed) {
+      refetch();
+    }
+  }, [isConfirmed]);
 
   const showDepositButton =
     isSignedIn &&
     !txSuccessful &&
+    !isEnough &&
     sessionStat?.users?.every((driver) => driver.walletId) &&
     sessionStat?.users?.length > 1;
 
-  async function signInWithEthereum() {
-    await signIn();
-  }
+  const userStatus = sessionStat.users.find(
+    (user) => user.walletId === address
+  )?.state;
 
+  console.log("HASH", hash, "DONE", isConfirmed);
+  console.log(
+    "TEXT",
+    startBtnText,
+    "STAT",
+    sessionStat.users.find((user) => user.walletId === address)?.state
+  );
   return (
     <>
-      {showDepositButton ? (
-        <Button
-          // className="bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 "
-          onClick={handleUserDeposit}
-        >
+      {showDepositButton && !isConfirmed && userStatus !== "registered" ? (
+        <Button onClick={handleUserDeposit}>
           {`Deposit 0.001 ${
+            chainId === CHAIN_ID_SCROLL_SEPOLIA_DECIMAL ||
             chainId === CHAIN_ID_BLAST_SEPOLIA_DECIMAL
               ? "ETH"
               : chainId === CHAIN_ID_AMOY_DECIMAL
@@ -54,7 +108,6 @@ export default function StartDepositButton({
         </Button>
       ) : (
         <Button
-          // className={`bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 ${
           className={`${
             isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
           }`}
@@ -63,9 +116,6 @@ export default function StartDepositButton({
               signInWithEthereum();
             }
             if (isSignedIn) {
-              handleStartGame();
-            }
-            if (!isSignedIn && !isConnected) {
               handleStartGame();
             }
           }}
@@ -77,3 +127,5 @@ export default function StartDepositButton({
     </>
   );
 }
+
+export default React.memo(StartDepositButton);
