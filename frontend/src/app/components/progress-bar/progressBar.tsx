@@ -75,23 +75,29 @@ export default function ProgressBar({
               </span>
             </div>
           ))
-        : sessionStat?.users?.map((driver) => {
-            return (
-              <div
-                className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8"
-                key={driver.userId}
-              >
-                <span className="ml-1">
-                  {driver.userId === ingameUserId && ingameWalletId
-                    ? formatWallet(ingameWalletId)
-                    : formatWallet(
-                        driver.walletId ? driver.walletId : driver.userId
-                      )}{" "}
-                  {driver.userId === ingameUserId ? "(you)" : ""}
-                </span>
-              </div>
-            );
-          })}
+        : sessionStat?.users
+            ?.filter((driver, index, self) => {
+              return (
+                self.findIndex((d) => d.userId === driver.userId) === index
+              );
+            })
+            .map((driver) => {
+              return (
+                <div
+                  className="w-[700px] bg-gray-300 border-2 border-gray-500 rounded-sm h-8"
+                  key={driver.userId}
+                >
+                  <span className="ml-1">
+                    {driver.userId === ingameUserId && ingameWalletId
+                      ? formatWallet(ingameWalletId)
+                      : formatWallet(
+                          driver.walletId ? driver.walletId : driver.userId
+                        )}{" "}
+                    {driver.userId === ingameUserId ? "(you)" : ""}
+                  </span>
+                </div>
+              );
+            })}
     </div>
   );
 }

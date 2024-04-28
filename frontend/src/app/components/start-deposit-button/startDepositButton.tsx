@@ -1,5 +1,9 @@
-import { useSIWE } from "connectkit";
-import { useAccount } from "wagmi";
+import { useModal, useSIWE } from "connectkit";
+import {
+  useAccount,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 import { RaceStatistic } from "@/app/api/ws-api-service";
 import {
   CHAIN_ID_AMOY_DECIMAL,
@@ -8,12 +12,15 @@ import {
 } from "@/app/constants/contract-constants";
 import { Button } from "@/app/components/ui/button";
 import isEnoughBalance from "@/app/contract-utils/is-enough-balance";
+import RestApiService from "@/app/api/rest-api-service";
+import { contractAddress, abi } from "@/app/contracts/game-contract";
+import { parseEther } from "viem";
 
 interface IStartDepositButton {
   txSuccessful: boolean;
   sessionStat: RaceStatistic;
   isButtonDisabled: boolean;
-  handleUserDeposit: () => void;
+  // handleUserDeposit: () => void;
   handleStartGame: () => void;
   startBtnText: string;
 }
@@ -21,7 +28,7 @@ interface IStartDepositButton {
 export default function StartDepositButton({
   txSuccessful,
   sessionStat,
-  handleUserDeposit,
+  // handleUserDeposit,
   isButtonDisabled,
   handleStartGame,
   startBtnText,
@@ -29,6 +36,12 @@ export default function StartDepositButton({
   const { isSignedIn, signIn } = useSIWE();
   const { isConnected, chainId } = useAccount();
   const isEnough = isEnoughBalance();
+  const { openSwitchNetworks } = useModal();
+  const { writeContract, data: hash } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
 
   const showDepositButton =
     isSignedIn &&
@@ -41,6 +54,24 @@ export default function StartDepositButton({
     await signIn();
   }
 
+  async function handleUserDeposit() {
+    const restApiService = new RestApiService();
+    const sessionChainId = (await restApiService.getGameSession(sessionStat.id))
+      .chain;
+    if (chainId !== sessionChainId) {
+      openSwitchNetworks();
+      return;
+    }
+    writeContract({
+      address: contractAddress,
+      abi,
+      functionName: "deposit",
+      args: [],
+      value: parseEther("0.001"),
+    });
+  }
+
+  console.log("HASH", hash, "loading:", isConfirming, "DONE", isConfirmed);
   return (
     <>
       {showDepositButton ? (
@@ -64,9 +95,6 @@ export default function StartDepositButton({
               signInWithEthereum();
             }
             if (isSignedIn) {
-              handleStartGame();
-            }
-            if (!isSignedIn && !isConnected) {
               handleStartGame();
             }
           }}

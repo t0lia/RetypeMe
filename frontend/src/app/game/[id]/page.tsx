@@ -61,6 +61,12 @@ const GamePage = () => {
     .split("")
     .map((char, index) => <span key={index}>{char}</span>);
 
+  const { writeContract, data: hash } = useWriteContract();
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
+
   useAccountEffect({
     onConnect(data) {
       setIngameWalletId(data.address);
@@ -222,29 +228,37 @@ const GamePage = () => {
       "SessionID",
       sessionId
     );
-    async function join() {
-      writeContract({
-        abi,
-        address: contractAddress,
-        functionName: "joinGame",
-        args: [hashSessionId],
-      });
-    }
-    try {
-      await join();
-    } catch (error) {
-      console.log(error);
-    }
-    setIsButtonDisabled(true);
 
-    wsApiServiceRef.current?.register(
-      localStorage.getItem("userId") ?? "",
-      ingameWalletId
-    );
+    writeContract({
+      abi,
+      address: contractAddress,
+      functionName: "joinGame",
+      args: [hashSessionId],
+    });
 
-    setUserStats([]);
+    // setIsButtonDisabled(true);
+
+    // wsApiServiceRef.current?.register(
+    //   localStorage.getItem("userId") ?? "",
+    //   ingameWalletId
+    // );
+
+    // setUserStats([]);
   }
+  useEffect(() => {
+    if (isConfirmed) {
+      setIsButtonDisabled(true);
 
+      wsApiServiceRef.current?.register(
+        localStorage.getItem("userId") ?? "",
+        ingameWalletId
+      );
+
+      setUserStats([]);
+    }
+  }, [isConfirmed]);
+
+  console.log("CONFIRMED", isConfirmed);
   function checkEqualHandler(e: React.ChangeEvent<HTMLInputElement>) {
     const enteredText = e.target.value;
 
@@ -357,53 +371,24 @@ const GamePage = () => {
     }
   }
 
-  const { writeContract, data: hash } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash,
-    });
+  // async function handleUserDeposit() {
+  //   const restApiService = new RestApiService();
+  //   const sessionChainId = (await restApiService.getGameSession(sessionStat.id))
+  //     .chain;
+  //   if (chainId !== sessionChainId) {
+  //     openSwitchNetworks();
+  //     return;
+  //   }
+  //   writeContract({
+  //     address: contractAddress,
+  //     abi,
+  //     functionName: "deposit",
+  //     args: [],
+  //     value: parseEther("0.001"),
+  //   });
+  // }
 
-  async function handleUserDeposit() {
-    const restApiService = new RestApiService();
-    const sessionChainId = (await restApiService.getGameSession(sessionStat.id))
-      .chain;
-    if (chainId !== sessionChainId) {
-      openSwitchNetworks();
-      return;
-    }
-    async function deposit() {
-      writeContract({
-        abi,
-        address: contractAddress,
-        functionName: "deposit",
-        args: [],
-        value: parseEther("0.001"),
-      });
-    }
-
-    try {
-      await deposit();
-    } catch (error) {
-      console.log(error);
-    }
-    // async function userDeposit1() {
-    //   try {
-    //     writeContract({
-    //       abi,
-    //       address: contractAddress,
-    //       functionName: "deposit",
-    //       value: parseEther("0.001"),
-    //     });
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // }
-    // const response = await userDeposit1();
-    // console.log("response:", response);
-    // if (response && response.status === 1) {
-    //   setTxSuccessful(true);
-    // }
-  }
+  // console.log("HASH", hash);
 
   return (
     <>
@@ -421,7 +406,7 @@ const GamePage = () => {
         <StartDepositButton
           txSuccessful={txSuccessful}
           sessionStat={sessionStat}
-          handleUserDeposit={handleUserDeposit}
+          // handleUserDeposit={handleUserDeposit}
           isButtonDisabled={isButtonDisabled}
           handleStartGame={handleStartGame}
           startBtnText={startBtnText}
