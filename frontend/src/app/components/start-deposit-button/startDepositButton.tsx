@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useModal, useSIWE } from "connectkit";
 import {
   useAccount,
@@ -16,6 +16,7 @@ import isEnoughBalance from "@/app/contract-utils/is-enough-balance";
 import RestApiService from "@/app/api/rest-api-service";
 import { contractAddress, abi } from "@/app/contracts/game-contract";
 import { parseEther } from "viem";
+import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
 
 interface IStartDepositButton {
   txSuccessful: boolean;
@@ -66,6 +67,13 @@ function StartDepositButton({
     useWaitForTransactionReceipt({
       hash,
     });
+
+  const { refetch } = getUserGameBalance();
+  useEffect(() => {
+    if (isConfirmed) {
+      refetch();
+    }
+  }, [isConfirmed]);
 
   const showDepositButton =
     isSignedIn &&

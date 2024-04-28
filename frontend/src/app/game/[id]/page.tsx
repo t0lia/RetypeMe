@@ -29,6 +29,7 @@ import { abi, contractAddress } from "../../contracts/game-contract";
 import { keccak256, toBytes } from "viem";
 
 import "./page.css";
+import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
 
 const GamePage = () => {
   const [textVisible, setTextVisible] = useState(false);
@@ -274,6 +275,7 @@ const GamePage = () => {
     // setUserStats([]);
   }, [address, startBtnText, router]);
 
+  const { refetch } = getUserGameBalance();
   useEffect(() => {
     if (isConfirmed) {
       console.log("isConfirmed:", isConfirmed);
@@ -283,7 +285,7 @@ const GamePage = () => {
         localStorage.getItem("userId") ?? "",
         ingameWalletId
       );
-
+      refetch();
       setIsButtonDisabled(true);
       setUserStats([]);
     }
