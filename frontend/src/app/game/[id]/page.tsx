@@ -299,6 +299,7 @@ const GamePage = () => {
     const newTextStyles = Array.from(
       { length: enteredTextLength },
       (_, i) => "black"
+      // (_, i) => "hsl(var(--primary))"
     );
 
     let hasMistake = false;
@@ -316,7 +317,8 @@ const GamePage = () => {
           });
         }
       } else if (enteredText[i] === initialGameText[i] && !hasMistake) {
-        newTextStyles[i] = "black";
+        // newTextStyles[i] = "black";
+        newTextStyles[i] = "hsl(var(--primary))";
       } else {
         newTextStyles[i] = "orangered";
       }
@@ -456,11 +458,11 @@ const GamePage = () => {
                   style={{ color: textInputStyles[index] }}
                 >
                   {textInputStyles.length < 1 && index === 0 && (
-                    <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
+                    <div className="absolute w-0.5 h-6 -mb-1 bg-primary inline-block animate-cursor"></div>
                   )}
                   {char}
                   {textInputStyles.length === index + 1 && (
-                    <div className="absolute w-0.5 h-6 -mb-1 bg-black inline-block animate-cursor"></div>
+                    <div className="absolute w-0.5 h-6 -mb-1 bg-primary inline-block animate-cursor"></div>
                   )}
                 </span>
               ))}

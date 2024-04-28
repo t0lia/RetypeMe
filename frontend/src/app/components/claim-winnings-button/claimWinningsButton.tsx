@@ -2,13 +2,8 @@ import { useEffect, useState } from "react";
 
 import { DriverMetrics } from "@/app/api/ws-api-service";
 import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
-import {
-  useAccount,
-  useWaitForTransactionReceipt,
-  useWriteContract,
-} from "wagmi";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { contractAddress, abi } from "@/app/contracts/game-contract";
-import { parseEther } from "viem";
 
 interface IClaimWinningsButton {
   userStats: DriverMetrics[];
@@ -29,11 +24,6 @@ export default function ClaimWinningsButton({
   const { writeContract, data: hash } = useWriteContract();
 
   async function handleClaimWinnings() {
-    // const response = await withdrawWinnings();
-    // console.log(response);
-    // if (response && response.status === 1) {
-    //   setSuccessfulWithdrawlWinnings(true);
-    // }
     const bigIntBalance = BigInt(balance.replace(" ETH", ""));
     writeContract({
       address: contractAddress,
