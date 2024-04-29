@@ -1,6 +1,8 @@
 contract:
   private-key: ENC(4F38/ymuKeIPOMIEiKilkCT2n0PHroL+6cOvsqm3lQ851Ezv8WupESEdtrTkSw2p1USbnY/OO1Pdoq8w7PxzOnKenhDTYOCEBT+L06rQRkH6CWLncBBvuD3e9ualApPwQCFkvqlWsNUt09cG2ebdCw==)
-  apikey: ENC(maY86NPvqY1CtyH+l61AD0D5k7Y6Ao10VhuWuQMtAUJWPe3JrKC7HadriCSADShW7mOdwB809yZMMTLujZ6lgZQ4T9y+kaGo/R98ikQvZAE=)
+  apikey:
+    infura: ENC(maY86NPvqY1CtyH+l61AD0D5k7Y6Ao10VhuWuQMtAUJWPe3JrKC7HadriCSADShW7mOdwB809yZMMTLujZ6lgZQ4T9y+kaGo/R98ikQvZAE=)
+    chainstack: ENC(J3aGnZodB0VfQT/LaUxpxp1Zb3CF1u/iYO0+lsczIaAe9EhaOJg8fJbITVqrayFZ5pp+vGmmEOQZ4cbJ/3eyXRVjWJsSCdbzN1MdgF4Z/8o=)
   chains: 80002,168587773,534351
 management:
   endpoints:

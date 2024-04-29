@@ -4,7 +4,7 @@
 
 Contract address: [0x078869dd68d019900098b5b1006951ea7b3f01f2](https://sepolia.scrollscan.com/address/0x078869dd68d019900098b5b1006951ea7b3f01f2)
 
-Contract verification: https://sepolia.scrollscan.com/address/0x078869dd68d019900098b5b1006951ea7b3f01f2
+Contract verification: https://sepolia.scrollscan.com/address/0x078869dd68d019900098b5b1006951ea7b3f01f2#code
 
 ## Useful links
 

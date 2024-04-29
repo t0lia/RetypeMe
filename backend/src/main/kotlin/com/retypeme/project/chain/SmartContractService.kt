@@ -24,8 +24,13 @@ class SmartContractService(val chainService: ChainService, val sessionService: S
     @Value("\${contract.private-key}")
     private val privateKey: String? = null
 
-    @Value("\${contract.apikey}")
-    private val apikey: String? = null
+    @Value("\${contract.apikey.infura}")
+    private val apikeyInfura: String? = null
+
+    @Value("\${contract.apikey.chainstack}")
+    private val apikeyChainstack: String? = null
+
+
 
     private val logger = LoggerFactory.getLogger(SmartContractService::class.java)
 
@@ -42,9 +47,9 @@ class SmartContractService(val chainService: ChainService, val sessionService: S
     fun getNetworkUrl(chainId: Int): String {
         val chainConfig = chainService.getChainById(chainId)
         return if (chainConfig.infura) {
-            "${chainConfig.rpc}/$apikey"
+            "${chainConfig.rpc}/$apikeyInfura"
         } else {
-            chainConfig.rpc
+            "${chainConfig.rpc}/$apikeyChainstack"
         }
     }
 
