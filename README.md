@@ -1,6 +1,13 @@
 # RetypeMe - A platform to compete and show off how fast you can type on a keyboard
 
+## Verified contract on Scroll Sepolia:
+
+Contract address: [0x078869dd68d019900098b5b1006951ea7b3f01f2](https://sepolia.scrollscan.com/address/0x078869dd68d019900098b5b1006951ea7b3f01f2)
+
+Contract verification: https://sepolia.scrollscan.com/address/0x078869dd68d019900098b5b1006951ea7b3f01f2
+
 ## Useful links
+
 - Swagger UI: http://localhost:8080/api/swagger-ui/index.html#
 - Metrics: http://localhost:8080/api/actuator/prometheus
 - Health: http://localhost:8080/api/actuator/health
@@ -26,6 +33,7 @@
 3. You can see current Docker containers by running:
 
    - All containers
+
      ```bash
      docker-compose ps
      ```
