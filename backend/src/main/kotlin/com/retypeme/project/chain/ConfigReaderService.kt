@@ -13,7 +13,7 @@ class ConfigReaderService {
         val resource: String = """chains:
   - id: 534351
     name: scroll-sepolia
-    rpc: "https://sepolia-rpc.scroll.io"
+    rpc: "https://scroll-sepolia.core.chainstack.com"
     infura: false
     contract: "0x078869dd68d019900098b5b1006951ea7b3f01f2"
   - id: 80002
