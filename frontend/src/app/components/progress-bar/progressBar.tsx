@@ -87,7 +87,7 @@ export default function ProgressBar({
                   className="w-[700px] bg-secondary border-2 border-gray-500 rounded-sm h-8"
                   key={driver.userId}
                 >
-                  <span className="ml-1">
+                  <span className="ml-1 align-middle">
                     {driver.userId === ingameUserId && ingameWalletId
                       ? formatWallet(ingameWalletId)
                       : formatWallet(

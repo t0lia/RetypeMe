@@ -13,13 +13,15 @@ function GamePageHeader({
   isButtonDisabled,
   isGameEnded,
 }: IGamePageHeaderProps) {
-  const { balance } = getUserGameBalance();
+  const { humanReadableBalance } = getUserGameBalance();
   const { address } = useAccount();
 
   return (
     <header className="flex h-16 justify-end items-center p-4">
       {address && (
-        <div className="flex flex-row mr-3 gap-1">Game balance: {balance}</div>
+        <div className="flex flex-row mr-3 gap-1">
+          Game balance: {humanReadableBalance}
+        </div>
       )}
       <ModeToggle />
       <ConnectButton

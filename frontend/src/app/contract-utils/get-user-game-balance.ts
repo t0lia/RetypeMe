@@ -26,7 +26,7 @@ export default function getUserGameBalance() {
       refetch,
     };
 
-  const humanReadableBalance = formatEther(balance as bigint);
+  const humanReadableBalance = formatEther(balance as bigint) + "ETH";
 
-  return { balance: `${humanReadableBalance} ETH`, refetch };
+  return { balance, humanReadableBalance, refetch };
 }

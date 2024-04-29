@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 
+import {
+  useWaitForTransactionReceipt,
+  useWriteContract,
+  useWatchContractEvent,
+} from "wagmi";
 import { DriverMetrics } from "@/app/api/ws-api-service";
 import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
-import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { contractAddress, abi } from "@/app/contracts/game-contract";
+
+import { Button } from "../ui/button";
 
 interface IClaimWinningsButton {
   userStats: DriverMetrics[];
@@ -20,16 +26,32 @@ export default function ClaimWinningsButton({
 }: IClaimWinningsButton) {
   const [successfulWithdrawlWinnings, setSuccessfulWithdrawlWinnings] =
     useState(false);
-  const { balance, refetch } = getUserGameBalance();
+  const [gameEnded, setGameEnded] = useState(false);
+
+  const { balance, humanReadableBalance, refetch } = getUserGameBalance();
   const { writeContract, data: hash } = useWriteContract();
 
+  const winner = userStats.find((driver) => driver.place === 1);
+
+  useWatchContractEvent({
+    address: contractAddress,
+    abi,
+    eventName: "GameEnded",
+    onLogs(logs) {
+      if (winner && winner.userId === ingameUserId) {
+        console.log("New logs!", logs);
+        refetch();
+        setGameEnded(true);
+      }
+    },
+  });
+
   async function handleClaimWinnings() {
-    const bigIntBalance = BigInt(balance.replace(" ETH", ""));
     writeContract({
       address: contractAddress,
       abi,
       functionName: "withdraw",
-      args: [bigIntBalance],
+      args: [balance],
     });
   }
 
@@ -47,6 +69,7 @@ export default function ClaimWinningsButton({
   return (
     <>
       {ingameWalletId &&
+        gameEnded &&
         userStats.every((driver) => driver.walletId) &&
         txSuccessful &&
         userStats.map((driver) => {
@@ -56,13 +79,13 @@ export default function ClaimWinningsButton({
             !successfulWithdrawlWinnings
           ) {
             return (
-              <button
+              <Button
                 key={driver.userId}
-                className="mb-5 bg-gray-600 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded transform active:translate-y-0.5 animation-pulse"
+                className="transform active:translate-y-0.5 animation-pulse"
                 onClick={handleClaimWinnings}
               >
-                Claim winnings: ${balance} 🏆
-              </button>
+                Claim winnings: ${humanReadableBalance} 🏆
+              </Button>
             );
           }
         })}
