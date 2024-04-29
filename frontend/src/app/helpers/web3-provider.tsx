@@ -20,8 +20,12 @@ export const Web3Provider = ({
       ssr: true,
       chains: [scrollSepolia, polygonAmoy, blastSepolia],
       transports: {
-        // [scrollSepolia.id]: http("https://scroll-sepolia.public.blastapi.io"),
-        [scrollSepolia.id]: http("https://sepolia-rpc.scroll.io/"),
+        // [scrollSepolia.id]: http("https://sepolia-rpc.scroll.io/"), // OFFICIAL PUBLIC RPC
+        // [scrollSepolia.id]: http("https://scroll-sepolia.public.blastapi.io"), // PUBLIC RPC FROM BLASTAPI
+        [scrollSepolia.id]: http(
+          // `https://rpc.ankr.com/scroll_sepolia_testnet/${process.env.NEXT_PUBLIC_ENV_LOCAL_SCROLL_SEPOLIA_API_KEY_ANKR}` // FREE RPC FROM ANKR
+          `https://rpc.ankr.com/scroll_sepolia_testnet/${process.env.NEXT_PUBLIC_ENV_LOCAL_SCROLL_SEPOLIA_API_KEY_CHAINSTACK}` // FREE RPC FROM CHAINSTACK
+        ),
         [polygonAmoy.id]: http(
           `https://polygon-amoy.infura.io/v3/${process.env.NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY}`
         ),
