@@ -38,7 +38,7 @@ public class DeployContractApplication implements CommandLineRunner {
     public DeployContractApplication(
         @Value("${contract.private-key}") String privateKey,
         @Value("${contract.network}") String network,
-        @Value("${contract.apikey}") String apikey) {
+        @Value("${contract.apikey.infura}") String apikey) {
         this.privateKey = privateKey;
         this.network = network;
         this.apikey = apikey;
