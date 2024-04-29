@@ -1,28 +1,30 @@
 import React, { useEffect } from "react";
+
 import { useModal, useSIWE } from "connectkit";
 import {
   useAccount,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
+import { parseEther } from "viem";
+
 import { RaceStatistic } from "@/app/api/ws-api-service";
 import {
   CHAIN_ID_AMOY_DECIMAL,
   CHAIN_ID_BLAST_SEPOLIA_DECIMAL,
   CHAIN_ID_SCROLL_SEPOLIA_DECIMAL,
 } from "@/app/constants/contract-constants";
-import { Button } from "@/app/components/ui/button";
 import isEnoughBalance from "@/app/contract-utils/is-enough-balance";
 import RestApiService from "@/app/api/rest-api-service";
 import { contractAddress, abi } from "@/app/contracts/game-contract";
-import { parseEther } from "viem";
 import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
+
+import { Button } from "@/app/components/ui/button";
 
 interface IStartDepositButton {
   txSuccessful: boolean;
   sessionStat: RaceStatistic;
   isButtonDisabled: boolean;
-  // handleUserDeposit: () => void;
   handleStartGame: () => void;
   startBtnText: string;
 }
@@ -30,7 +32,6 @@ interface IStartDepositButton {
 function StartDepositButton({
   txSuccessful,
   sessionStat,
-  // handleUserDeposit,
   isButtonDisabled,
   handleStartGame,
   startBtnText,
@@ -86,13 +87,6 @@ function StartDepositButton({
     (user) => user.walletId === address
   )?.state;
 
-  console.log("HASH", hash, "DONE", isConfirmed);
-  console.log(
-    "TEXT",
-    startBtnText,
-    "STAT",
-    sessionStat.users.find((user) => user.walletId === address)?.state
-  );
   return (
     <>
       {showDepositButton && !isConfirmed && userStatus !== "registered" ? (

@@ -251,12 +251,6 @@ const GamePage = () => {
     }
     const sessionId = sessionStorage.getItem("sessionId");
     const hashSessionId = keccak256(toBytes(sessionId as string));
-    console.log(
-      "VIEM:",
-      keccak256(toBytes(sessionId as string)),
-      "SessionID",
-      sessionId
-    );
 
     writeContract({
       abi,
@@ -278,7 +272,6 @@ const GamePage = () => {
   const { refetch } = getUserGameBalance();
   useEffect(() => {
     if (isConfirmed) {
-      console.log("isConfirmed:", isConfirmed);
       setTxSuccessful(true);
 
       wsApiServiceRef.current?.register(
@@ -397,32 +390,13 @@ const GamePage = () => {
       inputRef.current &&
       initialGameText.startsWith(inputRef.current.value)
     ) {
-      console.log("works");
+      // console.log("works");
       e.preventDefault();
     }
     if (e.key === "Backspace" && gameText !== initialGameText) {
       setGameText(initialGameText);
     }
   }
-
-  // async function handleUserDeposit() {
-  //   const restApiService = new RestApiService();
-  //   const sessionChainId = (await restApiService.getGameSession(sessionStat.id))
-  //     .chain;
-  //   if (chainId !== sessionChainId) {
-  //     openSwitchNetworks();
-  //     return;
-  //   }
-  //   writeContract({
-  //     address: contractAddress,
-  //     abi,
-  //     functionName: "deposit",
-  //     args: [],
-  //     value: parseEther("0.001"),
-  //   });
-  // }
-
-  // console.log("HASH", hash);
 
   return (
     <>
