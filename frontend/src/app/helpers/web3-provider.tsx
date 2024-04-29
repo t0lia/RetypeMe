@@ -24,7 +24,7 @@ export const Web3Provider = ({
         // [scrollSepolia.id]: http("https://scroll-sepolia.public.blastapi.io"), // PUBLIC RPC FROM BLASTAPI
         [scrollSepolia.id]: http(
           // `https://rpc.ankr.com/scroll_sepolia_testnet/${process.env.NEXT_PUBLIC_ENV_LOCAL_SCROLL_SEPOLIA_API_KEY_ANKR}` // FREE RPC FROM ANKR
-          `https://rpc.ankr.com/scroll_sepolia_testnet/${process.env.NEXT_PUBLIC_ENV_LOCAL_SCROLL_SEPOLIA_API_KEY_CHAINSTACK}` // FREE RPC FROM CHAINSTACK
+          `https://scroll-sepolia.core.chainstack.com/${process.env.NEXT_PUBLIC_ENV_LOCAL_SCROLL_SEPOLIA_API_KEY_CHAINSTACK}` // FREE RPC FROM CHAINSTACK
         ),
         [polygonAmoy.id]: http(
           `https://polygon-amoy.infura.io/v3/${process.env.NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY}`
