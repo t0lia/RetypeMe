@@ -5,6 +5,11 @@ services:
     restart: always
     ports:
       - "8080:8080"
+#    build:
+#      dockerfile: backend/Dockerfile
+#      context: .
+#      args:
+#        REPOSITORY_TOKEN: ${REPOSITORY_TOKEN}
     environment:
       SPRING_PROFILES_ACTIVE: "dev"
       JASYPT_ENCRYPTOR_PASSWORD: ${JASYPT_ENCRYPTOR_PASSWORD}
@@ -14,5 +19,10 @@ services:
     restart: always
     ports:
       - "3001:3000"
+#    build:
+#      dockerfile: ./Dockerfile
+#      context: ./frontend
+#      args:
+#        NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY: ${NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY}
     depends_on:
       - api

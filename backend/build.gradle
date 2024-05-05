@@ -20,6 +20,10 @@ repositories {
     mavenCentral()
     maven {
         url = uri("https://maven.pkg.github.com/t0lia/RetypeMe")
+        credentials {
+            username = "t0lia"
+            password = System.getenv("REPOSITORY_TOKEN")
+        }
     }
 }
 
@@ -65,7 +69,6 @@ tasks.withType(KotlinCompile) {
 
 sourceSets {
     main.kotlin.srcDirs += "src/kotlin"
-    main.kotlin.srcDirs += "src/java"
     main.kotlin.srcDirs += "build/generated"
 }
 
