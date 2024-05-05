@@ -1,6 +1,5 @@
 package com.retypeme.project.chain
 
-import com.retypeme.project.chain.contract.GamingContract
 import com.retypeme.project.control.SessionService
 import com.retypeme.project.messaging.WinnerFinishedEvent
 import org.slf4j.LoggerFactory
@@ -16,6 +15,7 @@ import org.web3j.protocol.http.HttpService
 import org.web3j.protocol.infura.InfuraHttpService
 import org.web3j.tx.RawTransactionManager
 import org.web3j.tx.gas.DefaultGasProvider
+import xyz.retypeme.sc.GamingContract
 import java.math.BigInteger
 
 @Service

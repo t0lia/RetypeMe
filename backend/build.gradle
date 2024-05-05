@@ -18,6 +18,9 @@ java {
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://maven.pkg.github.com/t0lia/RetypeMe")
+    }
 }
 
 springBoot {
@@ -48,6 +51,7 @@ dependencies {
     implementation "org.web3j:abi:4.10.3"
     implementation "org.web3j:codegen:4.10.3"
     implementation "org.web3j:infura:4.2.0"
+    implementation "xyz.retypeme:sc:0.0.1"
     runtimeOnly "io.micrometer:micrometer-registry-prometheus"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
 }
