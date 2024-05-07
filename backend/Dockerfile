@@ -1,4 +1,8 @@
 FROM gradle:8.5.0-jdk21 AS GRADLE_TOOL_CHAIN
+
+ARG REPOSITORY_TOKEN
+ENV REPOSITORY_TOKEN ${REPOSITORY_TOKEN}
+
 COPY . /app/
 WORKDIR /app/backend
 RUN gradle clean build

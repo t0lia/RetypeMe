@@ -1,9 +1,10 @@
 package com.retypeme.project.chain
 
-import com.retypeme.project.chain.contract.GamingContract
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import xyz.retypeme.sc.GamingContract
+import java.io.IOException
 
 @RestController
 class ContractController(val chainService: ChainService) {
@@ -13,10 +14,14 @@ class ContractController(val chainService: ChainService) {
 
     @RequestMapping("/contract/abi")
     fun abi(): String {
-        return AbiProvider().getAbi(GamingContract::class.java);
+        val path = "/solidity/abi/" + GamingContract::class.java.canonicalName.replace(".", "/") + ".json"
+        try {
+            return GamingContract::class.java.getResourceAsStream(path)?.bufferedReader()?.readText()
+                ?: throw RuntimeException("Failed to read ABI from path: $path")
+        } catch (e: IOException) {
+            throw RuntimeException("Failed to read ABI from path: $path", e)
+        }
     }
-
-
 
     @RequestMapping("/contract/chain")
     fun chain(): List<ChainItemConfig> {

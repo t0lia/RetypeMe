@@ -57,6 +57,8 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: retypeme/retypeme-backend:${{ env.newTag }}, retypeme/retypeme-backend:latest
+          build-args: |
+            REPOSITORY_TOKEN=${{ secrets.REPOSITORY_TOKEN }}
 
       - name: Build and push Docker frontend image
         uses: docker/build-push-action@v5

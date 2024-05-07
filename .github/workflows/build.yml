@@ -21,6 +21,8 @@ jobs:
           file: ./backend/Dockerfile
           push: false
           tags: retypeme/retypeme-backend:latest
+          build-args: |
+            REPOSITORY_TOKEN=${{ secrets.REPOSITORY_TOKEN }}
 
       - name: Build Docker frontend image
         uses: docker/build-push-action@v5
@@ -29,3 +31,5 @@ jobs:
           file: ./frontend/Dockerfile
           push: false
           tags: retypeme/retypeme-frontend:latest
+          build-args: |
+            NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY=${{ secrets.NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY }}
