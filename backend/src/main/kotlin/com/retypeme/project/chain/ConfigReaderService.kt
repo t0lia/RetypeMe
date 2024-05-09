@@ -34,4 +34,22 @@ class ConfigReaderService {
         """.trimIndent()
         return objectMapper.readValue(resource, ChainConfig::class.java)
     }
+    fun readChainConfigShort(): ChainSmartConfig {
+        val objectMapper = ObjectMapper(YAMLFactory())
+        val resource: String = """chains:
+  - id: 534351
+    name: scroll-sepolia
+    rpc: "https://scroll-sepolia.core.chainstack.com"
+  - id: 80002
+    name: polygon-amoy
+    rpc: "https://polygon-amoy.infura.io/v3"
+  - id: 31337
+    name: etherium-sepolia
+    rpc: "https://sepolia.infura.io/v3"
+  - id: 168587773
+    name: blast-sepolia
+    rpc: "https://blast-sepolia.infura.io/v3"
+        """.trimIndent()
+        return objectMapper.readValue(resource, ChainSmartConfig::class.java)
+    }
 }

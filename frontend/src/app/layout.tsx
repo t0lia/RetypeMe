@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { Web3Provider } from "./helpers/web3-provider";
 import { ThemeProvider } from "./helpers/theme-provider";
 import "./globals.css";
+import App from "@/app/App";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,9 +36,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="max-w-[1440px] self-center w-full flex flex-col h-screen">
-            <Web3Provider walletConnectProjectId={walletConnectProjectId}>
-              {children}
-            </Web3Provider>
+            <App>
+              <Web3Provider walletConnectProjectId={walletConnectProjectId}>
+                {children}
+              </Web3Provider>
+            </App>
           </div>
         </ThemeProvider>
       </body>

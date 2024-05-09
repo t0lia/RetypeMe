@@ -23,6 +23,11 @@ class ContractController(val chainService: ChainService) {
         }
     }
 
+    @RequestMapping("/contract/config")
+    fun smartConfig(): SmartConfig {
+        return chainService.getSmartConfig()
+    }
+
     @RequestMapping("/contract/chain")
     fun chain(): List<ChainItemConfig> {
         println("chains: $chains")

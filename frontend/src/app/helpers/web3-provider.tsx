@@ -5,6 +5,7 @@ import { polygonAmoy, blastSepolia, scrollSepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig, SIWEProvider } from "connectkit";
 import { siweConfig } from "./siwe-config";
+import {useConfigStore} from "@/app/store/configStore";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,11 @@ export const Web3Provider = ({
   children: React.ReactNode;
   walletConnectProjectId: string;
 }) => {
+
+  const { config } = useConfigStore();
+  console.log("config >>")
+  console.log(config);
+  console.log("<< config")
   const wagmiConfig = createConfig(
     getDefaultConfig({
       ssr: true,
