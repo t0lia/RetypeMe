@@ -1,11 +1,16 @@
 "use client";
 
 import { WagmiProvider, createConfig, http } from "wagmi";
-import { polygonAmoy, blastSepolia, scrollSepolia } from "wagmi/chains";
+import {
+  polygonAmoy,
+  blastSepolia,
+  scrollSepolia,
+  opBNBTestnet,
+} from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig, SIWEProvider } from "connectkit";
 import { siweConfig } from "./siwe-config";
-import {useConfigStore} from "@/app/store/configStore";
+import { useConfigStore } from "@/app/store/configStore";
 
 const queryClient = new QueryClient();
 
@@ -16,16 +21,16 @@ export const Web3Provider = ({
   children: React.ReactNode;
   walletConnectProjectId: string;
 }) => {
-
   const { config } = useConfigStore();
-  console.log("config >>")
+  console.log("config >>");
   console.log(config);
-  console.log("<< config")
+  console.log("<< config");
   const wagmiConfig = createConfig(
     getDefaultConfig({
       ssr: true,
-      chains: [scrollSepolia, polygonAmoy, blastSepolia],
+      chains: [opBNBTestnet, blastSepolia, scrollSepolia, polygonAmoy],
       transports: {
+        [opBNBTestnet.id]: http("https://opbnb-testnet-rpc.publicnode.com"),
         // [scrollSepolia.id]: http("https://sepolia-rpc.scroll.io/"), // OFFICIAL PUBLIC RPC
         // [scrollSepolia.id]: http("https://scroll-sepolia.public.blastapi.io"), // PUBLIC RPC FROM BLASTAPI
         [scrollSepolia.id]: http(
