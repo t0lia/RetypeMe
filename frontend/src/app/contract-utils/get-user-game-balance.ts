@@ -1,9 +1,11 @@
-import { type BaseError, useReadContract, useAccount } from "wagmi";
-import { formatEther } from "viem";
-import { abi, contractAddress } from "../contracts/game-contract";
+import { useReadContract, useAccount } from "wagmi";
+import { formatEther, Address, BaseError } from "viem";
+import { abi, contractAddressesMap } from "../contracts/game-contract";
 
 export default function getUserGameBalance() {
-  const { address } = useAccount();
+  const { address, chain } = useAccount();
+  const contractAddress = contractAddressesMap[chain?.name as string];
+
   const {
     data: balance,
     error,
@@ -11,7 +13,7 @@ export default function getUserGameBalance() {
     refetch,
   } = useReadContract({
     abi: abi,
-    address: contractAddress,
+    address: contractAddress as Address,
     functionName: "getBalance",
     args: [address],
   });

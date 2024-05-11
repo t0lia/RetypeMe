@@ -22,13 +22,11 @@ export const Web3Provider = ({
   walletConnectProjectId: string;
 }) => {
   const { config } = useConfigStore();
-  console.log("config >>");
-  console.log(config);
-  console.log("<< config");
+  console.log("CONFIG:", config);
   const wagmiConfig = createConfig(
     getDefaultConfig({
       ssr: true,
-      chains: [opBNBTestnet, blastSepolia, scrollSepolia, polygonAmoy],
+      chains: [scrollSepolia, opBNBTestnet, blastSepolia, polygonAmoy],
       transports: {
         [opBNBTestnet.id]: http("https://opbnb-testnet-rpc.publicnode.com"),
         // [scrollSepolia.id]: http("https://sepolia-rpc.scroll.io/"), // OFFICIAL PUBLIC RPC

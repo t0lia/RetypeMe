@@ -1,4 +1,4 @@
-import create from 'zustand'
+import { create } from "zustand";
 
 interface ConfigState {
   config: Contract; // Define a more specific type based on your configuration
@@ -6,8 +6,8 @@ interface ConfigState {
 }
 
 export const useConfigStore = create<ConfigState>((set) => ({
-  config: {address: "", chains: [], abi: []},
-  setConfig: (config) => set({config})
+  config: { address: "", chains: [], abi: [] },
+  setConfig: (config) => set({ config }),
 }));
 
 interface Contract {

@@ -1,16 +1,18 @@
-import { BrowserProvider, Contract } from "ethers";
-
-let provider;
-// export const contractAddress = "0x078869dd68d019900098b5b1006951ea7b3f01f2";
-export const contractAddress = "0x1e3248d540B0c177047ec17592A42C5747F050a1";
+export const scrollSepoliaContractAddress =
+  "0x078869dd68d019900098b5b1006951ea7b3f01f2";
+export const opBnbContractAddress =
+  "0x1e3248d540B0c177047ec17592A42C5747F050a1";
 export const polygonAmoyContractAddress =
   "0x993558c22ebe07c96e8f85d1ef4318c513abff0d";
 export const blastSepoliaContractAddress =
   "0xb3c33b58de859a5e06aff62c9d66319c256218da";
 
-if (typeof window !== "undefined") {
-  provider = new BrowserProvider(window.ethereum);
-}
+export const contractAddressesMap: { [key: string]: string } = {
+  "Blast Sepolia": blastSepoliaContractAddress,
+  "Scroll Sepolia": scrollSepoliaContractAddress,
+  "Polygon Amoy": polygonAmoyContractAddress,
+  "opBNB Testnet": opBnbContractAddress,
+};
 
 export const abi = [
   { inputs: [], stateMutability: "nonpayable", type: "constructor" },
@@ -199,6 +201,3 @@ export const abi = [
     type: "function",
   },
 ];
-
-export { provider };
-export const gameContract = new Contract(contractAddress, abi, provider);
