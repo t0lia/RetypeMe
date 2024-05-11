@@ -46,7 +46,6 @@ class SmartContractService(val chainService: ChainService, val sessionService: S
 
     fun getNetworkUrl(chainId: Int): String {
         val chainConfig = chainService.getChainById(chainId)
-        return if (chainConfig.infura) {
         return if (chainConfig.rpc.contains("opbnb")) {
             chainConfig.rpc
         } else if (chainConfig.infura) {
