@@ -144,13 +144,6 @@ export default function Home() {
           >
             {buttonText}
           </Button>
-          <Button
-            onClick={() => {
-              console.log(config);
-            }}
-          >
-            config
-          </Button>
           <div className="self-start pl-40 h-8">{streamingText}</div>
         </div>
       </main>

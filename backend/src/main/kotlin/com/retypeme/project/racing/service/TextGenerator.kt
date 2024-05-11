@@ -6,11 +6,16 @@ import org.springframework.stereotype.Service
 class TextGenerator {
 
     val sentences = listOf(
-        "scroll pulls together research and engineering from blockchain protocols and zero knowledge cryptography",
-        "scroll is compatible with evm bytecode and designed to feel just like developing on ethereum",
-        "scroll is more accessible more responsive and can support more users at once than ethereum alone",
-        "scroll stores additional information of the contract bytecode in the account to facilitate the zkevm circuit to prove the state transition more efficiently",
-        "scroll gains its security and speed by executing transactions offchain and also producing a cryptographic proof that the transactions were executed correctly"
+        "the cat jumped over the moon and found a cozy spot to rest afterward",
+        "a dog ran through a hill chasing its tail and brought joy to everyone around",
+        "a bird sang a melodious tune in the morning creating a symphony with nature",
+        "a tree grew beside a book its branches providing a perfect reading nook",
+        "a river flowed under the horizon reflecting the colors of a breathtaking sunset",
+        "the cat is very fluffy and playful bringing laughter and warmth to the household",
+        "a loyal dog is a companion for life offering unconditional love and boundless joy",
+        "a colorful bird is a messenger of happiness spreading beauty with each cheerful chirp",
+        "a tall tree is a majestic presence sheltering creatures and standing the test of time",
+        "a serene river is a source of tranquility its gentle flow soothing the weary soul"
     )
 
     fun generateText(): String {

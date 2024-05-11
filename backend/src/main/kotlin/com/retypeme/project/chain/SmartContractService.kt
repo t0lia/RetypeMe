@@ -31,14 +31,14 @@ class SmartContractService(val chainService: ChainService, val sessionService: S
     private val apikeyChainstack: String? = null
 
 
-
     private val logger = LoggerFactory.getLogger(SmartContractService::class.java)
 
     fun getBalance(chainId: Int): BigInteger {
         val networkUrl = getNetworkUrl(chainId)
         val web3 = Web3j.build(InfuraHttpService(networkUrl))
 
-        val balance = web3.ethGetBalance(chainService.getChainById(chainId).contract, DefaultBlockParameterName.LATEST).send()
+        val balance =
+            web3.ethGetBalance(chainService.getChainById(chainId).contract, DefaultBlockParameterName.LATEST).send()
         logger.info("Balance: " + balance.balance)
 
         return balance.balance
@@ -47,6 +47,9 @@ class SmartContractService(val chainService: ChainService, val sessionService: S
     fun getNetworkUrl(chainId: Int): String {
         val chainConfig = chainService.getChainById(chainId)
         return if (chainConfig.infura) {
+        return if (chainConfig.rpc.contains("opbnb")) {
+            chainConfig.rpc
+        } else if (chainConfig.infura) {
             "${chainConfig.rpc}/$apikeyInfura"
         } else {
             "${chainConfig.rpc}/$apikeyChainstack"
@@ -63,14 +66,21 @@ class SmartContractService(val chainService: ChainService, val sessionService: S
         val session = sessionService.getSessionById(sessionId)
         val chainId: Int = session.chain ?: 0
         val httpService =
-            if (chainId == 534351) HttpService(getNetworkUrl(chainId)) else InfuraHttpService(getNetworkUrl(chainId))
+            if (chainId == 534351 || chainId == 5611)
+                HttpService(getNetworkUrl(chainId))
+            else InfuraHttpService(getNetworkUrl(chainId))
         val web3 = Web3j.build(httpService)
 
         val transactionManager =
             RawTransactionManager(web3, Credentials.create(privateKey), chainId.toLong());
 
         val contract: GamingContract =
-            GamingContract.load(chainService.getChainById(chainId).contract, web3, transactionManager, DefaultGasProvider())
+            GamingContract.load(
+                chainService.getChainById(chainId).contract,
+                web3,
+                transactionManager,
+                DefaultGasProvider()
+            )
 
         logger.info("call endGame with parameters: session-id: $sessionId, winner-id: $winnerId")
         try {
