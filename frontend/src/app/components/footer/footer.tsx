@@ -21,7 +21,7 @@ function Footer() {
     <footer className="pb-2 px-3">
       <div className="flex justify-between">
         <Link
-          className="fill-current text-gray-600 hover:text-black pl-2"
+          className="fill-current hover:fill-primary pl-2"
           href={TWITTER_LINK}
           target="_blank"
         >

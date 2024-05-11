@@ -2,7 +2,7 @@ export function BasicCar() {
   return (
     <>
       <svg
-        fill="#000000"
+        fill="hsl(var(--primary))"
         height="50px"
         width="50px"
         version="1.1"
