@@ -20,7 +20,7 @@ class ConfigReaderService {
     name: opbnb-testnet
     rpc: "https://opbnb-testnet-rpc.bnbchain.org"
     infura: false
-    contract: "0x83da278c942eefe7a77db1a28863e57a490625ed"
+    contract: "0x1e3248d540B0c177047ec17592A42C5747F050a1"
   - id: 80002
     name: polygon-amoy
     rpc: "https://polygon-amoy.infura.io/v3"
