@@ -1,7 +1,8 @@
 import { BrowserProvider, Contract } from "ethers";
 
 let provider;
-export const contractAddress = "0x078869dd68d019900098b5b1006951ea7b3f01f2";
+// export const contractAddress = "0x078869dd68d019900098b5b1006951ea7b3f01f2";
+export const contractAddress = "0x83da278c942eefe7a77db1a28863e57a490625ed";
 export const polygonAmoyContractAddress =
   "0x993558c22ebe07c96e8f85d1ef4318c513abff0d";
 export const blastSepoliaContractAddress =
