@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { useAccount, useBalance, useWriteContract } from "wagmi";
-import { formatUnits, parseEther } from "viem";
+import { Address, formatUnits, parseEther } from "viem";
 import { Button } from "@/app/components/ui/button";
 import {
   Popover,
@@ -15,18 +15,17 @@ import {
 } from "@/app/components/ui/tabs";
 import { Input } from "@/app/components/ui/input";
 import getUserGameBalance from "../contract-utils/get-user-game-balance";
-import { contractAddress, abi } from "@/app/contracts/game-contract";
-// import RestApiService from "../api/rest-api-service";
-// import { useModal } from "connectkit";
+import { abi, contractAddressesMap } from "@/app/contracts/game-contract";
 
 export default function UserAndGameBalancePopover() {
-  const { address, chainId } = useAccount();
+  const { address, chainId, chain } = useAccount();
   const { data, isError, isLoading } = useBalance({
     address: address,
     chainId: chainId,
   });
+
+  const contractAddress = contractAddressesMap[chain?.name as string];
   const { writeContract, data: hash, isSuccess } = useWriteContract();
-  // const { openSwitchNetworks } = useModal();
 
   const withdrawInputRef = useRef(null);
   const depositInputRef = useRef(null);
@@ -52,7 +51,7 @@ export default function UserAndGameBalancePopover() {
   async function handleUserWithdraw(inputValue: string) {
     if (withdrawInputRef.current?.value > 0) {
       writeContract({
-        address: contractAddress,
+        address: contractAddress as Address,
         abi,
         functionName: "withdraw",
         args: [parseEther(inputValue)],
@@ -62,16 +61,8 @@ export default function UserAndGameBalancePopover() {
 
   async function handleUserDeposit(depositInputValue: string) {
     if (depositInputRef.current?.value > 0) {
-      // const restApiService = new RestApiService();
-      // const sessionChainId = (await restApiService.getGameSession(sessionStat.id))
-      //   .chain;
-
-      // if (chainId !== sessionChainId) {
-      //   openSwitchNetworks();
-      //   return;
-      // }
       writeContract({
-        address: contractAddress,
+        address: contractAddress as Address,
         abi,
         functionName: "deposit",
         args: [],

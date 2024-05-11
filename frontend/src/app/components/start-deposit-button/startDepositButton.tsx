@@ -6,7 +6,7 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
-import { parseEther } from "viem";
+import { Address, parseEther } from "viem";
 
 import { RaceStatistic } from "@/app/api/ws-api-service";
 import {
@@ -16,7 +16,7 @@ import {
 } from "@/app/constants/contract-constants";
 import isEnoughBalance from "@/app/contract-utils/is-enough-balance";
 import RestApiService from "@/app/api/rest-api-service";
-import { contractAddress, abi } from "@/app/contracts/game-contract";
+import { contractAddressesMap, abi } from "@/app/contracts/game-contract";
 import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
 
 import { Button } from "@/app/components/ui/button";
@@ -37,10 +37,11 @@ function StartDepositButton({
   startBtnText,
 }: IStartDepositButton) {
   const { isSignedIn, signIn } = useSIWE();
-  const { isConnected, chainId, address } = useAccount();
+  const { isConnected, chainId, address, chain } = useAccount();
   const isEnough = isEnoughBalance();
   const { openSwitchNetworks } = useModal();
   const { writeContract, data: hash } = useWriteContract();
+  const contractAddress = contractAddressesMap[chain?.name as string];
 
   async function signInWithEthereum(): Promise<void> {
     await signIn();
@@ -56,7 +57,7 @@ function StartDepositButton({
       return;
     }
     writeContract({
-      address: contractAddress,
+      address: contractAddress as Address,
       abi,
       functionName: "deposit",
       args: [],

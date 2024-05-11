@@ -25,8 +25,8 @@ import ClaimWinningsButton from "@/app/components/claim-winnings-button/claimWin
 import StartDepositButton from "@/app/components/start-deposit-button/startDepositButton";
 
 import { useWriteContract } from "wagmi";
-import { abi, contractAddress } from "../../contracts/game-contract";
-import { keccak256, toBytes } from "viem";
+import { abi, contractAddressesMap } from "../../contracts/game-contract";
+import { Address, keccak256, toBytes } from "viem";
 
 import "./page.css";
 import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
@@ -54,7 +54,7 @@ const GamePage = () => {
 
   const { openSwitchNetworks, setOpen } = useModal();
   const { isSignedIn } = useSIWE();
-  const { address, chainId } = useAccount();
+  const { address, chainId, chain } = useAccount();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const wsApiServiceRef = useRef<WsApiService | null>(null);
@@ -67,6 +67,8 @@ const GamePage = () => {
     useWaitForTransactionReceipt({
       hash,
     });
+
+  const contractAddress = contractAddressesMap[chain?.name as string];
 
   useAccountEffect({
     onConnect(data) {
@@ -210,34 +212,6 @@ const GamePage = () => {
     };
   }, [textIsBlurred, keyStrokeCount]);
 
-  // async function handleStartGame() {
-  //   if (!address) {
-  //     setOpen(true);
-  //     return;
-  //   }
-  //   if (startBtnText === "New Game") {
-  //     const data = await handleCreateNewGameSession();
-  //     if (data) {
-  //       router.push(`/game/${data.id}`);
-  //     }
-  //   }
-  //   const sessionId = sessionStorage.getItem("sessionId");
-  //   const hashSessionId = keccak256(toBytes(sessionId as string));
-  //   console.log(
-  //     "VIEM:",
-  //     keccak256(toBytes(sessionId as string)),
-  //     "SessionID",
-  //     sessionId
-  //   );
-
-  //   writeContract({
-  //     abi,
-  //     address: contractAddress,
-  //     functionName: "joinGame",
-  //     args: [hashSessionId],
-  //   });
-  // }
-
   const handleStartGame = useCallback(async () => {
     if (!address) {
       setOpen(true);
@@ -254,7 +228,7 @@ const GamePage = () => {
 
     writeContract({
       abi,
-      address: contractAddress,
+      address: contractAddress as Address,
       functionName: "joinGame",
       args: [hashSessionId],
     });
@@ -292,7 +266,6 @@ const GamePage = () => {
     const newTextStyles = Array.from(
       { length: enteredTextLength },
       (_, i) => "black"
-      // (_, i) => "hsl(var(--primary))"
     );
 
     let hasMistake = false;
@@ -310,7 +283,6 @@ const GamePage = () => {
           });
         }
       } else if (enteredText[i] === initialGameText[i] && !hasMistake) {
-        // newTextStyles[i] = "black";
         newTextStyles[i] = "hsl(var(--primary))";
       } else {
         newTextStyles[i] = "orangered";

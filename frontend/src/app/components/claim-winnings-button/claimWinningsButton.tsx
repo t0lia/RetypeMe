@@ -4,12 +4,14 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
   useWatchContractEvent,
+  useAccount,
 } from "wagmi";
 import { DriverMetrics } from "@/app/api/ws-api-service";
 import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
-import { contractAddress, abi } from "@/app/contracts/game-contract";
+import { contractAddressesMap, abi } from "@/app/contracts/game-contract";
 
 import { Button } from "../ui/button";
+import { Address } from "viem";
 
 interface IClaimWinningsButton {
   userStats: DriverMetrics[];
@@ -31,10 +33,13 @@ export default function ClaimWinningsButton({
   const { balance, humanReadableBalance, refetch } = getUserGameBalance();
   const { writeContract, data: hash } = useWriteContract();
 
+  const { chain } = useAccount();
+  const contractAddress = contractAddressesMap[chain?.name as string];
+
   const winner = userStats.find((driver) => driver.place === 1);
 
   useWatchContractEvent({
-    address: contractAddress,
+    address: contractAddress as Address,
     abi,
     eventName: "GameEnded",
     onLogs(logs) {
@@ -48,7 +53,7 @@ export default function ClaimWinningsButton({
 
   async function handleClaimWinnings() {
     writeContract({
-      address: contractAddress,
+      address: contractAddress as Address,
       abi,
       functionName: "withdraw",
       args: [balance],
