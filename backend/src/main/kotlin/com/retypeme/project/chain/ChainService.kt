@@ -17,8 +17,8 @@ class ChainService(private val configReaderService: ConfigReaderService) {
         return configReaderService.readChainConfig().chains
     }
 
-    fun getChainsSmart(): List<ChainItem> {
-        return configReaderService.readChainConfigShort().chains.filter { chains.contains(it.id) }
+    fun getChainsSmart(): List<ChainItemConfig> {
+        return configReaderService.readChainConfig().chains.filter { chains.contains(it.id) }
     }
 
     fun getChainByName(name: String): ChainItemConfig {
@@ -30,7 +30,7 @@ class ChainService(private val configReaderService: ConfigReaderService) {
     }
 
     fun getSmartConfig(): SmartConfig {
-        return SmartConfig("0x993558c22ebe07c96e8f85d1ef4318c513abff0d", getChainsSmart(), abi())
+        return SmartConfig(getChainsSmart(), abi())
     }
 
     fun abi(): List<Any> {
