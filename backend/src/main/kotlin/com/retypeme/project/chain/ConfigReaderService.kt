@@ -16,6 +16,11 @@ class ConfigReaderService {
     rpc: "https://scroll-sepolia.core.chainstack.com"
     infura: false
     contract: "0x078869dd68d019900098b5b1006951ea7b3f01f2"
+  - id: 5611
+    name: opbnb-testnet
+    rpc: "https://opbnb-testnet-rpc.bnbchain.org"
+    infura: false
+    contract: "0x83da278c942eefe7a77db1a28863e57a490625ed"
   - id: 80002
     name: polygon-amoy
     rpc: "https://polygon-amoy.infura.io/v3"
