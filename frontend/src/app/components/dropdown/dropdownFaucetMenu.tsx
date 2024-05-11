@@ -54,6 +54,30 @@ function DropdownFaucetMenu() {
 
           <DropdownMenuGroup>
             <DropdownMenuLabel className="text-sm px-3 py-1">
+              BNB Faucet & Bridge
+            </DropdownMenuLabel>
+            <Link
+              href="https://www.bnbchain.org/en/testnet-faucet"
+              target="_blank"
+            >
+              <DropdownMenuItem className="flex items-center cursor-pointer pl-[25px]">
+                BNB Faucet
+              </DropdownMenuItem>
+            </Link>
+            <Link
+              href="https://opbnb-bridge.bnbchain.org/deposit"
+              target="_blank"
+            >
+              <DropdownMenuItem className="flex items-center cursor-pointer pl-[25px]">
+                Bridge to opBNB
+              </DropdownMenuItem>
+            </Link>
+          </DropdownMenuGroup>
+
+          <DropdownMenuSeparator className="h-[1px] bg-gray-300 m-[4px]" />
+
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className="text-sm px-3 py-1">
               Matic Polygon Amoy
             </DropdownMenuLabel>
             <Link
