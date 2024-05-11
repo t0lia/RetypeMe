@@ -1,5 +1,6 @@
 import { formatWallet } from "@/app/helpers";
 import { DriverMetrics, RaceStatistic } from "@/app/api/ws-api-service";
+import { BasicCar } from "@/app/public/cars/basic-car";
 
 interface IProgressBar {
   userStats: DriverMetrics[];
@@ -20,23 +21,23 @@ export default function ProgressBar({
       {userStats.length > 0
         ? userStats.map((driver) => (
             <div
+              className="w-[700px] bg-secondary border-2 border-gray-500 rounded-sm h-8 flex relative"
               key={driver.userId}
-              className="w-[700px] relative bg-secondary border-2 border-gray-500 rounded-sm h-8 overflow-hidden"
             >
+              <span className="ml-1 align-middle absolute -left-40">
+                {driver.userId === ingameUserId && ingameWalletId
+                  ? formatWallet(ingameWalletId)
+                  : formatWallet(
+                      driver.walletId ? driver.walletId : driver.userId
+                    )}{" "}
+                {driver.userId === ingameUserId ? "(you)" : ""}
+              </span>
               <div
                 key={driver.userId}
-                className="bg-primary h-full transition-all duration-200"
-                style={{ width: `${driver.progress}%` }}
+                className="h-full transition-all duration-200 flex overflow-hidden"
+                style={{ paddingLeft: `${driver.progress}%` }}
               >
-                <span className="ml-1 align-middle">
-                  {sessionStat.users.map((userSession) => {
-                    if (userSession.userId === driver.userId)
-                      return userSession.walletId
-                        ? formatWallet(userSession.walletId)
-                        : formatWallet(driver.userId);
-                  })}
-                  {driver.userId === ingameUserId && "(you)"}
-                </span>
+                <BasicCar />
               </div>
               <span className="absolute right-0 top-0 mr-1">
                 {driver.progress === 100 && driver.place === 1 && (
@@ -84,10 +85,10 @@ export default function ProgressBar({
             .map((driver) => {
               return (
                 <div
-                  className="w-[700px] bg-secondary border-2 border-gray-500 rounded-sm h-8"
+                  className="w-[700px] bg-secondary border-2 border-gray-500 rounded-sm h-8 flex relative"
                   key={driver.userId}
                 >
-                  <span className="ml-1 align-middle">
+                  <span className="ml-1 align-middle absolute -left-40">
                     {driver.userId === ingameUserId && ingameWalletId
                       ? formatWallet(ingameWalletId)
                       : formatWallet(
@@ -95,6 +96,7 @@ export default function ProgressBar({
                         )}{" "}
                     {driver.userId === ingameUserId ? "(you)" : ""}
                   </span>
+                  <BasicCar />
                 </div>
               );
             })}
