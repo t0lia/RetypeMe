@@ -27,7 +27,7 @@ export default function RootLayout({
       className={`${inter.className} h-screen`}
       suppressHydrationWarning
     >
-      <body className="flex flex-col h-full">
+      <body className="flex flex-col h-full overflow-hidden">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -35,9 +35,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="max-w-[1440px] self-center w-full flex flex-col h-screen">
-              <Web3Provider walletConnectProjectId={walletConnectProjectId}>
-                {children}
-              </Web3Provider>
+            <Web3Provider walletConnectProjectId={walletConnectProjectId}>
+              {children}
+            </Web3Provider>
           </div>
         </ThemeProvider>
       </body>

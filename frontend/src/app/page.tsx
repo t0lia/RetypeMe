@@ -18,6 +18,8 @@ import { Button } from "./components/ui/button";
 import ModeToggle from "./components/ui/toggle-theme-changer";
 import { useConfigStore } from "@/app/store/configStore";
 import Logo from "./components/logo/logo";
+import Image from "next/image";
+import keyboard from "./public/assets/keyboard.webp";
 
 export default function Home() {
   const [streamingText, setStreamingText] = useState("");
@@ -132,7 +134,7 @@ export default function Home() {
           </div>
         </div>
       </header>
-      <main className="h-screen flex flex-col">
+      <main className="h-screen flex flex-col relative">
         <div className="flex flex-col flex-1 justify-center items-center gap-20">
           <Button
             className="transform active:translate-y-0.5"
@@ -142,6 +144,13 @@ export default function Home() {
           </Button>
           <div className="self-start pl-40 h-8">{streamingText}</div>
         </div>
+        <Image
+          width={888}
+          height={600}
+          alt="keyboard"
+          src={keyboard}
+          className="absolute -bottom-48 -right-48 -z-10 "
+        />
       </main>
       <Footer />
     </div>
