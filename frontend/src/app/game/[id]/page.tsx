@@ -376,7 +376,7 @@ const GamePage = () => {
         isGameEnded={isGameEnded}
         isButtonDisabled={isButtonDisabled}
       />
-      <main className="flex flex-col items-center min-[h-screen-h-16] py-2">
+      <main className="flex flex-col items-center min-[h-screen-h-16] pt-6 pb-2">
         <ProgressBar
           ingameUserId={ingameUserId}
           sessionStat={sessionStat}
@@ -386,7 +386,6 @@ const GamePage = () => {
         <StartDepositButton
           txSuccessful={txSuccessful}
           sessionStat={sessionStat}
-          // handleUserDeposit={handleUserDeposit}
           isButtonDisabled={isButtonDisabled}
           handleStartGame={handleStartGame}
           startBtnText={startBtnText}
