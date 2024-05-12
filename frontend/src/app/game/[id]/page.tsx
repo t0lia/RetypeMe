@@ -25,13 +25,15 @@ import ClaimWinningsButton from "@/app/components/claim-winnings-button/claimWin
 import StartDepositButton from "@/app/components/start-deposit-button/startDepositButton";
 
 import { useWriteContract } from "wagmi";
-import { abi, contractAddressesMap } from "../../contracts/game-contract";
 import { Address, keccak256, toBytes } from "viem";
 
 import "./page.css";
 import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
+import {useConfigStore} from "@/app/store/configStore";
 
 const GamePage = () => {
+
+  const {contractConfig} = useConfigStore();
   const [textVisible, setTextVisible] = useState(false);
   const [startBtnText, setStartBtnText] = useState("Start game");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -68,7 +70,7 @@ const GamePage = () => {
       hash,
     });
 
-  const contractAddress = contractAddressesMap[chain?.name as string];
+  const contractAddress = contractConfig.contractAddressesMap[chain?.name as string];
 
   useAccountEffect({
     onConnect(data) {
@@ -227,7 +229,7 @@ const GamePage = () => {
     const hashSessionId = keccak256(toBytes(sessionId as string));
 
     writeContract({
-      abi,
+      abi: contractConfig.abi,
       address: contractAddress as Address,
       functionName: "joinGame",
       args: [hashSessionId],

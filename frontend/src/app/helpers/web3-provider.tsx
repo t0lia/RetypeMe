@@ -21,8 +21,8 @@ export const Web3Provider = ({
   children: React.ReactNode;
   walletConnectProjectId: string;
 }) => {
-  const { config } = useConfigStore();
-  console.log("CONFIG:", config);
+  const { contractConfig } = useConfigStore();
+  console.log("CONFIG:", contractConfig);
   const wagmiConfig = createConfig(
     getDefaultConfig({
       ssr: true,

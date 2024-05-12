@@ -1,10 +1,11 @@
 import { useReadContract, useAccount } from "wagmi";
 import { formatEther, Address, BaseError } from "viem";
-import { abi, contractAddressesMap } from "../contracts/game-contract";
+import {useConfigStore} from "@/app/store/configStore";
 
 export default function getUserGameBalance() {
   const { address, chain } = useAccount();
-  const contractAddress = contractAddressesMap[chain?.name as string];
+  const {contractConfig} = useConfigStore();
+  const contractAddress = contractConfig.contractAddressesMap[chain?.name as string];
 
   const {
     data: balance,
@@ -12,7 +13,7 @@ export default function getUserGameBalance() {
     isPending,
     refetch,
   } = useReadContract({
-    abi: abi,
+    abi: contractConfig.abi,
     address: contractAddress as Address,
     functionName: "getBalance",
     args: [address],

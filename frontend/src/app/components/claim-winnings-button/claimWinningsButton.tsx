@@ -8,10 +8,10 @@ import {
 } from "wagmi";
 import { DriverMetrics } from "@/app/api/ws-api-service";
 import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
-import { contractAddressesMap, abi } from "@/app/contracts/game-contract";
 
 import { Button } from "../ui/button";
 import { Address } from "viem";
+import {useConfigStore} from "@/app/store/configStore";
 
 interface IClaimWinningsButton {
   userStats: DriverMetrics[];
@@ -26,6 +26,9 @@ export default function ClaimWinningsButton({
   txSuccessful,
   ingameUserId,
 }: IClaimWinningsButton) {
+
+  const {contractConfig} = useConfigStore();
+
   const [successfulWithdrawlWinnings, setSuccessfulWithdrawlWinnings] =
     useState(false);
   const [gameEnded, setGameEnded] = useState(false);
@@ -34,13 +37,13 @@ export default function ClaimWinningsButton({
   const { writeContract, data: hash } = useWriteContract();
 
   const { chain } = useAccount();
-  const contractAddress = contractAddressesMap[chain?.name as string];
+  const contractAddress = contractConfig.contractAddressesMap[chain?.name as string];
 
   const winner = userStats.find((driver) => driver.place === 1);
 
   useWatchContractEvent({
     address: contractAddress as Address,
-    abi,
+    abi: contractConfig.abi,
     eventName: "GameEnded",
     onLogs(logs) {
       if (winner && winner.userId === ingameUserId) {
@@ -54,7 +57,7 @@ export default function ClaimWinningsButton({
   async function handleClaimWinnings() {
     writeContract({
       address: contractAddress as Address,
-      abi,
+      abi: contractConfig.abi,
       functionName: "withdraw",
       args: [balance],
     });
