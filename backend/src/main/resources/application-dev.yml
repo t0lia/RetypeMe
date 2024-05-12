@@ -3,7 +3,7 @@ contract:
   apikey:
     infura: ENC(gRoG5skQ/eF7QPrux4WSukPwhscEnEe6tmxJyv3D0cAps7WY3cClcJwqN6W5vReyAaN9HceM0U2mEOffCSnM4gNKT/lzVI1RodU72xOomfw=)
     chainstack: ENC(hmXkq30AsMWQVcRI/H1UVk6GIfnf2TvRy4V4YucYr0iJP7Uus4NI2+Y6YBcsyV1TjY8GZuF8uLNO5lGWME3gU/iyrLB0hhglfN9Rp/4yRlY=)
-  chains: 80002,168587773,534351
+  chains: 80002,168587773,534351,5611
 
 management:
   endpoints:

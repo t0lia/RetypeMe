@@ -6,15 +6,16 @@ export interface ConfigState {
 }
 
 export interface ContractConfig {
-  chains: Chain[];
+  chains: ChainConfig[];
   abi: any[];
   contractAddressesMap: { [key: string]: string }
 }
 
-export interface Chain {
+export interface ChainConfig {
   id: number;
   name: string;
   rpc: string;
+  contract: string;
 }
 
 const scrollSepoliaContractAddress =
@@ -221,8 +222,34 @@ const abi = [
   },
 ];
 
+const chains: ChainConfig[] = [
+  {
+    "id": 534351,
+    "name": "scroll-sepolia",
+    "rpc": `https://scroll-sepolia.core.chainstack.com/${process.env.NEXT_PUBLIC_ENV_LOCAL_SCROLL_SEPOLIA_API_KEY_CHAINSTACK}`,
+    "contract": "0x078869dd68d019900098b5b1006951ea7b3f01f2"
+  },
+  {
+    "id": 5611,
+    "name": "opbnb-testnet-rpc",
+    "rpc": "https://opbnb-testnet-rpc.publicnode.com",
+    "contract": "0x1e3248d540B0c177047ec17592A42C5747F050a1"
+  },
+  {
+    "id": 168587773,
+    "name": "blast-sepolia",
+    "rpc": `https://blast-sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY}`,
+    "contract": "0xb3c33b58de859a5e06aff62c9d66319c256218da"
+  },
+  {
+    "id": 80002,
+    "name": "polygon-amoy",
+    "rpc": `https://polygon-amoy.infura.io/v3/${process.env.NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY}`,
+    "contract": "0x993558c22ebe07c96e8f85d1ef4318c513abff0d"
+  }
+]
 
 export const useConfigStore = create<ConfigState>((set) => ({
-  contractConfig: {chains: [], abi, contractAddressesMap},
+  contractConfig: {chains, abi, contractAddressesMap},
   setConfig: (contractConfig) => set({contractConfig}),
 }));
