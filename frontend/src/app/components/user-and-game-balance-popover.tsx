@@ -23,15 +23,19 @@ export default function UserAndGameBalancePopover() {
     address: address,
     chainId: chainId,
   });
-
+  console.log("POPOVER RERENDER");
   const contractAddress = contractAddressesMap[chain?.name as string];
   const { writeContract, data: hash, isSuccess } = useWriteContract();
 
   const withdrawInputRef = useRef(null);
   const depositInputRef = useRef(null);
 
-  const { humanReadableBalance: userGameBalanceValue, refetch } =
-    getUserGameBalance();
+  const {
+    isPending,
+    error,
+    humanReadableBalance: userGameBalanceValue,
+    refetch,
+  } = getUserGameBalance();
 
   let shortUserBalanceValue;
   let userBalanceValue;
@@ -42,9 +46,11 @@ export default function UserAndGameBalancePopover() {
 
   const userBalances = (
     <div className="inline-flex items-center justify-center whitespace-nowrap bg-primary text-primary-foreground text-sm font-medium py-2 px-4 -mr-2 h-10">
-      {isLoading && "Fetching balance…"}
-      {isError && "Error fetching balance"}
-      {data && `${shortUserBalanceValue} | ${userGameBalanceValue}`}
+      {isLoading && "Loading…"}
+      {isError && "Error"}
+      {data && `${shortUserBalanceValue}`} | {isPending && isPending}
+      {error && error}
+      {userGameBalanceValue && userGameBalanceValue}
     </div>
   );
 
