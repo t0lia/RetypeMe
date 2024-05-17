@@ -1,11 +1,14 @@
 package com.retypeme.project.racing.service
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 
 @Service
-class TextGenerator {
-
-    val sentences = listOf(
+class TextGenerator @Autowired constructor(
+    private val env: Environment
+) {
+    private val sentences = listOf(
         "the cat jumped over the moon and found a cozy spot to rest afterward",
         "a dog ran through a hill chasing its tail and brought joy to everyone around",
         "a bird sang a melodious tune in the morning creating a symphony with nature",
@@ -19,6 +22,13 @@ class TextGenerator {
     )
 
     fun generateText(): String {
-        return sentences.random()
+        val randomSentence = sentences.random()
+
+        if ("dev" in env.activeProfiles) {
+            // Return only the first three words if 'dev' profile is active
+            return randomSentence.split(" ").take(3).joinToString(" ")
+        }
+
+        return randomSentence
     }
 }

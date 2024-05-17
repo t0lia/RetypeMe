@@ -31,7 +31,7 @@ export default function Home() {
   const { isSignedIn } = useSIWE();
   const { isConnected } = useAccount();
   const { setOpen, openSIWE } = useModal();
-  const { config } = useConfigStore();
+  const { contractConfig } = useConfigStore();
 
   useEffect(() => {
     if (isConnected && !isSignedIn) {
