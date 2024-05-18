@@ -1,18 +1,32 @@
 "use client";
 
 import { WagmiProvider, createConfig, http } from "wagmi";
-import {
-  polygonAmoy,
-  blastSepolia,
-  scrollSepolia,
-  opBNBTestnet,
-} from "wagmi/chains";
+
+import * as all from "viem/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig, SIWEProvider } from "connectkit";
 import { siweConfig } from "./siwe-config";
-import { useConfigStore } from "@/app/store/configStore";
+import {ChainConfig, useConfigStore} from "@/app/store/configStore";
+import {Chain} from "wagmi/chains";
+import {HttpTransport} from "viem";
 
 const queryClient = new QueryClient();
+const {...chains } = all;
+
+function getChain(chainId: number): Chain {
+  const chain = Object.values(chains).find(chain => chain.id === chainId);
+  if (!chain) {
+    throw new Error(`Chain with id ${chainId} not found`);
+  }
+  return chain;
+}
+
+const generateTransports = (chains: ChainConfig[]) => {
+  return chains.reduce((acc, chain) => {
+    acc[chain.id] = http(chain.rpc);
+    return acc;
+  }, {} as Record<number, HttpTransport>);
+};
 
 export const Web3Provider = ({
   children,
@@ -21,28 +35,17 @@ export const Web3Provider = ({
   children: React.ReactNode;
   walletConnectProjectId: string;
 }) => {
-  const { config } = useConfigStore();
-  console.log("CONFIG:", config);
+  const { contractConfig } = useConfigStore();
+  const supportedChains = contractConfig.chains.map((chain) => chain.id);
+
+  const chains = supportedChains.map((chainId) => getChain(chainId));
+
+  const transports = generateTransports(contractConfig.chains);
   const wagmiConfig = createConfig(
     getDefaultConfig({
       ssr: true,
-      chains: [scrollSepolia, opBNBTestnet, blastSepolia, polygonAmoy],
-      transports: {
-        [opBNBTestnet.id]: http("https://opbnb-testnet-rpc.publicnode.com"),
-        // [scrollSepolia.id]: http("https://sepolia-rpc.scroll.io/"), // OFFICIAL PUBLIC RPC
-        // [scrollSepolia.id]: http("https://scroll-sepolia.public.blastapi.io"), // PUBLIC RPC FROM BLASTAPI
-        [scrollSepolia.id]: http(
-          // `https://rpc.ankr.com/scroll_sepolia_testnet/${process.env.NEXT_PUBLIC_ENV_LOCAL_SCROLL_SEPOLIA_API_KEY_ANKR}` // FREE RPC FROM ANKR
-          `https://scroll-sepolia.core.chainstack.com/${process.env.NEXT_PUBLIC_ENV_LOCAL_SCROLL_SEPOLIA_API_KEY_CHAINSTACK}` // FREE RPC FROM CHAINSTACK
-        ),
-        [polygonAmoy.id]: http(
-          `https://polygon-amoy.infura.io/v3/${process.env.NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY}`
-        ),
-        [blastSepolia.id]: http(
-          `https://blast-sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY}`
-        ),
-      },
-
+      chains: [chains[0], ...chains.slice(1)],
+      transports,
       // Required API Keys
       walletConnectProjectId: walletConnectProjectId,
 

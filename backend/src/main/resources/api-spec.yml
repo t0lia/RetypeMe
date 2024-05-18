@@ -33,7 +33,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/SessionResponse'
   /sessions/{id}:
-    parameters: # Add parameters at the path level
+    parameters:
       - name: id
         in: path
         required: true
@@ -50,6 +50,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SessionResponse'
+        '404':
+          description: Not Found
+  /statistics/{userId}:
+    get:
+      summary: Get user statistics by ID
+      operationId: getUserStatistics
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStatistic'
         '404':
           description: Not Found
 
@@ -95,3 +115,43 @@ components:
       properties:
         userId:
           type: string
+    ProgressUpdateRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        progress:
+          type: integer
+    ProgressUpdateResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+        progress:
+          type: integer
+    UserStatistic:
+      type: object
+      properties:
+        userId:
+          type: string
+        completedDuels:
+          type: integer
+        averageSpeed:
+          type: number
+          format: double
+        bestSpeed:
+          type: number
+          format: double
+        wins:
+          type: integer
+        maxSpeed:
+          type: number
+          format: double
+        topSpeeds:
+          type: array
+          items:
+            type: number
+            format: double
+        firstDuelDate:
+          type: string
+          format: date

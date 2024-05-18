@@ -15,16 +15,18 @@ import {
 } from "@/app/components/ui/tabs";
 import { Input } from "@/app/components/ui/input";
 import getUserGameBalance from "../contract-utils/get-user-game-balance";
-import { abi, contractAddressesMap } from "@/app/contracts/game-contract";
+import { useConfigStore } from "@/app/store/configStore";
 
 export default function UserAndGameBalancePopover() {
+  const { contractConfig } = useConfigStore();
   const { address, chainId, chain } = useAccount();
   const { data, isError, isLoading } = useBalance({
     address: address,
     chainId: chainId,
   });
-  console.log("POPOVER RERENDER");
-  const contractAddress = contractAddressesMap[chain?.name as string];
+
+  const contractAddress =
+    contractConfig.contractAddressesMap[chain?.name as string];
   const { writeContract, data: hash, isSuccess } = useWriteContract();
 
   const withdrawInputRef = useRef(null);
@@ -58,7 +60,7 @@ export default function UserAndGameBalancePopover() {
     if (withdrawInputRef.current?.value > 0) {
       writeContract({
         address: contractAddress as Address,
-        abi,
+        abi: contractConfig.abi,
         functionName: "withdraw",
         args: [parseEther(inputValue)],
       });
@@ -69,7 +71,7 @@ export default function UserAndGameBalancePopover() {
     if (depositInputRef.current?.value > 0) {
       writeContract({
         address: contractAddress as Address,
-        abi,
+        abi: contractConfig.abi,
         functionName: "deposit",
         args: [],
         value: parseEther(depositInputValue),
