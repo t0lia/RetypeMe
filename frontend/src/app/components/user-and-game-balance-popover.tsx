@@ -16,6 +16,7 @@ import {
 import { Input } from "@/app/components/ui/input";
 import getUserGameBalance from "../contract-utils/get-user-game-balance";
 import { useConfigStore } from "@/app/store/configStore";
+import Spinner from "./ui/spinner";
 
 export default function UserAndGameBalancePopover() {
   const { contractConfig } = useConfigStore();
@@ -48,9 +49,9 @@ export default function UserAndGameBalancePopover() {
 
   const userBalances = (
     <div className="inline-flex items-center justify-center whitespace-nowrap bg-primary text-primary-foreground text-sm font-medium py-2 px-4 -mr-2 h-10">
-      {isLoading && "Loading…"}
+      {isLoading && <Spinner />}
       {isError && "Error"}
-      {data && `${shortUserBalanceValue}`} | {isPending && isPending}
+      {data && `${shortUserBalanceValue}`} | {isPending && <Spinner />}
       {error && error}
       {userGameBalanceValue && userGameBalanceValue}
     </div>
