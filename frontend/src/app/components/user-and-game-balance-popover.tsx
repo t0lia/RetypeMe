@@ -1,5 +1,10 @@
 import React, { useRef } from "react";
-import { useAccount, useBalance, useWriteContract } from "wagmi";
+import {
+  useAccount,
+  useBalance,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
 import { Address, formatUnits, parseEther } from "viem";
 import { Button } from "@/app/components/ui/button";
 import {
@@ -28,7 +33,12 @@ export default function UserAndGameBalancePopover() {
 
   const contractAddress =
     contractConfig.contractAddressesMap[chain?.name as string];
-  const { writeContract, data: hash, isSuccess } = useWriteContract();
+  const {
+    writeContract,
+    data: hash,
+    isSuccess,
+    isPending: isPendingTx,
+  } = useWriteContract();
 
   const withdrawInputRef = useRef(null);
   const depositInputRef = useRef(null);
@@ -80,6 +90,10 @@ export default function UserAndGameBalancePopover() {
     }
   }
 
+  const { isLoading: isConfirming } = useWaitForTransactionReceipt({
+    hash,
+  });
+
   return (
     <Popover>
       <PopoverTrigger>{userBalances}</PopoverTrigger>
@@ -118,6 +132,7 @@ export default function UserAndGameBalancePopover() {
                 handleUserDeposit(depositInputRef.current?.value);
               }}
             >
+              {(isConfirming || isPendingTx) && <Spinner />}
               Deposit
             </Button>
           </TabsContent>
@@ -147,6 +162,7 @@ export default function UserAndGameBalancePopover() {
               }}
               className="mt-2 self-stretch"
             >
+              {(isConfirming || isPendingTx) && <Spinner />}
               Withdraw
             </Button>
           </TabsContent>
