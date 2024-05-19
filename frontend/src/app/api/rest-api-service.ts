@@ -45,6 +45,19 @@ export default class RestApiService {
     return data as SessionsData;
   }
 
+  async getLeaderBoard(): Promise<any> {
+    const res = await fetch(`${this.apiUrl}/statistics/leaderboard`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: 'include',
+    });
+
+    const data = await res.json();
+    return data as SessionsData;
+  }
+
   async join<T>(id: string, userId: string | null): Promise<T> {
     const res = await fetch(`${this.apiUrl}/sessions/${id}/join`, {
       method: "POST",
