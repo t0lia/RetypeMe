@@ -19,8 +19,6 @@ export default function getUserGameBalance() {
     functionName: "getBalance",
     args: [address],
   });
-  console.log("READ BALANCE");
-  console.log("ISPENDING", isPending, "ERROR:", error);
 
   if (isPending) {
     return { isPending: "Loading...", refetch };

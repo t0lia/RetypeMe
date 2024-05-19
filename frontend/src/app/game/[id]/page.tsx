@@ -29,11 +29,10 @@ import { Address, keccak256, toBytes } from "viem";
 
 import "./page.css";
 import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
-import {useConfigStore} from "@/app/store/configStore";
+import { useConfigStore } from "@/app/store/configStore";
 
 const GamePage = () => {
-
-  const {contractConfig} = useConfigStore();
+  const { contractConfig } = useConfigStore();
   const [textVisible, setTextVisible] = useState(false);
   const [startBtnText, setStartBtnText] = useState("Start game");
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
@@ -70,7 +69,8 @@ const GamePage = () => {
       hash,
     });
 
-  const contractAddress = contractConfig.contractAddressesMap[chain?.name as string];
+  const contractAddress =
+    contractConfig.contractAddressesMap[chain?.name as string];
 
   useAccountEffect({
     onConnect(data) {
@@ -391,6 +391,7 @@ const GamePage = () => {
           isButtonDisabled={isButtonDisabled}
           handleStartGame={handleStartGame}
           startBtnText={startBtnText}
+          isConfirmingJoin={isConfirming}
         />
         {textVisible && (
           <div className="relative" onClick={handleClickFormattedText}>

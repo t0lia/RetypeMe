@@ -28,6 +28,7 @@ interface IStartDepositButton {
   isButtonDisabled: boolean;
   handleStartGame: () => void;
   startBtnText: string;
+  isConfirmingJoin: boolean;
 }
 
 function StartDepositButton({
@@ -36,6 +37,7 @@ function StartDepositButton({
   isButtonDisabled,
   handleStartGame,
   startBtnText,
+  isConfirmingJoin,
 }: IStartDepositButton) {
   const { contractConfig } = useConfigStore();
   const { isSignedIn, signIn } = useSIWE();
@@ -120,6 +122,7 @@ function StartDepositButton({
           }}
           disabled={isButtonDisabled}
         >
+          {isConfirmingJoin && <Spinner />}
           {!isSignedIn && isConnected ? "Please Sign In" : `${startBtnText}`}
         </Button>
       )}
