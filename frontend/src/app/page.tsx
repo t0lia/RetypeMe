@@ -81,27 +81,35 @@ export default function Home() {
     ];
 
     let charIndex = 0;
-    const intervalId = setInterval(() => {
-      setStreamingText(() => {
-        const newText = texts[textIndex];
+    let intervalId: NodeJS.Timeout;
 
-        if (charIndex < newText.length) {
-          return newText.substring(0, charIndex + 1);
-        } else {
-          clearInterval(intervalId);
+    const startInterval = () => {
+      intervalId = setInterval(() => {
+        setStreamingText((prevText) => {
+          const newText = texts[textIndex];
+          if (charIndex < newText.length) {
+            return newText.substring(0, charIndex + 1);
+          } else {
+            clearInterval(intervalId);
 
-          setTimeout(() => {
-            charIndex = 0;
-            setTextIndex((prevIndex) => (prevIndex + 1) % texts.length);
-          }, 1000);
+            setTimeout(() => {
+              charIndex = 0;
+              setTextIndex((prevIndex) => (prevIndex + 1) % texts.length);
+            }, 2000);
 
-          return newText;
-        }
-      });
-      charIndex++;
-    }, 50);
+            return newText;
+          }
+        });
+        charIndex++;
+      }, 60);
+    };
 
-    return () => clearInterval(intervalId);
+    const timeoutId = setTimeout(startInterval, 2000);
+
+    return () => {
+      clearInterval(intervalId);
+      clearTimeout(timeoutId);
+    };
   }, [textIndex]);
 
   if (isSmallScreen) {
@@ -142,7 +150,10 @@ export default function Home() {
           >
             {buttonText}
           </Button>
-          <div className="self-start pl-40 h-8">{streamingText}</div>
+          <div className="self-start pl-40 h-8 text-2xl w-[50%] tracking-tight leading-snug">
+            {streamingText}
+            <span className="animate-caret w-4 bg-current h-7 inline-block translate-y-1.5"></span>
+          </div>
         </div>
         <Image
           width={0}

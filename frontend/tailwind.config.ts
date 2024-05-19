@@ -28,10 +28,15 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        caret: {
+          "0%, 49%": { visibility: "hidden" },
+          "50%, 100%": { visibility: "visible" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        caret: "caret 1s steps(1) infinite",
       },
       colors: {
         border: "hsl(var(--border))",
