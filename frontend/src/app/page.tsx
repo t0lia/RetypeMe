@@ -1,10 +1,12 @@
 "use client";
 
+import "./page.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import handleCreateNewGameSession from "./helpers/create-new-game-session";
+import RestApiService from "@/app/api/rest-api-service";
 
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 import Footer from "./components/footer/footer";
@@ -26,6 +28,7 @@ export default function Home() {
   const [textIndex, setTextIndex] = useState(0);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [buttonText, setButtonText] = useState("Connect Wallet");
+  const [leaderboard, setLeaderBoard] = useState([]);
 
   const router = useRouter();
   const { isSignedIn } = useSIWE();
@@ -45,6 +48,7 @@ export default function Home() {
 
   useEffect(() => {
     setIsSmallScreen(window.innerWidth < 768);
+    new RestApiService().getLeaderBoard().then((data) => {setLeaderBoard(data)});
   });
 
   async function startGameSessionAfterSigIn() {
@@ -104,6 +108,21 @@ export default function Home() {
     return () => clearInterval(intervalId);
   }, [textIndex]);
 
+  const renderLeaderBoard = () => {
+    return (
+      <div className="leaderboard">
+        <h2 className="text-2xl font-bold mb-4">Leaderboard</h2>
+        <ul className="leaderboard-list">
+          {leaderboard.map((entry, index) => (
+            <li key={index} className="leaderboard-item">
+              <span>{entry.userId}</span> - <span>{entry.speed} WPM</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
   if (isSmallScreen) {
     return (
       <main className="flex flex-col h-screen justify-center bg-gradient-to-br from-indigo-600 to-violet-700 text-xl gap-32">
@@ -143,6 +162,7 @@ export default function Home() {
             {buttonText}
           </Button>
           <div className="self-start pl-40 h-8">{streamingText}</div>
+          {renderLeaderBoard()}
         </div>
         <Image
           width={0}

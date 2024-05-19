@@ -5,6 +5,7 @@ import com.retypeme.project.messaging.GameEventPublisher
 import com.retypeme.project.racing.model.Race
 import com.retypeme.project.racing.controller.DriverMetrics
 import com.retypeme.project.racing.service.DateTimeProvider
+import com.retypeme.project.statistic.service.LeaderboardService
 import com.retypeme.project.statistic.service.StatisticService
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
@@ -18,7 +19,8 @@ class RaceRepository(
     private val dateTimeProvider: DateTimeProvider,
     private val gameEventPublisher: GameEventPublisher,
     private val chainService: ChainService,
-    private val userStatisticService: StatisticService
+    private val userStatisticService: StatisticService,
+    private val leaderboardService: LeaderboardService
 ) {
 
     private val openRaces: MutableMap<String, Race> = mutableMapOf()
@@ -41,7 +43,13 @@ class RaceRepository(
         session.text = text
     }
 
-    fun updateRegistration(sessionId: String, chain: Int, userId: String, walletId: String, state: String): List<String> {
+    fun updateRegistration(
+        sessionId: String,
+        chain: Int,
+        userId: String,
+        walletId: String,
+        state: String
+    ): List<String> {
         val race: Race = getSessionById(sessionId)
         if (race.chain != chain) {
             val expected = chainService.getChainById(race.chain).name
@@ -72,7 +80,8 @@ class RaceRepository(
     fun join(sessionId: String, userId: String, walletId: String) {
         val session = getSessionById(sessionId)
         if (session.users.map { u -> u.userId }.contains(userId)) {
-            val user: DriverMetrics = session.users.find { u -> u.userId == userId } ?: throw Exception("User not found")
+            val user: DriverMetrics =
+                session.users.find { u -> u.userId == userId } ?: throw Exception("User not found")
             user.walletId = walletId
         } else {
             session.users.add(DriverMetrics(sessionId, userId, walletId, 0, 0, 0, JOINED))
@@ -101,7 +110,8 @@ class RaceRepository(
             val duelDate = session.startedAt?.toLocalDate()
             if (duelDate != null) {
                 val won = user.place == 1
-                userStatisticService.updateUserStatistic(user.walletId, user.cpm.toDouble(), won, duelDate)
+                userStatisticService.updateUserStatistic(user.walletId, user.cpm.toDouble(), won)
+                leaderboardService.addUserScore(user.walletId, user.cpm.toDouble())
             }
         }
     }

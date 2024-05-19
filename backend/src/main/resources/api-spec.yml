@@ -52,10 +52,27 @@ paths:
                 $ref: '#/components/schemas/SessionResponse'
         '404':
           description: Not Found
+  /statistics:
+    post:
+      summary: Create user statistic
+      operationId: createStatistic
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Statistic'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Statistic'
   /statistics/{userId}:
     get:
       summary: Get user statistics by ID
-      operationId: getUserStatistics
+      operationId: getStatistics
       parameters:
         - name: userId
           in: path
@@ -69,9 +86,46 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserStatistic'
+                $ref: '#/components/schemas/Statistic'
         '404':
           description: Not Found
+  /statistics/leaderboard:
+    get:
+      summary: Get leaderboard
+      operationId: getLeaderboard
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: Number of top users to retrieve (default is 10)
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LeaderboardItem'
+    post:
+      summary: Create leaderboard item
+      operationId: createLeaderboardItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeaderboardItem'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaderboardItem'
 
 components:
   schemas:
@@ -129,7 +183,7 @@ components:
           type: string
         progress:
           type: integer
-    UserStatistic:
+    Statistic:
       type: object
       properties:
         userId:
@@ -139,10 +193,10 @@ components:
         averageSpeed:
           type: number
           format: double
-        bestSpeed:
+        totalReward:
           type: number
           format: double
-        wins:
+        overallWinsInDuels:
           type: integer
         maxSpeed:
           type: number
@@ -152,6 +206,11 @@ components:
           items:
             type: number
             format: double
-        firstDuelDate:
+    LeaderboardItem:
+      type: object
+      properties:
+        userId:
           type: string
-          format: date
+        speed:
+          type: number
+          format: double
