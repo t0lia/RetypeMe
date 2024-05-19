@@ -5,6 +5,7 @@ import com.retypeme.project.messaging.GameEventPublisher
 import com.retypeme.project.racing.model.Race
 import com.retypeme.project.racing.controller.DriverMetrics
 import com.retypeme.project.racing.service.DateTimeProvider
+import com.retypeme.project.statistic.service.StatisticService
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.time.ZoneOffset.UTC
@@ -16,13 +17,13 @@ const val REGISTERED = "registered"
 class RaceRepository(
     private val dateTimeProvider: DateTimeProvider,
     private val gameEventPublisher: GameEventPublisher,
-    private val chainService: ChainService
-
+    private val chainService: ChainService,
+    private val userStatisticService: StatisticService
 ) {
 
     private val openRaces: MutableMap<String, Race> = mutableMapOf()
 
-    fun createRace(id: String, chain:Int, users: Int): Race {
+    fun createRace(id: String, chain: Int, users: Int): Race {
         val now: LocalDateTime = dateTimeProvider.now()
         val usersList: MutableList<DriverMetrics> = mutableListOf()
         val session = Race(id, chain, "", users, null, now, usersList)
@@ -34,19 +35,19 @@ class RaceRepository(
         return openRaces[id] ?: throw Exception("Session not found")
     }
 
-    fun start(sessionId: String, text: String): Unit {
+    fun start(sessionId: String, text: String) {
         val session: Race = getSessionById(sessionId)
         session.startedAt = dateTimeProvider.now()
         session.text = text
     }
 
-    fun updateRegistration(sessionId: String, chain:Int, userId: String, walletId: String, state: String): List<String> {
+    fun updateRegistration(sessionId: String, chain: Int, userId: String, walletId: String, state: String): List<String> {
         val race: Race = getSessionById(sessionId)
-        if(race.chain != chain) {
+        if (race.chain != chain) {
             val expected = chainService.getChainById(race.chain).name
             val actual = chainService.getChainById(chain).name
             val msg = "Session is created for different chain, expected: $expected, got: $actual"
-            return mutableListOf(msg);
+            return mutableListOf(msg)
         }
         if (state == JOINED) {
             join(sessionId, userId, walletId)
@@ -60,7 +61,7 @@ class RaceRepository(
     private fun register(race: Race, userId: String, sessionId: String) {
         val user: DriverMetrics =
             race.users.find { u -> u.userId == userId && u.state == JOINED } ?: throw Exception("User not found")
-        user.state = REGISTERED;
+        user.state = REGISTERED
         if (race.isReady()) {
             gameEventPublisher.publishRaceReady(
                 sessionId, race.users.map { u -> u.userId }.toMutableList()
@@ -68,9 +69,8 @@ class RaceRepository(
         }
     }
 
-    fun join(sessionId: String, userId: String, walletId: String): Unit {
+    fun join(sessionId: String, userId: String, walletId: String) {
         val session = getSessionById(sessionId)
-
         if (session.users.map { u -> u.userId }.contains(userId)) {
             val user: DriverMetrics = session.users.find { u -> u.userId == userId } ?: throw Exception("User not found")
             user.walletId = walletId
@@ -79,7 +79,7 @@ class RaceRepository(
         }
     }
 
-    fun updateProgress(sessionId: String, userId: String, progress: Int): Unit {
+    fun updateProgress(sessionId: String, userId: String, progress: Int) {
         val race: Race = getSessionById(sessionId)
         val user: DriverMetrics = race.users.find { u -> u.userId == userId } ?: throw Exception("User not found")
         if (user.progress < 100) {
@@ -96,6 +96,12 @@ class RaceRepository(
             user.place = session.users.count { u -> u.progress == 100 }
             if (user.place == 1 && user.walletId.isNotEmpty() && user.walletId.startsWith("0x")) {
                 gameEventPublisher.publishWinnerFinished(session.id, user.walletId)
+            }
+
+            val duelDate = session.startedAt?.toLocalDate()
+            if (duelDate != null) {
+                val won = user.place == 1
+                userStatisticService.updateUserStatistic(user.walletId, user.cpm.toDouble(), won, duelDate)
             }
         }
     }

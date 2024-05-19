@@ -16,10 +16,11 @@ import {
 } from "@/app/constants/contract-constants";
 import isEnoughBalance from "@/app/contract-utils/is-enough-balance";
 import RestApiService from "@/app/api/rest-api-service";
-import { contractAddressesMap, abi } from "@/app/contracts/game-contract";
 import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
 
 import { Button } from "@/app/components/ui/button";
+import { useConfigStore } from "@/app/store/configStore";
+import Spinner from "../ui/spinner";
 
 interface IStartDepositButton {
   txSuccessful: boolean;
@@ -27,6 +28,7 @@ interface IStartDepositButton {
   isButtonDisabled: boolean;
   handleStartGame: () => void;
   startBtnText: string;
+  isConfirmingJoin: boolean;
 }
 
 function StartDepositButton({
@@ -35,13 +37,16 @@ function StartDepositButton({
   isButtonDisabled,
   handleStartGame,
   startBtnText,
+  isConfirmingJoin,
 }: IStartDepositButton) {
+  const { contractConfig } = useConfigStore();
   const { isSignedIn, signIn } = useSIWE();
   const { isConnected, chainId, address, chain } = useAccount();
   const isEnough = isEnoughBalance();
   const { openSwitchNetworks } = useModal();
   const { writeContract, data: hash } = useWriteContract();
-  const contractAddress = contractAddressesMap[chain?.name as string];
+  const contractAddress =
+    contractConfig.contractAddressesMap[chain?.name as string];
 
   async function signInWithEthereum(): Promise<void> {
     await signIn();
@@ -58,7 +63,7 @@ function StartDepositButton({
     }
     writeContract({
       address: contractAddress as Address,
-      abi,
+      abi: contractConfig.abi,
       functionName: "deposit",
       args: [],
       value: parseEther("0.001"),
@@ -92,6 +97,7 @@ function StartDepositButton({
     <>
       {showDepositButton && !isConfirmed && userStatus !== "registered" ? (
         <Button onClick={handleUserDeposit}>
+          {isConfirming && <Spinner />}
           {`Deposit 0.001 ${
             chainId === CHAIN_ID_SCROLL_SEPOLIA_DECIMAL ||
             chainId === CHAIN_ID_BLAST_SEPOLIA_DECIMAL
@@ -116,6 +122,7 @@ function StartDepositButton({
           }}
           disabled={isButtonDisabled}
         >
+          {isConfirmingJoin && <Spinner />}
           {!isSignedIn && isConnected ? "Please Sign In" : `${startBtnText}`}
         </Button>
       )}

@@ -1,34 +1,36 @@
 import { useReadContract, useAccount } from "wagmi";
 import { formatEther, Address, BaseError } from "viem";
-import { abi, contractAddressesMap } from "../contracts/game-contract";
+import { useConfigStore } from "@/app/store/configStore";
 
 export default function getUserGameBalance() {
   const { address, chain } = useAccount();
-  const contractAddress = contractAddressesMap[chain?.name as string];
+  const { contractConfig } = useConfigStore();
+  const contractAddress =
+    contractConfig.contractAddressesMap[chain?.name as string];
 
   const {
     data: balance,
     error,
     isPending,
-    refetch,
+    queryKey,
   } = useReadContract({
-    abi: abi,
+    abi: contractConfig.abi,
     address: contractAddress as Address,
     functionName: "getBalance",
     args: [address],
   });
 
   if (isPending) {
-    return { balance: "Loading...", refetch };
+    return { isPending: "Loading...", queryKey };
   }
 
-  if (error)
+  if (error) {
     return {
-      balance: `Error: ${(error as BaseError).shortMessage || error.message}`,
-      refetch,
+      error: `Error: ${(error as BaseError).shortMessage || error.message}`,
+      queryKey,
     };
+  }
 
   const humanReadableBalance = formatEther(balance as bigint);
-
-  return { balance, humanReadableBalance, refetch };
+  return { humanReadableBalance, queryKey };
 }

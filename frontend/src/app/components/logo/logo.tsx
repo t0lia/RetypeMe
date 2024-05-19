@@ -12,9 +12,9 @@ export default function Logo(): ReactNode {
           We're on Testnet
         </div>
         <Image
-          className="scale-[0.8] group-active:translate-y-1"
-          width={50}
-          height={50}
+          className="scale-[0.8] group-active:translate-y-1 w-[50px] h-auto"
+          width="0"
+          height="0"
           alt="retypeme logo"
           src={logo}
         />

@@ -1,16 +1,17 @@
 import { useReadContract, useAccount } from "wagmi";
-import { abi, contractAddressesMap } from "../contracts/game-contract";
 import { Address, BaseError } from "viem";
+import {useConfigStore} from "@/app/store/configStore";
 
 export default function isEnoughBalance() {
+  const {contractConfig} = useConfigStore();
   const { address, chain } = useAccount();
-  const contractAddress = contractAddressesMap[chain?.name as string];
+  const contractAddress = contractConfig.contractAddressesMap[chain?.name as string];
   const {
     data: isEnough,
     error,
     isPending,
   } = useReadContract({
-    abi: abi,
+    abi: contractConfig.abi,
     address: contractAddress as Address,
     functionName: "isEnoughBalance",
     args: [address],
