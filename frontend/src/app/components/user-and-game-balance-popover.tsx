@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   useAccount,
   useBalance,
@@ -22,6 +22,7 @@ import { Input } from "@/app/components/ui/input";
 import getUserGameBalance from "../contract-utils/get-user-game-balance";
 import { useConfigStore } from "@/app/store/configStore";
 import Spinner from "./ui/spinner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function UserAndGameBalancePopover() {
   const { contractConfig } = useConfigStore();
@@ -30,13 +31,12 @@ export default function UserAndGameBalancePopover() {
     address: address,
     chainId: chainId,
   });
-
+  const queryClient = useQueryClient();
   const contractAddress =
     contractConfig.contractAddressesMap[chain?.name as string];
   const {
     writeContract,
     data: hash,
-    isSuccess,
     isPending: isPendingTx,
   } = useWriteContract();
 
@@ -47,7 +47,7 @@ export default function UserAndGameBalancePopover() {
     isPending,
     error,
     humanReadableBalance: userGameBalanceValue,
-    refetch,
+    queryKey,
   } = getUserGameBalance();
 
   let shortUserBalanceValue;
@@ -90,9 +90,14 @@ export default function UserAndGameBalancePopover() {
     }
   }
 
-  const { isLoading: isConfirming } = useWaitForTransactionReceipt({
-    hash,
-  });
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey });
+  }, [isConfirmed]);
 
   return (
     <Popover>

@@ -12,7 +12,7 @@ export default function getUserGameBalance() {
     data: balance,
     error,
     isPending,
-    refetch,
+    queryKey,
   } = useReadContract({
     abi: contractConfig.abi,
     address: contractAddress as Address,
@@ -21,16 +21,16 @@ export default function getUserGameBalance() {
   });
 
   if (isPending) {
-    return { isPending: "Loading...", refetch };
+    return { isPending: "Loading...", queryKey };
   }
 
   if (error) {
     return {
       error: `Error: ${(error as BaseError).shortMessage || error.message}`,
-      refetch,
+      queryKey,
     };
   }
 
   const humanReadableBalance = formatEther(balance as bigint);
-  return { humanReadableBalance, refetch };
+  return { humanReadableBalance, queryKey };
 }
