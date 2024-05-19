@@ -145,11 +145,12 @@ export default function Home() {
           <div className="self-start pl-40 h-8">{streamingText}</div>
         </div>
         <Image
-          width={888}
-          height={600}
+          width={0}
+          height={0}
           alt="keyboard"
           src={keyboard}
-          className="absolute -bottom-48 -right-48 -z-10 "
+          className="absolute -bottom-48 -right-48 -z-10 h-[600px] w-auto"
+          priority
         />
       </main>
       <Footer />

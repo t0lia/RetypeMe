@@ -24,7 +24,7 @@ function DropdownFaucetMenu() {
 
       <DropdownMenuPortal>
         <DropdownMenuContent sideOffset={5}>
-          <DropdownMenuGroup>
+          {/* <DropdownMenuGroup>
             <DropdownMenuLabel className="text-sm px-3 py-1">
               ETH Scroll Sepolia
             </DropdownMenuLabel>
@@ -50,9 +50,9 @@ function DropdownFaucetMenu() {
             </Link>
           </DropdownMenuGroup>
 
-          <DropdownMenuSeparator className="h-[1px] bg-gray-300 m-[4px]" />
+          <DropdownMenuSeparator className="h-[1px] bg-gray-300 m-[4px]" /> */}
 
-          <DropdownMenuGroup>
+          {/* <DropdownMenuGroup>
             <DropdownMenuLabel className="text-sm px-3 py-1">
               BNB Faucet & Bridge
             </DropdownMenuLabel>
@@ -74,9 +74,9 @@ function DropdownFaucetMenu() {
             </Link>
           </DropdownMenuGroup>
 
-          <DropdownMenuSeparator className="h-[1px] bg-gray-300 m-[4px]" />
+          <DropdownMenuSeparator className="h-[1px] bg-gray-300 m-[4px]" /> */}
 
-          <DropdownMenuGroup>
+          {/* <DropdownMenuGroup>
             <DropdownMenuLabel className="text-sm px-3 py-1">
               Matic Polygon Amoy
             </DropdownMenuLabel>
@@ -103,7 +103,7 @@ function DropdownFaucetMenu() {
             </Link>
           </DropdownMenuGroup>
 
-          <DropdownMenuSeparator className="h-[1px] bg-gray-300 m-[4px]" />
+          <DropdownMenuSeparator className="h-[1px] bg-gray-300 m-[4px]" /> */}
 
           <DropdownMenuGroup>
             <DropdownMenuLabel className="text-sm px-3 py-1">
