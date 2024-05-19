@@ -1,29 +1,31 @@
 package com.retypeme.project.statistic.repository
 
-import com.retypeme.project.statistic.model.Statistic
+import com.retypeme.project.statistic.model.StatisticModel
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Repository
-import java.util.concurrent.ConcurrentHashMap
 
 
 interface StatisticRepository {
-    fun save(userStatistic: Statistic)
-    fun findById(userId: String): Statistic?
-    fun findAll(): List<Statistic>
+    fun save(statistic: StatisticModel)
+    fun findById(userId: String): StatisticModel?
+    fun findAll(): List<StatisticModel>
 }
 
+
 @Repository
-class UserStatisticRepositoryImpl : StatisticRepository {
-    private val userStatistics = ConcurrentHashMap<String, Statistic>()
+class StatisticRepositoryImpl(private val redisTemplate: RedisTemplate<String, Any>) : StatisticRepository {
 
-    override fun save(userStatistic: Statistic) {
-        userStatistics[userStatistic.userId] = userStatistic
+    private val hashKey = "statistic"
+
+    override fun save(statistic: StatisticModel) {
+        redisTemplate.opsForHash<String, StatisticModel>().put(hashKey, statistic.userId!!, statistic)
     }
 
-    override fun findById(userId: String): Statistic? {
-        return userStatistics[userId]
+    override fun findById(userId: String): StatisticModel? {
+        return redisTemplate.opsForHash<String, StatisticModel>().get(hashKey, userId)
     }
 
-    override fun findAll(): List<Statistic> {
-        return userStatistics.values.toList()
+    override fun findAll(): List<StatisticModel> {
+        return redisTemplate.opsForHash<String, StatisticModel>().values(hashKey)
     }
 }

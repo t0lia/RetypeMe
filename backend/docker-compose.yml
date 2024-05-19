@@ -1,11 +1,14 @@
-version: '2'
+version: "2"
 services:
 
-  app:
-    image: t0lia/retypeme-backend:latest
+  redis:
+    image: redis:latest
     restart: always
     ports:
-      - "8080:8080"
-    build:
-      dockerfile: Dockerfile
-      context: .
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
+    driver: local

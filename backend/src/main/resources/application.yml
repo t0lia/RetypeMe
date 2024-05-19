@@ -30,3 +30,17 @@ contract:
   private-key: "0x"
   network-url: ""
   chain-id: 1
+spring:
+  cache:
+    type: redis
+  data:
+    redis:
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+      host: ${SPRING_REDIS_HOST}
+      port: ${SPRING_REDIS_PORT}
+      timeout: 2000
+      database: 0
