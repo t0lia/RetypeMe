@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import handleCreateNewGameSession from "./helpers/create-new-game-session";
-import RestApiService from "@/app/api/rest-api-service";
 
 import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 import Footer from "./components/footer/footer";
@@ -22,13 +21,13 @@ import { useConfigStore } from "@/app/store/configStore";
 import Logo from "./components/logo/logo";
 import Image from "next/image";
 import keyboard from "./public/assets/keyboard.webp";
+import { LeaderboardCard } from "./components/leaderboard-card/leaderboardCard";
 
 export default function Home() {
   const [streamingText, setStreamingText] = useState("");
   const [textIndex, setTextIndex] = useState(0);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [buttonText, setButtonText] = useState("Connect Wallet");
-  const [leaderboard, setLeaderBoard] = useState([]);
 
   const router = useRouter();
   const { isSignedIn } = useSIWE();
@@ -49,12 +48,6 @@ export default function Home() {
   useEffect(() => {
     setIsSmallScreen(window.innerWidth < 768);
   });
-
-  useEffect(() => {
-    new RestApiService().getLeaderBoard().then((data) => {
-      setLeaderBoard(data);
-    });
-  }, []);
 
   async function startGameSessionAfterSigIn() {
     if (isConnected && isSignedIn) {
@@ -121,21 +114,6 @@ export default function Home() {
     };
   }, [textIndex]);
 
-  const renderLeaderBoard = () => {
-    return (
-      <div className="leaderboard">
-        <h2 className="text-2xl font-bold mb-4">Leaderboard</h2>
-        <ul className="leaderboard-list">
-          {leaderboard.map((entry, index) => (
-            <li key={index} className="leaderboard-item">
-              <span>{entry.userId}</span> - <span>{entry.speed} WPM</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
-  };
-
   if (isSmallScreen) {
     return (
       <main className="flex flex-col h-screen justify-center bg-gradient-to-br from-indigo-600 to-violet-700 text-xl gap-32">
@@ -178,7 +156,9 @@ export default function Home() {
             {streamingText}
             <span className="animate-caret w-4 bg-current h-7 inline-block translate-y-1.5"></span>
           </div>
-          {renderLeaderBoard()}
+          <div className="w-1/4 absolute top-4 right-0">
+            <LeaderboardCard />
+          </div>
         </div>
         <Image
           width={0}
