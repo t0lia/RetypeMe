@@ -13,13 +13,13 @@ import {
   TableRow,
 } from "@/app/components/ui/table";
 
+interface LeaderboardEntry {
+  userId: string;
+  speed: number;
+}
+
 export function LeaderboardCard() {
-  const [leaderboard, setLeaderboard] = useState([
-    { userId: "0x0000000000000000", speed: "123" },
-    { userId: "0x00000000sadfsdf4324r", speed: "200" },
-    { userId: "0x0000000000000000", speed: "45" },
-    { userId: "0x000000fa4000asdf002", speed: "201" },
-  ]);
+  const [leaderboard , setLeaderboard] = useState<LeaderboardEntry[]>([ ]);
 
   useEffect(() => {
     new RestApiService().getLeaderBoard().then((data) => {

@@ -46,7 +46,7 @@ export default class RestApiService {
   }
 
   async getLeaderBoard(): Promise<any> {
-    const res = await fetch(`${this.apiUrl}/statistics/leaderboard`, {
+    const res = await fetch(`${this.apiUrl}/statistics/leaderboard?limit=10`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
