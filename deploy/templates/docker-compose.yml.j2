@@ -10,9 +10,25 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: "{{ profile }}"
       JASYPT_ENCRYPTOR_PASSWORD: "{{ jasypt_password }}"
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    depends_on:
+      - redis
 
   ui:
     image: retypeme/retypeme-frontend:{{ version }}
     restart: always
     ports:
       - "3001:3000"
+
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
+    driver: local
