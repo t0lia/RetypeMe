@@ -48,10 +48,13 @@ export default function Home() {
 
   useEffect(() => {
     setIsSmallScreen(window.innerWidth < 768);
+  });
+
+  useEffect(() => {
     new RestApiService().getLeaderBoard().then((data) => {
       setLeaderBoard(data);
     });
-  });
+  }, []);
 
   async function startGameSessionAfterSigIn() {
     if (isConnected && isSignedIn) {

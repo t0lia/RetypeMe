@@ -21,6 +21,7 @@ import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
 import { Button } from "@/app/components/ui/button";
 import { useConfigStore } from "@/app/store/configStore";
 import Spinner from "../ui/spinner";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface IStartDepositButton {
   txSuccessful: boolean;
@@ -47,6 +48,7 @@ function StartDepositButton({
   const { writeContract, data: hash } = useWriteContract();
   const contractAddress =
     contractConfig.contractAddressesMap[chain?.name as string];
+  const queryClient = useQueryClient();
 
   async function signInWithEthereum(): Promise<void> {
     await signIn();
@@ -75,10 +77,10 @@ function StartDepositButton({
       hash,
     });
 
-  const { refetch } = getUserGameBalance();
+  const { queryKey } = getUserGameBalance();
   useEffect(() => {
     if (isConfirmed) {
-      refetch();
+      queryClient.invalidateQueries({ queryKey });
     }
   }, [isConfirmed]);
 

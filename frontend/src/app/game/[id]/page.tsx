@@ -30,6 +30,7 @@ import { Address, keccak256, toBytes } from "viem";
 import "./page.css";
 import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
 import { useConfigStore } from "@/app/store/configStore";
+import { useQueryClient } from "@tanstack/react-query";
 
 const GamePage = () => {
   const { contractConfig } = useConfigStore();
@@ -62,13 +63,12 @@ const GamePage = () => {
   const formattedText = gameText
     .split("")
     .map((char, index) => <span key={index}>{char}</span>);
-
   const { writeContract, data: hash } = useWriteContract();
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
       hash,
     });
-
+  const queryClient = useQueryClient();
   const contractAddress =
     contractConfig.contractAddressesMap[chain?.name as string];
 
@@ -234,18 +234,9 @@ const GamePage = () => {
       functionName: "joinGame",
       args: [hashSessionId],
     });
-
-    // setIsButtonDisabled(true);
-
-    // wsApiServiceRef.current?.register(
-    //   localStorage.getItem("userId") ?? "",
-    //   ingameWalletId
-    // );
-
-    // setUserStats([]);
   }, [address, startBtnText, router]);
 
-  const { refetch } = getUserGameBalance();
+  const { queryKey } = getUserGameBalance();
   useEffect(() => {
     if (isConfirmed) {
       setTxSuccessful(true);
@@ -254,7 +245,7 @@ const GamePage = () => {
         localStorage.getItem("userId") ?? "",
         ingameWalletId
       );
-      refetch();
+      queryClient.invalidateQueries({ queryKey });
       setIsButtonDisabled(true);
       setUserStats([]);
     }
