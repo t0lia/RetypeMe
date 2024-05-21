@@ -152,11 +152,11 @@ export default function Home() {
           >
             {buttonText}
           </Button>
-          <div className="self-start pl-40 h-8 text-2xl w-[50%] tracking-tight leading-snug">
+          <div className="self-start pl-40 h-8 text-2xl w-[50%] tracking-tight leading-snug relative">
             {streamingText}
-            <span className="animate-caret w-4 bg-current h-7 inline-block translate-y-1.5"></span>
+            <span className="animate-caret w-4 bg-current h-7 inline-block translate-y-0.5 absolute"></span>
           </div>
-          <div className="w-1/4 absolute top-4 right-0">
+          <div className="w-1/5 absolute top-4 right-0">
             <LeaderboardCard />
           </div>
         </div>

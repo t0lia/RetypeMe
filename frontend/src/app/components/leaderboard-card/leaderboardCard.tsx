@@ -12,6 +12,7 @@ import {
   TableCell,
   TableRow,
 } from "@/app/components/ui/table";
+import { formatWallet } from "@/app/helpers";
 
 interface LeaderboardEntry {
   userId: string;
@@ -19,7 +20,9 @@ interface LeaderboardEntry {
 }
 
 export function LeaderboardCard() {
-  const [leaderboard , setLeaderboard] = useState<LeaderboardEntry[]>([ ]);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([
+    { userId: "0x470Eb274064Dc3134470DC0CB85f7c6E87164C18", speed: 434 },
+  ]);
 
   useEffect(() => {
     new RestApiService().getLeaderBoard().then((data) => {
@@ -44,11 +47,11 @@ export function LeaderboardCard() {
                 let place = index + 1;
                 return (
                   <TableRow key={index} className="flex justify-between">
-                    <TableCell className="p-1 w-10">{place}.</TableCell>
+                    <TableCell className="p-1 w-auto">{place}.</TableCell>
                     <TableCell className="p-1 flex-grow">
-                      {entry.userId}
+                      {formatWallet(entry.userId)}
                     </TableCell>
-                    <TableCell className="p-1 text-end w-20">
+                    <TableCell className="p-1 text-end w-auto">
                       {entry.speed} CPM
                     </TableCell>
                   </TableRow>
