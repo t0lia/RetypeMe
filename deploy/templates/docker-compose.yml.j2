@@ -10,8 +10,6 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: "{{ profile }}"
       JASYPT_ENCRYPTOR_PASSWORD: "{{ jasypt_password }}"
-      SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 6379
     depends_on:
       - redis
 

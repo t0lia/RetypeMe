@@ -36,3 +36,17 @@ contract:
 application:
   cors:
     allowed-origins: "http://localhost:3000,http://localhost:3001"
+spring:
+  cache:
+    type: redis
+  data:
+    redis:
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+      host: redis
+      port: 6379
+      timeout: 2000
+      database: 0
