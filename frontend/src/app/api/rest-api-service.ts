@@ -1,5 +1,6 @@
 import ApiDomainService from "@/app/api/api-domain-service";
 import {SessionsData} from "@/app/helpers/create-new-game-session";
+import {LeaderboardEntry, Statistic} from "@/app/components/leaderboard-card/leaderboardCard";
 
 type PlayersInput = {
   players: number;
@@ -45,7 +46,7 @@ export default class RestApiService {
     return data as SessionsData;
   }
 
-  async getLeaderBoard(): Promise<any> {
+  async getLeaderBoard(): Promise<LeaderboardEntry[]> {
     const res = await fetch(`${this.apiUrl}/statistics/leaderboard?limit=10`, {
       method: "GET",
       headers: {
@@ -55,7 +56,20 @@ export default class RestApiService {
     });
 
     const data = await res.json();
-    return data as SessionsData;
+    return data as LeaderboardEntry[];
+  }
+
+  async getStatistic(user:String): Promise<Statistic> {
+    const res = await fetch(`${this.apiUrl}/statistics/${user}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: 'include',
+    });
+
+    const data = await res.json();
+    return data as Statistic;
   }
 
   async join<T>(id: string, userId: string | null): Promise<T> {

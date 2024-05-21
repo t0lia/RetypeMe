@@ -14,21 +14,35 @@ import {
 } from "@/app/components/ui/table";
 import { formatWallet } from "@/app/helpers";
 
-interface LeaderboardEntry {
+export interface LeaderboardEntry {
   userId: string;
   speed: number;
 }
 
+export interface Statistic {
+  averageSpeed: number;
+  completedDuels: number;
+  maxSpeed: number;
+  overallWinsInDuels: number;
+  topSpeeds: number[];
+  totalReward: number;
+  userId: string;
+}
+
 export function LeaderboardCard() {
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([
-    { userId: "0x470Eb274064Dc3134470DC0CB85f7c6E87164C18", speed: 434 },
-  ]);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
 
   useEffect(() => {
-    new RestApiService().getLeaderBoard().then((data) => {
+    let api = new RestApiService();
+    api.getLeaderBoard().then((data: LeaderboardEntry[]) => {
       setLeaderboard(data);
       console.log(data);
     });
+    api.getStatistic("add user here")
+      .then((data) => {
+        console.log(data);
+      });
+
   }, []);
 
   return (
