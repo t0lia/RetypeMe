@@ -18,7 +18,7 @@ class StatisticRepositoryImpl(private val redisTemplate: RedisTemplate<String, A
     private val hashKey = "statistic"
 
     override fun save(statistic: StatisticModel) {
-        redisTemplate.opsForHash<String, StatisticModel>().put(hashKey, statistic.userId!!, statistic)
+        redisTemplate.opsForHash<String, StatisticModel>().put(hashKey, statistic.userId, statistic)
     }
 
     override fun findById(userId: String): StatisticModel? {
