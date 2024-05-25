@@ -109,8 +109,7 @@ class RaceRepository(
 
             val duelDate = session.startedAt?.toLocalDate()
             if (duelDate != null) {
-                val won = user.place == 1
-                userStatisticService.updateUserStatistic(user.walletId, user.cpm.toDouble(), won)
+                userStatisticService.updateUserStatistic(user.walletId, user.cpm.toDouble() )
                 leaderboardService.addUserScore(user.walletId, user.cpm.toDouble())
             }
         }
