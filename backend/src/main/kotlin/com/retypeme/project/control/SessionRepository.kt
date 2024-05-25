@@ -1,30 +1,35 @@
 package com.retypeme.project.control
 
-import org.springframework.stereotype.Component
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.redis.core.HashOperations
+import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.stereotype.Repository
 import kotlin.random.Random
 
-@Component
-class SessionRepository {
+@Repository
+class SessionRepository(@Autowired val redisTemplate: RedisTemplate<String, Session>) {
 
-    private val openSessions: MutableMap<String, Session> = mutableMapOf()
+    private val hashOps: HashOperations<String, String, Session> by lazy {
+        redisTemplate.opsForHash()
+    }
 
     fun createSession(players: Int, chain: Int): Session {
         var sessionId: String
         do {
             sessionId = Random.nextInt(11111, 99999).toString()
-        } while (openSessions.containsKey(sessionId))
+        } while (hashOps.hasKey("sessions", sessionId))
 
         val session = Session(sessionId, chain, players)
-        openSessions[sessionId] = session
+        hashOps.put("sessions", sessionId, session)
         return session
     }
 
     fun getAllSessions(): List<Session> {
-        return openSessions.values.map { it }
+        return hashOps.entries("sessions").values.toList()
     }
 
     fun getSessionById(id: String): Session {
-        return openSessions[id] ?: throw Exception("Session not found")
+        return hashOps.get("sessions", id) ?: throw Exception("Session not found")
     }
 
 }
