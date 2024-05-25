@@ -18,19 +18,18 @@ class RedisConfig {
     @Bean
     fun redisConnectionFactory(
         @Value("\${spring.data.redis.host}") host: String,
-        @Value("\${spring.data.redis.port}") port: Int
+        @Value("\${spring.data.redis.port}") port: Int,
     ): RedisConnectionFactory {
         return LettuceConnectionFactory(host, port)
     }
 
     @Bean
-    fun <T> redisTemplate(
-        redisConnectionFactory: RedisConnectionFactory,
-
-        ): RedisTemplate<String, T> {
+    fun <T> redisTemplate(redisConnectionFactory: RedisConnectionFactory): RedisTemplate<String, T> {
         val template = RedisTemplate<String, T>()
         template.connectionFactory = redisConnectionFactory
-        val om = ObjectMapper()
+
+        // Configure the ObjectMapper
+        val objectMapper = ObjectMapper()
             .registerModule(KotlinModule.Builder().build())
             .registerModule(JavaTimeModule())
             .activateDefaultTyping(
@@ -39,9 +38,12 @@ class RedisConfig {
                     .build(), ObjectMapper.DefaultTyping.EVERYTHING
             )
 
-        val serializer = GenericJackson2JsonRedisSerializer(om)
+        val serializer = GenericJackson2JsonRedisSerializer(objectMapper)
         template.keySerializer = serializer
         template.valueSerializer = serializer
+        template.hashKeySerializer = serializer
+        template.hashValueSerializer = serializer
+
         return template
     }
 }
