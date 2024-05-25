@@ -194,7 +194,8 @@ components:
           type: number
           format: double
         totalReward:
-          type: integer
+          type: string
+          format: biginteger
         overallWinsInDuels:
           type: integer
         maxSpeed:
