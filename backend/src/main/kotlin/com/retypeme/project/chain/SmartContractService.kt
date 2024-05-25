@@ -60,14 +60,14 @@ class SmartContractService(
             return
         }
         val updatedStatistic: StatisticModel = existingStatistic?.copy(
-            totalReward = existingStatistic.totalReward + event.winnings.toInt(),
+            totalReward = existingStatistic.totalReward.add(event.winnings),
             overallWinsInDuels = existingStatistic.overallWinsInDuels + 1
         )
             ?: StatisticModel(
                 userId = event.winner,
                 completedDuels = 0,
                 averageSpeed = 0.0,
-                totalReward = event.winnings.toInt(),
+                totalReward = event.winnings,
                 overallWinsInDuels = 1,
                 maxSpeed = 0.0,
                 topSpeeds = mutableListOf()
