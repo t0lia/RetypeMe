@@ -1,10 +1,10 @@
 package com.retypeme.project.chain
 
+import io.reactivex.disposables.Disposable
 import org.web3j.crypto.Credentials
 import org.web3j.protocol.Web3j
+import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.response.TransactionReceipt
-import org.web3j.protocol.http.HttpService
-import org.web3j.protocol.infura.InfuraHttpService
 import org.web3j.tx.RawTransactionManager
 import org.web3j.tx.gas.DefaultGasProvider
 import xyz.retypeme.sc.GamingContract
@@ -43,4 +43,8 @@ class SmartContractWrapper(address: String, privateKey: String, chain: Long, web
         contract.deposit(amount).send()
     }
 
+    fun subscribeToGameEndedEvents(callback: (GamingContract.GameEndedEventResponse) -> Unit): Disposable {
+        val flowable = contract.gameEndedEventFlowable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+        return flowable.subscribe(callback)
+    }
 }
