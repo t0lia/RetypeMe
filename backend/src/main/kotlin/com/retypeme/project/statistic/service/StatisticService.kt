@@ -3,6 +3,7 @@ package com.retypeme.project.statistic.service
 import com.retypeme.project.statistic.model.StatisticModel
 import com.retypeme.project.statistic.repository.StatisticRepository
 import org.springframework.stereotype.Service
+import java.math.BigInteger
 
 @Service
 class StatisticService(private val userStatisticRepository: StatisticRepository) {
@@ -14,7 +15,7 @@ class StatisticService(private val userStatisticRepository: StatisticRepository)
         val totalSpeed = (existingStatisticModel?.averageSpeed ?: 0.0) * (completedDuels - 1) + speed
         val averageSpeed = totalSpeed / completedDuels
         val maxSpeed = maxOf(existingStatisticModel?.maxSpeed ?: 0.0, speed)
-        val totalReward = existingStatisticModel?.totalReward ?: 0
+        val totalReward = existingStatisticModel?.totalReward ?: BigInteger.ZERO
         val overallWinsInDuels = existingStatisticModel?.overallWinsInDuels ?: 0
         val topSpeeds = existingStatisticModel?.let { getTopSpeeds(it, speed) } ?: mutableListOf()
 

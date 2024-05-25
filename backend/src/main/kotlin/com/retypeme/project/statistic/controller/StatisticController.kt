@@ -10,6 +10,7 @@ import com.retypeme.project.statistic.service.StatisticService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.math.BigInteger
 
 @RestController
 @RequestMapping("/statistics")
@@ -48,7 +49,7 @@ class StatisticController(
             userId = statistic.userId!!,
             completedDuels = statistic.completedDuels!!,
             averageSpeed = statistic.averageSpeed!!,
-            totalReward = statistic.totalReward!!,
+            totalReward = BigInteger(statistic.totalReward!!),
             overallWinsInDuels = statistic.overallWinsInDuels!!,
             maxSpeed = statistic.maxSpeed!!,
             topSpeeds = statistic.topSpeeds?.toMutableList() ?: mutableListOf()
@@ -60,7 +61,7 @@ class StatisticController(
             userId = statisticModel.userId,
             completedDuels = statisticModel.completedDuels,
             averageSpeed = statisticModel.averageSpeed,
-            totalReward = statisticModel.totalReward,
+            totalReward = statisticModel.totalReward.toString(),
             overallWinsInDuels = statisticModel.overallWinsInDuels,
             maxSpeed = statisticModel.maxSpeed,
             topSpeeds = statisticModel.topSpeeds
