@@ -38,11 +38,9 @@ export function LeaderboardCard() {
       setLeaderboard(data);
       console.log(data);
     });
-    api.getStatistic("add user here")
-      .then((data) => {
-        console.log(data);
-      });
-
+    api.getStatistic("add user here").then((data) => {
+      console.log(data);
+    });
   }, []);
 
   return (
@@ -61,11 +59,11 @@ export function LeaderboardCard() {
                 let place = index + 1;
                 return (
                   <TableRow key={index} className="flex justify-between">
-                    <TableCell className="p-1 w-auto">{place}.</TableCell>
+                    <TableCell className="p-1 w-6">{place}.</TableCell>
                     <TableCell className="p-1 flex-grow">
                       {formatWallet(entry.userId)}
                     </TableCell>
-                    <TableCell className="p-1 text-end w-auto">
+                    <TableCell className="p-1 text-end w-20">
                       {entry.speed} CPM
                     </TableCell>
                   </TableRow>
