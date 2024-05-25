@@ -7,21 +7,18 @@ import Link from "next/link";
 
 import handleCreateNewGameSession from "./helpers/create-new-game-session";
 
-import DropDownFaucetMenu from "./components/dropdown/dropdownFaucetMenu";
 import Footer from "./components/footer/footer";
-import ConnectButton from "./components/connect-button/connectButton";
 import { Twitter } from "./public/icons/twitter";
 
 import { TWITTER_LINK } from "./constants/links";
 import { useModal, useSIWE } from "connectkit";
 import { useAccount } from "wagmi";
 import { Button } from "./components/ui/button";
-import ModeToggle from "./components/ui/toggle-theme-changer";
 import { useConfigStore } from "@/app/store/configStore";
-import Logo from "./components/logo/logo";
 import Image from "next/image";
 import keyboard from "./public/assets/keyboard.webp";
 import { LeaderboardCard } from "./components/leaderboard-card/leaderboardCard";
+import GamePageHeader from "./components/game-page-header/gamePageHeader";
 
 export default function Home() {
   const [streamingText, setStreamingText] = useState("");
@@ -133,17 +130,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-screen">
-      <header>
-        <div className="flex justify-between h-16 items-center">
-          <Logo />
-
-          <div className="flex flex-row">
-            <ModeToggle />
-            <DropDownFaucetMenu />
-            <ConnectButton />
-          </div>
-        </div>
-      </header>
+      <GamePageHeader dropDownFaucetMenu={true} />
       <main className="h-screen flex flex-col relative">
         <div className="flex flex-col flex-1 justify-center items-center gap-20">
           <Button
@@ -156,7 +143,7 @@ export default function Home() {
             {streamingText}
             <span className="animate-caret w-4 bg-current h-7 inline-block translate-y-0.5 absolute"></span>
           </div>
-          <div className="w-1/5 absolute top-4 right-0">
+          <div className="absolute top-4 right-0">
             <LeaderboardCard />
           </div>
         </div>
