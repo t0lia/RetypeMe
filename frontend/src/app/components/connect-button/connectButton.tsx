@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { ConnectKitButton, useChains, useModal, useSIWE } from "connectkit";
 import { useAccount, useBalance } from "wagmi";
 import { Button } from "@/app/components/ui/button";
-import UserAndGameBalancePopover from "../user-and-game-balance-popover";
+import UserAndGameBalancePopover from "../user-and-game-balance-popover/userAndGameBalancePopover";
 
 interface ConnectButtonProps {
   isButtonDisabled?: boolean;
