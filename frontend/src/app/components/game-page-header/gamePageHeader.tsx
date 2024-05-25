@@ -57,7 +57,7 @@ function GamePageHeader({
               <DropdownMenuContent>
                 <DropdownMenuGroup>
                   <DropdownMenuLabel>My account</DropdownMenuLabel>
-                  <Link href={`/user/${address}`} target="_blank">
+                  <Link href={`/user/${address}`} target="_self">
                     <DropdownMenuItem className="cursor-pointer">
                       <User className="mr-2 h-4 w-4" />
                       <span>Profile</span>
