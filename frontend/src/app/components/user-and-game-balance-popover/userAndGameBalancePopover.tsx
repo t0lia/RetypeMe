@@ -19,9 +19,9 @@ import {
   TabsTrigger,
 } from "@/app/components/ui/tabs";
 import { Input } from "@/app/components/ui/input";
-import getUserGameBalance from "../contract-utils/get-user-game-balance";
+import getUserGameBalance from "../../contract-utils/get-user-game-balance";
 import { useConfigStore } from "@/app/store/configStore";
-import Spinner from "./ui/spinner";
+import Spinner from "../ui/spinner";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function UserAndGameBalancePopover() {

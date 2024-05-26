@@ -36,7 +36,7 @@ export default function Home() {
     if (isConnected && !isSignedIn) {
       setButtonText("Please Sign In");
     } else if (isConnected && isSignedIn) {
-      setButtonText("Try Duel Mode");
+      setButtonText("Start Duel Mode");
     } else {
       setButtonText("Connect Wallet");
     }
@@ -133,12 +133,19 @@ export default function Home() {
       <GamePageHeader dropDownFaucetMenu={true} />
       <main className="h-screen flex flex-col relative">
         <div className="flex flex-col flex-1 justify-center items-center gap-20">
-          <Button
-            className="transform active:translate-y-0.5"
-            onClick={handleTryDuelModeButton}
-          >
-            {buttonText}
-          </Button>
+          <div className="flex gap-4">
+            {isSignedIn && (
+              <Link href="/single">
+                <Button>Start Single Mode</Button>
+              </Link>
+            )}
+            <Button
+              className="transform active:translate-y-0.5"
+              onClick={handleTryDuelModeButton}
+            >
+              {buttonText}
+            </Button>
+          </div>
           <div className="self-start pl-40 h-8 text-2xl w-[50%] tracking-tight leading-snug relative">
             {streamingText}
             <span className="animate-caret w-4 bg-current h-7 inline-block translate-y-0.5 absolute"></span>
