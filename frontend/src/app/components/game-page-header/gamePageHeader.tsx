@@ -17,7 +17,7 @@ import {
 } from "@/app/components/ui/dropdown-menu";
 import { LogOut, User } from "lucide-react";
 import Link from "next/link";
-import { useAccount } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 
 interface IGamePageHeaderProps {
   isButtonDisabled?: boolean;
@@ -32,6 +32,7 @@ function GamePageHeader({
 }: IGamePageHeaderProps) {
   const { isSignedIn } = useSIWE();
   const { address } = useAccount();
+  const { disconnect } = useDisconnect();
   return (
     <header className="flex h-16 justify-between items-center">
       <Logo />
@@ -47,8 +48,8 @@ function GamePageHeader({
             <DropdownMenuTrigger>
               <Avatar className="ml-2">
                 <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
+                  src="https://github.com/retypeme.png"
+                  alt="user logo"
                 />
                 <AvatarFallback>RTM</AvatarFallback>
               </Avatar>
@@ -64,7 +65,10 @@ function GamePageHeader({
                     </DropdownMenuItem>
                   </Link>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer">
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() => disconnect()}
+                  >
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>
                   </DropdownMenuItem>
