@@ -5,10 +5,10 @@ import java.math.BigInteger
 
 data class StatisticModel(
     val userId: String,
-    val completedDuels: Int,
-    val averageSpeed: Double,
-    val totalReward: BigInteger,
-    val overallWinsInDuels: Int,
-    val maxSpeed: Double,
-    val topSpeeds: List<Double>
+    val completedDuels: Int = 0,
+    val averageSpeed: Double = 0.0,
+    val totalReward: BigInteger = BigInteger.ZERO,
+    val overallWinsInDuels: Int = 0,
+    val maxSpeed: Double = 0.0,
+    val topSpeeds: List<Double> = emptyList()
 ) : Serializable

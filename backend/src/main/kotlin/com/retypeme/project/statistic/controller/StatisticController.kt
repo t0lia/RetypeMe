@@ -8,6 +8,8 @@ import com.retypeme.project.statistic.model.StatisticModel
 import com.retypeme.project.statistic.service.LeaderboardService
 import com.retypeme.project.statistic.service.StatisticService
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.OK
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.math.BigInteger
@@ -20,10 +22,9 @@ class StatisticController(
 ) : StatisticsApi {
 
     @GetMapping("/{userId}")
-
     override fun getStatistics(@PathVariable userId: String): ResponseEntity<Statistic> {
-        val body = userStatisticService.getUserStatistic(userId)
-        return ResponseEntity(convertStatisticModel(body!!), HttpStatus.OK)
+        val result: StatisticModel = userStatisticService.getUserStatistic(userId) ?: StatisticModel(userId = userId)
+        return ResponseEntity(convertStatisticModel(result), OK)
     }
 
     @PostMapping
@@ -41,7 +42,7 @@ class StatisticController(
     @GetMapping("/leaderboard")
     override fun getLeaderboard(@RequestParam limit: Int): ResponseEntity<List<LeaderboardItem>> {
         val body = leaderboardService.getTopUsers(limit).map { convertLeaderboardItemModel(it) }
-        return ResponseEntity(body, HttpStatus.OK)
+        return ResponseEntity(body, OK)
     }
 
     fun convertStatistic(statistic: Statistic): StatisticModel {
