@@ -33,7 +33,6 @@ export default function UserProfile() {
   async function getUserStat() {
     let restApiService = new RestApiService();
     const data = await restApiService.getStatistic(address as string);
-    console.log(typeof data);
     setData(data);
   }
   useEffect(() => {
