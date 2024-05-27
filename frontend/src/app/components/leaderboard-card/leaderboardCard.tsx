@@ -64,7 +64,7 @@ export function LeaderboardCard() {
                     <TableCell className="p-1 flex-grow">
                       <Link
                         href={`https://opbnb-testnet.bscscan.com/address/${entry.userId}`}
-                        target="_blanc"
+                        target="_blank"
                       >
                         {formatWallet(entry.userId)}
                       </Link>
