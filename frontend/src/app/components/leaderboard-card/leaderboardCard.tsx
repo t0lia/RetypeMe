@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/app/components/ui/table";
 import { formatWallet } from "@/app/helpers";
+import Link from "next/link";
 
 export interface LeaderboardEntry {
   userId: string;
@@ -61,7 +62,12 @@ export function LeaderboardCard() {
                   <TableRow key={index} className="flex justify-between">
                     <TableCell className="p-1 w-6">{place}.</TableCell>
                     <TableCell className="p-1 flex-grow">
-                      {formatWallet(entry.userId)}
+                      <Link
+                        href={`https://opbnb-testnet.bscscan.com/address/${entry.userId}`}
+                        target="_blanc"
+                      >
+                        {formatWallet(entry.userId)}
+                      </Link>
                     </TableCell>
                     <TableCell className="p-1 text-end w-20">
                       {entry.speed} CPM
