@@ -37,10 +37,6 @@ export function LeaderboardCard() {
     let api = new RestApiService();
     api.getLeaderBoard().then((data: LeaderboardEntry[]) => {
       setLeaderboard(data);
-      console.log(data);
-    });
-    api.getStatistic("add user here").then((data) => {
-      console.log(data);
     });
   }, []);
 
@@ -59,7 +55,10 @@ export function LeaderboardCard() {
               .map((entry, index) => {
                 let place = index + 1;
                 return (
-                  <TableRow key={index} className="flex justify-between">
+                  <TableRow
+                    key={index}
+                    className="flex justify-between font-mono"
+                  >
                     <TableCell className="p-1 w-6">{place}.</TableCell>
                     <TableCell className="p-1 flex-grow">
                       <Link
