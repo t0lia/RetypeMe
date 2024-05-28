@@ -387,7 +387,7 @@ const GamePage = () => {
         {textVisible && (
           <div className="relative" onClick={handleClickFormattedText}>
             <div
-              className={`w-[1000px] mt-5 mb-5 filter text-gray-500 text-xl font-medium ${
+              className={`w-[1000px] mt-5 mb-5 filter text-gray-500 text-2xl font-medium font-mono ${
                 textIsBlurred ? "blur-[3px]" : ""
               }`}
             >
@@ -397,11 +397,11 @@ const GamePage = () => {
                   style={{ color: textInputStyles[index] }}
                 >
                   {textInputStyles.length < 1 && index === 0 && (
-                    <div className="absolute w-0.5 h-6 -mb-1 bg-primary inline-block animate-cursor"></div>
+                    <div className="absolute w-0.5 h-7 -mb-1 bg-primary inline-block animate-cursor"></div>
                   )}
                   {char}
                   {textInputStyles.length === index + 1 && (
-                    <div className="absolute w-0.5 h-6 -mb-1 bg-primary inline-block animate-cursor"></div>
+                    <div className="absolute w-0.5 h-7 -mb-1 bg-primary inline-block animate-cursor"></div>
                   )}
                 </span>
               ))}

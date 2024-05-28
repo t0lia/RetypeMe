@@ -6,12 +6,10 @@ import GamePageHeader from "@/app/components/game-page-header/gamePageHeader";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/app/components/ui/card";
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { Statistic } from "@/app/components/leaderboard-card/leaderboardCard";
@@ -28,18 +26,18 @@ export default function UserProfile() {
     userId: "",
   });
   const { address } = useAccount();
-  const pathname = usePathname();
+  // const pathname = usePathname();
 
   async function getUserStat() {
-    let restApiService = new RestApiService();
-    const data = await restApiService.getStatistic(address as string);
+    let api = new RestApiService();
+    const data = await api.getStatistic(address as string);
     setData(data);
   }
   useEffect(() => {
     if (address) {
       getUserStat();
     }
-  }, [pathname]);
+  }, []);
 
   return (
     <>
@@ -91,7 +89,7 @@ export default function UserProfile() {
                     {data.totalReward
                       ? formatUnits(BigInt(data?.totalReward), 10)
                       : "0"}{" "}
-                    ETH
+                    tBNB
                   </div>
                   <p className="text-xs text-muted-foreground">
                     +19% from last month
