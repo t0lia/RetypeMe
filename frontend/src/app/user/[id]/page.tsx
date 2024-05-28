@@ -87,7 +87,7 @@ export default function UserProfile() {
                 <CardContent>
                   <div className="text-2xl font-bold">
                     {data.totalReward
-                      ? formatUnits(BigInt(data?.totalReward), 10)
+                      ? formatUnits(BigInt(data?.totalReward), 18)
                       : "0"}{" "}
                     tBNB
                   </div>
