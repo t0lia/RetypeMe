@@ -13,7 +13,7 @@ class ConfigReaderService {
   - id: 5611
     name: opbnb-testnet-rpc
     rpc: "https://opbnb-testnet-rpc.bnbchain.org"
-    contract: "0x1e3248d540B0c177047ec17592A42C5747F050a1"
+    contract: "0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6"
    
 """.trimIndent()
 

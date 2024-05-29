@@ -2,9 +2,9 @@
 
 ## Verified contract on opBNB:
 
-Contract address: [0x1e3248d540b0c177047ec17592a42c5747f050a1](https://opbnb-testnet.bscscan.com/address/0x1e3248d540b0c177047ec17592a42c5747f050a1)
+Contract address: [0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6](https://opbnb-testnet.bscscan.com/address/0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6)
 
-Contract verification: https://opbnb-testnet.bscscan.com/address/0x1e3248d540b0c177047ec17592a42c5747f050a1#code
+Contract verification: https://opbnb-testnet.bscscan.com/address/0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6#code
 
 ## Useful links
 
