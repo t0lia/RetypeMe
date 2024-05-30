@@ -13,6 +13,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: "dev"
       JASYPT_ENCRYPTOR_PASSWORD: ${JASYPT_ENCRYPTOR_PASSWORD}
+      SPRING_DATA_REDIS_PASSWORD: secret
     depends_on:
       - redis
 
@@ -32,6 +33,7 @@ services:
   redis:
     image: redis:latest
     restart: always
+    command: ["redis-server", "--requirepass", "secret"]
     ports:
       - "6379:6379"
     volumes:
