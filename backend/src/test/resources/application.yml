@@ -48,5 +48,6 @@ spring:
           min-idle: 0
       host: redis
       port: 6379
+      password: secret
       timeout: 2000
       database: 0
