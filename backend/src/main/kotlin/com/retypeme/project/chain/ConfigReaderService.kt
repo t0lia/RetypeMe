@@ -10,10 +10,10 @@ class ConfigReaderService {
         """
   chains:
  
-  - id: 5611
-    name: opbnb-testnet-rpc
-    rpc: "https://opbnb-testnet-rpc.bnbchain.org"
-    contract: "0x1e3248d540B0c177047ec17592A42C5747F050a1"
+  - id: 168587773
+    name: blast-sepolia
+    rpc: "https://blast-sepolia.infura.io/v3"
+    contract: "0xb3c33b58de859a5e06aff62c9d66319c256218da"
    
 """.trimIndent()
 

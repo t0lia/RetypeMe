@@ -21,7 +21,7 @@ export interface ChainConfig {
 const scrollSepoliaContractAddress =
   "0x078869dd68d019900098b5b1006951ea7b3f01f2";
 const opBnbContractAddress =
-  "0x1e3248d540B0c177047ec17592A42C5747F050a1";
+  "0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6";
 const polygonAmoyContractAddress =
   "0x993558c22ebe07c96e8f85d1ef4318c513abff0d";
 const blastSepoliaContractAddress =
@@ -229,18 +229,18 @@ const chains: ChainConfig[] = [
   //   "rpc": `https://scroll-sepolia.core.chainstack.com/c02e3ccda5dd045b98b943c1ab129544`,
   //   "contract": "0x078869dd68d019900098b5b1006951ea7b3f01f2"
   // },
-  {
-    "id": 5611,
-    "name": "opbnb-testnet-rpc",
-    "rpc": "https://opbnb-testnet-rpc.publicnode.com",
-    "contract": "0x1e3248d540B0c177047ec17592A42C5747F050a1"
-  },
   // {
-  //   "id": 168587773,
-  //   "name": "blast-sepolia",
-  //   "rpc": `https://blast-sepolia.infura.io/v3/91f259e2739445678d072c85496b47b7`,
-  //   "contract": "0xb3c33b58de859a5e06aff62c9d66319c256218da"
+  //   "id": 5611,
+  //   "name": "opbnb-testnet-rpc",
+  //   "rpc": "https://opbnb-testnet-rpc.publicnode.com",
+  //   "contract": "0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6"
   // },
+  {
+    "id": 168587773,
+    "name": "blast-sepolia",
+    "rpc": `https://blast-sepolia.infura.io/v3/91f259e2739445678d072c85496b47b7`,
+    "contract": "0xb3c33b58de859a5e06aff62c9d66319c256218da"
+  },
   // {
   //   "id": 80002,
   //   "name": "polygon-amoy",
