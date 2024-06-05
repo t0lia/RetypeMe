@@ -52,7 +52,7 @@ function DropdownFaucetMenu() {
 
           <DropdownMenuSeparator className="h-[1px] bg-gray-300 m-[4px]" /> */}
 
-          <DropdownMenuGroup>
+          {/* <DropdownMenuGroup>
             <DropdownMenuLabel className="text-sm px-3 py-1">
               BNB Faucet & Bridge
             </DropdownMenuLabel>
@@ -72,7 +72,7 @@ function DropdownFaucetMenu() {
                 Bridge to opBNB
               </DropdownMenuItem>
             </Link>
-          </DropdownMenuGroup>
+          </DropdownMenuGroup> */}
 
           {/* <DropdownMenuSeparator className="h-[1px] bg-gray-300 m-[4px]" /> */}
 
@@ -105,7 +105,7 @@ function DropdownFaucetMenu() {
 
           <DropdownMenuSeparator className="h-[1px] bg-gray-300 m-[4px]" /> */}
 
-          {/* <DropdownMenuGroup>
+          <DropdownMenuGroup>
             <DropdownMenuLabel className="text-sm px-3 py-1">
               ETH Blast Sepolia
             </DropdownMenuLabel>
@@ -117,7 +117,15 @@ function DropdownFaucetMenu() {
                 Blastapi faucet
               </DropdownMenuItem>
             </Link>
-          </DropdownMenuGroup> */}
+            <Link
+              href="https://faucet.quicknode.com/blast/sepolia"
+              target="_blank"
+            >
+              <DropdownMenuItem className="flex items-center cursor-pointer pl-[25px]">
+                QuickNode faucet
+              </DropdownMenuItem>
+            </Link>
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenuPortal>
     </DropdownMenu>
