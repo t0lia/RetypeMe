@@ -1,4 +1,4 @@
-import {create} from "zustand";
+import { create } from "zustand";
 
 export interface ConfigState {
   contractConfig: ContractConfig; // Define a more specific type based on your configuration
@@ -8,7 +8,7 @@ export interface ConfigState {
 export interface ContractConfig {
   chains: ChainConfig[];
   abi: any[];
-  contractAddressesMap: { [key: string]: string }
+  contractAddressesMap: { [key: string]: string };
 }
 
 export interface ChainConfig {
@@ -20,10 +20,8 @@ export interface ChainConfig {
 
 const scrollSepoliaContractAddress =
   "0x078869dd68d019900098b5b1006951ea7b3f01f2";
-const opBnbContractAddress =
-  "0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6";
-const polygonAmoyContractAddress =
-  "0x993558c22ebe07c96e8f85d1ef4318c513abff0d";
+const opBnbContractAddress = "0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6";
+const polygonAmoyContractAddress = "0x993558c22ebe07c96e8f85d1ef4318c513abff0d";
 const blastSepoliaContractAddress =
   "0xb3c33b58de859a5e06aff62c9d66319c256218da";
 
@@ -35,7 +33,7 @@ const contractAddressesMap: { [key: string]: string } = {
 };
 
 const abi = [
-  {inputs: [], stateMutability: "nonpayable", type: "constructor"},
+  { inputs: [], stateMutability: "nonpayable", type: "constructor" },
   {
     inputs: [
       {
@@ -75,7 +73,7 @@ const abi = [
     type: "event",
   },
   {
-    outputs: [{name: "", internalType: "uint256", type: "uint256"}],
+    outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
     inputs: [],
     name: "DUEL_PLAYERS_COUNT",
     stateMutability: "view",
@@ -84,7 +82,7 @@ const abi = [
   {
     outputs: [],
     inputs: [
-      {name: "_newCommissionRate", internalType: "uint256", type: "uint256"},
+      { name: "_newCommissionRate", internalType: "uint256", type: "uint256" },
     ],
     name: "changeCommissionRate",
     stateMutability: "nonpayable",
@@ -104,7 +102,7 @@ const abi = [
     type: "function",
   },
   {
-    outputs: [{name: "", internalType: "uint256", type: "uint256"}],
+    outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
     inputs: [],
     name: "commissionRate",
     stateMutability: "view",
@@ -120,15 +118,15 @@ const abi = [
   {
     outputs: [],
     inputs: [
-      {name: "_sessionId", internalType: "uint256", type: "uint256"},
-      {name: "_winner", internalType: "address", type: "address"},
+      { name: "_sessionId", internalType: "uint256", type: "uint256" },
+      { name: "_winner", internalType: "address", type: "address" },
     ],
     name: "endGame",
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    outputs: [{name: "", internalType: "uint256", type: "uint256"}],
+    outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
     inputs: [],
     name: "fixedDepositAmount",
     stateMutability: "view",
@@ -136,64 +134,64 @@ const abi = [
   },
   {
     outputs: [
-      {name: "depositAmount", internalType: "uint256", type: "uint256"},
-      {name: "sessionId", internalType: "uint256", type: "uint256"},
+      { name: "depositAmount", internalType: "uint256", type: "uint256" },
+      { name: "sessionId", internalType: "uint256", type: "uint256" },
       {
         name: "status",
         internalType: "enum GamingContract.GameStatus",
         type: "uint8",
       },
-      {name: "winner", internalType: "address", type: "address"},
+      { name: "winner", internalType: "address", type: "address" },
     ],
-    inputs: [{name: "", internalType: "uint256", type: "uint256"}],
+    inputs: [{ name: "", internalType: "uint256", type: "uint256" }],
     name: "gameSessions",
     stateMutability: "view",
     type: "function",
   },
   {
-    outputs: [{name: "", internalType: "uint256", type: "uint256"}],
-    inputs: [{name: "_user", internalType: "address", type: "address"}],
+    outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
+    inputs: [{ name: "_user", internalType: "address", type: "address" }],
     name: "getBalance",
     stateMutability: "view",
     type: "function",
   },
   {
-    outputs: [{name: "", internalType: "uint256", type: "uint256"}],
-    inputs: [{name: "_user", internalType: "address", type: "address"}],
+    outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
+    inputs: [{ name: "_user", internalType: "address", type: "address" }],
     name: "getMinDeposit",
     stateMutability: "view",
     type: "function",
   },
   {
-    outputs: [{name: "", internalType: "uint256", type: "uint256"}],
-    inputs: [{name: "", internalType: "address", type: "address"}],
+    outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
+    inputs: [{ name: "", internalType: "address", type: "address" }],
     name: "inGameUserBalances",
     stateMutability: "view",
     type: "function",
   },
   {
-    outputs: [{name: "", internalType: "bool", type: "bool"}],
-    inputs: [{name: "_user", internalType: "address", type: "address"}],
+    outputs: [{ name: "", internalType: "bool", type: "bool" }],
+    inputs: [{ name: "_user", internalType: "address", type: "address" }],
     name: "isEnoughBalance",
     stateMutability: "view",
     type: "function",
   },
   {
     outputs: [],
-    inputs: [{name: "_sessionId", internalType: "uint256", type: "uint256"}],
+    inputs: [{ name: "_sessionId", internalType: "uint256", type: "uint256" }],
     name: "joinGame",
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    outputs: [{name: "", internalType: "address", type: "address"}],
+    outputs: [{ name: "", internalType: "address", type: "address" }],
     inputs: [],
     name: "owner",
     stateMutability: "view",
     type: "function",
   },
   {
-    outputs: [{name: "", internalType: "uint256", type: "uint256"}],
+    outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
     inputs: [],
     name: "totalCommission",
     stateMutability: "view",
@@ -201,7 +199,7 @@ const abi = [
   },
   {
     outputs: [],
-    inputs: [{name: "_amount", internalType: "uint256", type: "uint256"}],
+    inputs: [{ name: "_amount", internalType: "uint256", type: "uint256" }],
     name: "withdraw",
     stateMutability: "nonpayable",
     type: "function",
@@ -229,27 +227,27 @@ const chains: ChainConfig[] = [
   //   "rpc": `https://scroll-sepolia.core.chainstack.com/c02e3ccda5dd045b98b943c1ab129544`,
   //   "contract": "0x078869dd68d019900098b5b1006951ea7b3f01f2"
   // },
-  // {
-  //   "id": 5611,
-  //   "name": "opbnb-testnet-rpc",
-  //   "rpc": "https://opbnb-testnet-rpc.publicnode.com",
-  //   "contract": "0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6"
-  // },
   {
-    "id": 168587773,
-    "name": "blast-sepolia",
-    "rpc": `https://blast-sepolia.infura.io/v3/91f259e2739445678d072c85496b47b7`,
-    "contract": "0xb3c33b58de859a5e06aff62c9d66319c256218da"
+    id: 5611,
+    name: "opbnb-testnet-rpc",
+    rpc: "https://opbnb-testnet-rpc.publicnode.com",
+    contract: "0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6",
   },
+  // {
+  //   "id": 168587773,
+  //   "name": "blast-sepolia",
+  //   "rpc": `https://blast-sepolia.infura.io/v3/91f259e2739445678d072c85496b47b7`,
+  //   "contract": "0xb3c33b58de859a5e06aff62c9d66319c256218da"
+  // },
   // {
   //   "id": 80002,
   //   "name": "polygon-amoy",
   //   "rpc": `https://polygon-amoy.infura.io/v391f259e2739445678d072c85496b47b7`,
   //   "contract": "0x993558c22ebe07c96e8f85d1ef4318c513abff0d"
   // }
-]
+];
 
 export const useConfigStore = create<ConfigState>((set) => ({
-  contractConfig: {chains, abi, contractAddressesMap},
-  setConfig: (contractConfig) => set({contractConfig}),
+  contractConfig: { chains, abi, contractAddressesMap },
+  setConfig: (contractConfig) => set({ contractConfig }),
 }));
