@@ -18,6 +18,7 @@ import {
 import { LogOut, User } from "lucide-react";
 import Link from "next/link";
 import { useAccount, useDisconnect } from "wagmi";
+import { BlackCreateWalletButton } from "../black-create-wallet-button/blackCreateWalletButton";
 
 interface IGamePageHeaderProps {
   isButtonDisabled?: boolean;
@@ -39,6 +40,7 @@ function GamePageHeader({
       <div className="flex justify-end items-center p-4">
         <ModeToggle />
         {dropDownFaucetMenu && <DropdownFaucetMenu />}
+        <BlackCreateWalletButton />
         <ConnectButton
           isButtonDisabled={isButtonDisabled}
           isGameEnded={isGameEnded}
