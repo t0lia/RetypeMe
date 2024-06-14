@@ -28,8 +28,8 @@
     "siwe": "^2.3.2",
     "tailwind-merge": "2.3.0",
     "tailwindcss-animate": "1.0.7",
-    "viem": "^2.13.8",
-    "wagmi": "^2.10.0",
+    "viem": "^2.14.0",
+    "wagmi": "^2.10.2",
     "zustand": "4.5.2"
   },
   "devDependencies": {
