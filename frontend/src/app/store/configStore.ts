@@ -24,12 +24,14 @@ const opBnbContractAddress = "0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6";
 const polygonAmoyContractAddress = "0x993558c22ebe07c96e8f85d1ef4318c513abff0d";
 const blastSepoliaContractAddress =
   "0xb3c33b58de859a5e06aff62c9d66319c256218da";
+const baseSepoliaContractAddress = "";
 
 const contractAddressesMap: { [key: string]: string } = {
   "Blast Sepolia": blastSepoliaContractAddress,
   "Scroll Sepolia": scrollSepoliaContractAddress,
   "Polygon Amoy": polygonAmoyContractAddress,
   "opBNB Testnet": opBnbContractAddress,
+  "Base Sepolia": baseSepoliaContractAddress,
 };
 
 const abi = [
@@ -229,9 +231,15 @@ const chains: ChainConfig[] = [
   // },
   {
     id: 5611,
-    name: "opbnb-testnet-rpc",
+    name: "opbnb-testnet",
     rpc: "https://opbnb-testnet-rpc.publicnode.com",
     contract: "0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6",
+  },
+  {
+    id: 84532,
+    name: "base-sepolia",
+    rpc: "https://sepolia.base.org",
+    contract: "",
   },
   // {
   //   "id": 168587773,

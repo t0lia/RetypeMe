@@ -6,15 +6,15 @@ import * as all from "viem/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig, SIWEProvider } from "connectkit";
 import { siweConfig } from "./siwe-config";
-import {ChainConfig, useConfigStore} from "@/app/store/configStore";
-import {Chain} from "wagmi/chains";
-import {HttpTransport} from "viem";
+import { ChainConfig, useConfigStore } from "@/app/store/configStore";
+import { Chain } from "wagmi/chains";
+import { HttpTransport } from "viem";
 
 const queryClient = new QueryClient();
-const {...chains } = all;
+const { ...chains } = all;
 
 function getChain(chainId: number): Chain {
-  const chain = Object.values(chains).find(chain => chain.id === chainId);
+  const chain = Object.values(chains).find((chain) => chain.id === chainId);
   if (!chain) {
     throw new Error(`Chain with id ${chainId} not found`);
   }
@@ -48,10 +48,8 @@ export const Web3Provider = ({
       transports,
       // Required API Keys
       walletConnectProjectId: walletConnectProjectId,
-
       // Required App Info
       appName: "RetypeMe",
-
       // Optional App Info
       appDescription:
         "Master blind typing skills, race against friends, and own your achievements as NFTs on RetypeMe. Elevate your typing experience with engaging competitions and a community-driven platform. Start your journey to faster, more accurate typing today!",
