@@ -105,7 +105,7 @@ function DropdownFaucetMenu() {
 
           <DropdownMenuSeparator className="h-[1px] bg-gray-300 m-[4px]" /> */}
 
-          {/* <DropdownMenuGroup>
+          <DropdownMenuGroup>
             <DropdownMenuLabel className="text-sm px-3 py-1">
               ETH Blast Sepolia
             </DropdownMenuLabel>
@@ -125,7 +125,7 @@ function DropdownFaucetMenu() {
                 QuickNode faucet
               </DropdownMenuItem>
             </Link>
-          </DropdownMenuGroup> */}
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenuPortal>
     </DropdownMenu>

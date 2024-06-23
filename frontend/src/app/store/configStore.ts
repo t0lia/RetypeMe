@@ -24,7 +24,7 @@ const opBnbContractAddress = "0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6";
 const polygonAmoyContractAddress = "0x993558c22ebe07c96e8f85d1ef4318c513abff0d";
 const blastSepoliaContractAddress =
   "0xb3c33b58de859a5e06aff62c9d66319c256218da";
-const baseSepoliaContractAddress = "";
+const baseSepoliaContractAddress = "0xb4eb30e7f583d788a1611f4b7022bdda4bd4af81";
 
 const contractAddressesMap: { [key: string]: string } = {
   "Blast Sepolia": blastSepoliaContractAddress,
@@ -239,14 +239,14 @@ const chains: ChainConfig[] = [
     id: 84532,
     name: "base-sepolia",
     rpc: "https://sepolia.base.org",
-    contract: "",
+    contract: "0xb4eb30e7f583d788a1611f4b7022bdda4bd4af81",
   },
-  // {
-  //   "id": 168587773,
-  //   "name": "blast-sepolia",
-  //   "rpc": `https://blast-sepolia.infura.io/v3/91f259e2739445678d072c85496b47b7`,
-  //   "contract": "0xb3c33b58de859a5e06aff62c9d66319c256218da"
-  // },
+  {
+    id: 168587773,
+    name: "blast-sepolia",
+    rpc: `https://blast-sepolia.infura.io/v3/91f259e2739445678d072c85496b47b7`,
+    contract: "0xb3c33b58de859a5e06aff62c9d66319c256218da",
+  },
   // {
   //   "id": 80002,
   //   "name": "polygon-amoy",
