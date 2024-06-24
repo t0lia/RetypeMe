@@ -113,7 +113,7 @@ export function BlackCreateWalletButton({ height = 40, width = 160 }) {
     <button style={buttonStyles} onClick={createWallet}>
       <div style={styles.gradientContainer}>
         <Gradient style={styles.gradient}>
-          <div style={styles.buttonBody}>
+          <div style={styles.buttonBody} className="text-white">
             <CoinbaseWalletLogo containerStyles={["pr-2"]} />
             Create Wallet
           </div>

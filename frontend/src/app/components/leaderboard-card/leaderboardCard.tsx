@@ -14,6 +14,7 @@ import {
 } from "@/app/components/ui/table";
 import { formatWallet } from "@/app/helpers";
 import Link from "next/link";
+import { useAccount } from "wagmi";
 
 export interface LeaderboardEntry {
   userId: string;
@@ -32,6 +33,12 @@ export interface Statistic {
 
 export function LeaderboardCard() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const { chainId } = useAccount();
+  const chainBlockExplorerLinks: Record<number, string> = {
+    5611: "https://opbnb-testnet.bscscan.com/address/",
+    168587773: "https://testnet.blastscan.io/address/",
+    84532: "https://sepolia.basescan.org/address/",
+  };
 
   useEffect(() => {
     let api = new RestApiService();
@@ -62,7 +69,11 @@ export function LeaderboardCard() {
                     <TableCell className="p-1 w-6">{place}.</TableCell>
                     <TableCell className="p-1 flex-grow">
                       <Link
-                        href={`https://opbnb-testnet.bscscan.com/address/${entry.userId}`}
+                        href={
+                          chainId
+                            ? chainBlockExplorerLinks[chainId] + entry.userId
+                            : ""
+                        }
                         target="_blank"
                       >
                         {formatWallet(entry.userId)}

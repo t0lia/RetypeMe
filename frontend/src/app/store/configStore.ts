@@ -242,10 +242,10 @@ const chains: ChainConfig[] = [
     contract: "0xb4eb30e7f583d788a1611f4b7022bdda4bd4af81",
   },
   {
-    "id": 168587773,
-    "name": "blast-sepolia",
-    "rpc": `https://blast-sepolia.infura.io/v3/91f259e2739445678d072c85496b47b7`,
-    "contract": "0xb3c33b58de859a5e06aff62c9d66319c256218da"
+    id: 168587773,
+    name: "blast-sepolia",
+    rpc: `https://blast-sepolia.infura.io/v3/91f259e2739445678d072c85496b47b7`,
+    contract: "0xb3c33b58de859a5e06aff62c9d66319c256218da",
   },
   // {
   //   "id": 80002,
