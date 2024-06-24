@@ -25,7 +25,6 @@ export default function UserProfile() {
     userId: "",
   });
   const { address, chain } = useAccount();
-  console.log(chain?.nativeCurrency?.symbol);
 
   async function getUserStat() {
     let api = new RestApiService();
