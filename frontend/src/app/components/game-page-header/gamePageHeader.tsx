@@ -32,7 +32,7 @@ function GamePageHeader({
   dropDownFaucetMenu,
 }: IGamePageHeaderProps) {
   const { isSignedIn } = useSIWE();
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   return (
     <header className="flex h-16 justify-between items-center">
@@ -40,7 +40,7 @@ function GamePageHeader({
       <div className="flex justify-end items-center p-4">
         <ModeToggle />
         {dropDownFaucetMenu && <DropdownFaucetMenu />}
-        <BlackCreateWalletButton />
+        {!isConnected && <BlackCreateWalletButton />}
         <ConnectButton
           isButtonDisabled={isButtonDisabled}
           isGameEnded={isGameEnded}

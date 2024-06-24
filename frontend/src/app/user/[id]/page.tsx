@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/components/ui/card";
-// import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { Statistic } from "@/app/components/leaderboard-card/leaderboardCard";
@@ -25,8 +24,8 @@ export default function UserProfile() {
     totalReward: 0,
     userId: "",
   });
-  const { address } = useAccount();
-  // const pathname = usePathname();
+  const { address, chain } = useAccount();
+  console.log(chain?.nativeCurrency?.symbol);
 
   async function getUserStat() {
     let api = new RestApiService();
@@ -56,9 +55,9 @@ export default function UserProfile() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{data?.maxSpeed} CPM</div>
-                  <p className="text-xs text-muted-foreground">
+                  {/* <p className="text-xs text-muted-foreground">
                     +20.1% from last month
-                  </p>
+                  </p> */}
                 </CardContent>
               </Card>
               <Card x-chunk="dashboard-01-chunk-1">
@@ -72,9 +71,9 @@ export default function UserProfile() {
                   <div className="text-2xl font-bold">
                     {data?.overallWinsInDuels}
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  {/* <p className="text-xs text-muted-foreground">
                     +180.1% from last month
-                  </p>
+                  </p> */}
                 </CardContent>
               </Card>
               <Card x-chunk="dashboard-01-chunk-2">
@@ -89,11 +88,11 @@ export default function UserProfile() {
                     {data.totalReward
                       ? formatUnits(BigInt(data?.totalReward), 18)
                       : "0"}{" "}
-                    tBNB
+                    {chain?.nativeCurrency?.symbol}
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  {/* <p className="text-xs text-muted-foreground">
                     +19% from last month
-                  </p>
+                  </p> */}
                 </CardContent>
               </Card>
               <Card x-chunk="dashboard-01-chunk-3">
@@ -107,9 +106,9 @@ export default function UserProfile() {
                   <div className="text-2xl font-bold">
                     {data?.completedDuels}
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  {/* <p className="text-xs text-muted-foreground">
                     +1 since last month
-                  </p>
+                  </p> */}
                 </CardContent>
               </Card>
             </>
