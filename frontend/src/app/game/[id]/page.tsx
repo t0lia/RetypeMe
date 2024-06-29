@@ -25,12 +25,18 @@ import ClaimWinningsButton from "@/app/components/claim-winnings-button/claimWin
 import StartDepositButton from "@/app/components/start-deposit-button/startDepositButton";
 
 import { useWriteContract } from "wagmi";
-import { Address, keccak256, toBytes } from "viem";
+import { Address, keccak256, parseEther, toBytes } from "viem";
 
 import "./page.css";
 import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
 import { useConfigStore } from "@/app/store/configStore";
 import { useQueryClient } from "@tanstack/react-query";
+import { wagmiConfig } from "@/app/helpers/web3-provider";
+import {
+  writeContracts,
+  showCallsStatus,
+  getCallsStatus,
+} from "@wagmi/core/experimental";
 
 const GamePage = () => {
   const { contractConfig } = useConfigStore();
@@ -53,6 +59,7 @@ const GamePage = () => {
     errors: [],
     users: [],
   });
+  const [batchStatusConfirmed, setBatchStatusConfirmed] = useState(false);
 
   const { openSwitchNetworks, setOpen } = useModal();
   const { isSignedIn } = useSIWE();
@@ -236,9 +243,36 @@ const GamePage = () => {
     });
   }, [address, startBtnText, router]);
 
+  const handleBatchStartGame = async () => {
+    const sessionId = sessionStorage.getItem("sessionId");
+    const hashSessionId = keccak256(toBytes(sessionId as string));
+    const id = await writeContracts(wagmiConfig, {
+      contracts: [
+        {
+          address: contractAddress as Address,
+          abi: contractConfig.abi,
+          functionName: "deposit",
+          args: [],
+          value: parseEther("0.001"),
+        },
+        {
+          address: contractAddress as Address,
+          abi: contractConfig.abi,
+          functionName: "joinGame",
+          args: [hashSessionId],
+        },
+      ],
+    });
+    await showCallsStatus(wagmiConfig, { id: id });
+    const status = await getCallsStatus(wagmiConfig, { id: id });
+    if (status.status === "CONFIRMED") {
+      setBatchStatusConfirmed(true);
+    }
+  };
+
   const { queryKey } = getUserGameBalance();
   useEffect(() => {
-    if (isConfirmed) {
+    if (isConfirmed || batchStatusConfirmed) {
       setTxSuccessful(true);
 
       wsApiServiceRef.current?.register(
@@ -249,7 +283,7 @@ const GamePage = () => {
       setIsButtonDisabled(true);
       setUserStats([]);
     }
-  }, [isConfirmed]);
+  }, [isConfirmed, batchStatusConfirmed]);
 
   function checkEqualHandler(e: React.ChangeEvent<HTMLInputElement>) {
     const enteredText = e.target.value;
@@ -383,6 +417,7 @@ const GamePage = () => {
           handleStartGame={handleStartGame}
           startBtnText={startBtnText}
           isConfirmingJoin={isConfirming}
+          handleBatchStartGame={handleBatchStartGame}
         />
         {textVisible && (
           <div className="relative" onClick={handleClickFormattedText}>

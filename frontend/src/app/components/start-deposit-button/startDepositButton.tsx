@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useModal, useSIWE } from "connectkit";
 import {
@@ -8,7 +8,7 @@ import {
 } from "wagmi";
 import { Address, keccak256, parseEther, toBytes } from "viem";
 
-import { RaceStatistic } from "@/app/api/ws-api-service";
+import WsApiService, { RaceStatistic } from "@/app/api/ws-api-service";
 import {
   CHAIN_ID_AMOY_DECIMAL,
   CHAIN_ID_BLAST_SEPOLIA_DECIMAL,
@@ -22,7 +22,11 @@ import { Button } from "@/app/components/ui/button";
 import { useConfigStore } from "@/app/store/configStore";
 import Spinner from "@/app/components/ui/spinner";
 import { useQueryClient } from "@tanstack/react-query";
-import { writeContracts } from "@wagmi/core/experimental";
+import {
+  writeContracts,
+  showCallsStatus,
+  getCallsStatus,
+} from "@wagmi/core/experimental";
 import { wagmiConfig } from "@/app/helpers/web3-provider";
 
 interface IStartDepositButton {
@@ -32,6 +36,7 @@ interface IStartDepositButton {
   handleStartGame: () => void;
   startBtnText: string;
   isConfirmingJoin: boolean;
+  handleBatchStartGame: () => void;
 }
 
 function StartDepositButton({
@@ -41,7 +46,9 @@ function StartDepositButton({
   handleStartGame,
   startBtnText,
   isConfirmingJoin,
+  handleBatchStartGame,
 }: IStartDepositButton) {
+  const [batchStatusConfirmed, setBatchStatusConfirmed] = useState(false);
   const { contractConfig } = useConfigStore();
   const { isSignedIn, signIn } = useSIWE();
   const { isConnected, chainId, address, chain, connector } = useAccount();
@@ -51,6 +58,7 @@ function StartDepositButton({
   const contractAddress =
     contractConfig.contractAddressesMap[chain?.name as string];
   const queryClient = useQueryClient();
+  const wsApiServiceRef = useRef<WsApiService | null>(null);
 
   async function signInWithEthereum(): Promise<void> {
     await signIn();
@@ -66,25 +74,34 @@ function StartDepositButton({
       return;
     }
     if (connector?.id === "coinbaseWalletSDK") {
-      const sessionId = sessionStorage.getItem("sessionId");
-      const hashSessionId = keccak256(toBytes(sessionId as string));
-      writeContracts(wagmiConfig, {
-        contracts: [
-          {
-            address: contractAddress as Address,
-            abi: contractConfig.abi,
-            functionName: "deposit",
-            args: [],
-            value: parseEther("0.001"),
-          },
-          {
-            address: contractAddress as Address,
-            abi: contractConfig.abi,
-            functionName: "joinGame",
-            args: [hashSessionId],
-          },
-        ],
-      });
+      handleBatchStartGame();
+      // const sessionId = sessionStorage.getItem("sessionId");
+      // const hashSessionId = keccak256(toBytes(sessionId as string));
+      // const id = await writeContracts(wagmiConfig, {
+      //   // account: address,
+      //   contracts: [
+      //     {
+      //       address: contractAddress as Address,
+      //       abi: contractConfig.abi,
+      //       functionName: "deposit",
+      //       args: [],
+      //       value: parseEther("0.001"),
+      //     },
+      //     {
+      //       address: contractAddress as Address,
+      //       abi: contractConfig.abi,
+      //       functionName: "joinGame",
+      //       args: [hashSessionId],
+      //     },
+      //   ],
+      // });
+      // console.log("ID", id);
+      // await showCallsStatus(wagmiConfig, { id: id });
+      // const status = await getCallsStatus(wagmiConfig, { id: id });
+      // console.log("STATus", status);
+      // if (status.status === "CONFIRMED") {
+      //   setBatchStatusConfirmed(true);
+      // }
     } else {
       writeContract({
         address: contractAddress as Address,
@@ -106,7 +123,18 @@ function StartDepositButton({
     if (isConfirmed) {
       queryClient.invalidateQueries({ queryKey });
     }
-  }, [isConfirmed]);
+    if (batchStatusConfirmed) {
+      // setTxSuccessful(true);
+
+      wsApiServiceRef.current?.register(
+        localStorage.getItem("userId") ?? "",
+        address as Address
+      );
+      queryClient.invalidateQueries({ queryKey });
+      // setIsButtonDisabled(true);
+      // setUserStats([]);
+    }
+  }, [isConfirmed, batchStatusConfirmed]);
 
   const showDepositButton =
     isSignedIn &&
@@ -121,7 +149,10 @@ function StartDepositButton({
 
   return (
     <>
-      {showDepositButton && !isConfirmed && userStatus !== "registered" ? (
+      {showDepositButton &&
+      !isConfirmed &&
+      userStatus !== "registered" &&
+      !batchStatusConfirmed ? (
         <Button onClick={handleUserDeposit}>
           {isConfirming && <Spinner />}
           {`Deposit 0.001 ${
