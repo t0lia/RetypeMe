@@ -1,10 +1,10 @@
 # RetypeMe - A platform to compete and show off how fast you can type on a keyboard
 
-## Verified contract on opBNB:
+## Verified contract on BaseSepolia Testnet:
 
-Contract address: [0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6](https://opbnb-testnet.bscscan.com/address/0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6)
+Contract address: [0xb4eb30e7f583d788a1611f4b7022bdda4bd4af81](https://sepolia.basescan.org/address/0xb4eb30e7f583d788a1611f4b7022bdda4bd4af81)
 
-Contract verification: https://opbnb-testnet.bscscan.com/address/0x247e2bee76ec31c1a4caaf06600a80ffd6774dd6#code
+Contract verification: [sepolia.basescan.org/address/0xb4eb30e7f583d788a1611f4b7022bdda4bd4af81#code](https://sepolia.basescan.org/address/0xb4eb30e7f583d788a1611f4b7022bdda4bd4af81)
 
 ## Useful links
 
