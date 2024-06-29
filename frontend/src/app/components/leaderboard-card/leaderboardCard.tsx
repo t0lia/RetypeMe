@@ -35,8 +35,8 @@ export function LeaderboardCard() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const { chainId } = useAccount();
   const chainBlockExplorerLinks: Record<number, string> = {
-    // 5611: "https://opbnb-testnet.bscscan.com/address/",
-    // 168587773: "https://testnet.blastscan.io/address/",
+    5611: "https://opbnb-testnet.bscscan.com/address/",
+    168587773: "https://testnet.blastscan.io/address/",
     84532: "https://sepolia.basescan.org/address/",
   };
 
