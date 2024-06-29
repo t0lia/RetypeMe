@@ -6,6 +6,8 @@ import com.moonstoneid.siwe.SiweMessage
 import com.moonstoneid.siwe.error.SiweException
 import com.retypeme.project.auth.UserRepository
 import com.retypeme.project.auth.VerificationRequest
+import com.retypeme.project.chain.ChainItemConfig
+import com.retypeme.project.chain.ConfigReaderService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -13,12 +15,17 @@ import org.springframework.security.authentication.dao.AbstractUserDetailsAuthen
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
+import org.web3j.protocol.Web3j
+import org.web3j.protocol.http.HttpService
 
 @Component
 class MetaMaskAuthenticationProvider : AbstractUserDetailsAuthenticationProvider() {
 
     @Autowired
     private lateinit var userRepository: UserRepository
+
+    @Autowired
+    private lateinit var configReaderService: ConfigReaderService
 
     @Throws(AuthenticationException::class)
     override fun additionalAuthenticationChecks(userDetails: UserDetails, auth: UsernamePasswordAuthenticationToken) {
@@ -29,8 +36,13 @@ class MetaMaskAuthenticationProvider : AbstractUserDetailsAuthenticationProvider
         val message: SiweMessage = SiweMessage.Parser().parse(verificationRequest.message);
 
         try {
-//            message.verify(message.domain, userDetails.nonce, verificationRequest.signature)
-            message.verify(message.domain, message.nonce, verificationRequest.signature)
+            val rpc = configReaderService.readChainConfig().chains.filter { item -> item.id == message.chainId }
+                .map { item -> item.rpc }
+                .first()
+
+            val provider: Web3j = Web3j.build(HttpService(rpc));
+
+            message.verify(message.domain, message.nonce, verificationRequest.signature, provider)
         } catch (e: SiweException) {
             throw BadCredentialsException("Signature is not valid", e)
         }
