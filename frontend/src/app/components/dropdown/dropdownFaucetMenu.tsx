@@ -16,7 +16,6 @@ import { useAccount } from "wagmi";
 
 function DropdownFaucetMenu() {
   const { chainId } = useAccount();
-  console.log("ChainID:", chainId);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

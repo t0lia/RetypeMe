@@ -6,7 +6,7 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
-import { Address, parseEther } from "viem";
+import { Address, keccak256, parseEther, toBytes } from "viem";
 
 import { RaceStatistic } from "@/app/api/ws-api-service";
 import {
@@ -20,8 +20,10 @@ import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
 
 import { Button } from "@/app/components/ui/button";
 import { useConfigStore } from "@/app/store/configStore";
-import Spinner from "../ui/spinner";
+import Spinner from "@/app/components/ui/spinner";
 import { useQueryClient } from "@tanstack/react-query";
+import { writeContracts } from "@wagmi/core/experimental";
+import { wagmiConfig } from "@/app/helpers/web3-provider";
 
 interface IStartDepositButton {
   txSuccessful: boolean;
@@ -42,7 +44,7 @@ function StartDepositButton({
 }: IStartDepositButton) {
   const { contractConfig } = useConfigStore();
   const { isSignedIn, signIn } = useSIWE();
-  const { isConnected, chainId, address, chain } = useAccount();
+  const { isConnected, chainId, address, chain, connector } = useAccount();
   const isEnough = isEnoughBalance();
   const { openSwitchNetworks } = useModal();
   const { writeContract, data: hash } = useWriteContract();
@@ -63,13 +65,35 @@ function StartDepositButton({
       openSwitchNetworks();
       return;
     }
-    writeContract({
-      address: contractAddress as Address,
-      abi: contractConfig.abi,
-      functionName: "deposit",
-      args: [],
-      value: parseEther("0.001"),
-    });
+    if (connector?.id === "coinbaseWalletSDK") {
+      const sessionId = sessionStorage.getItem("sessionId");
+      const hashSessionId = keccak256(toBytes(sessionId as string));
+      writeContracts(wagmiConfig, {
+        contracts: [
+          {
+            address: contractAddress as Address,
+            abi: contractConfig.abi,
+            functionName: "deposit",
+            args: [],
+            value: parseEther("0.001"),
+          },
+          {
+            address: contractAddress as Address,
+            abi: contractConfig.abi,
+            functionName: "joinGame",
+            args: [hashSessionId],
+          },
+        ],
+      });
+    } else {
+      writeContract({
+        address: contractAddress as Address,
+        abi: contractConfig.abi,
+        functionName: "deposit",
+        args: [],
+        value: parseEther("0.001"),
+      });
+    }
   }
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
