@@ -33,7 +33,7 @@ jobs:
           tags: retypeme/retypeme-frontend-uat:latest
           build-args: |
             NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY=${{ secrets.NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY }}
-            NEXT_PUBLIC_API_DOMAIN: ${{NEXT_PUBLIC_API_DOMAIN_UAT}}
+            NEXT_PUBLIC_API_DOMAIN=${{NEXT_PUBLIC_API_DOMAIN_UAT}}
 
       - name: Build Docker frontend image
         uses: docker/build-push-action@v5
@@ -44,4 +44,4 @@ jobs:
           tags: retypeme/retypeme-frontend-prod:latest
           build-args: |
             NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY=${{ secrets.NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY }}
-            NEXT_PUBLIC_API_DOMAIN: ${{NEXT_PUBLIC_API_DOMAIN_PROD}}
+            NEXT_PUBLIC_API_DOMAIN=${{NEXT_PUBLIC_API_DOMAIN_PROD}}
