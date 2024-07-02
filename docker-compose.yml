@@ -27,6 +27,7 @@ services:
 #      context: ./frontend
 #      args:
 #        NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY: ${NEXT_PUBLIC_ENV_LOCAL_INFURA_AMOY_API_KEY}
+#        NEXT_PUBLIC_API_DOMAIN: ${NEXT_PUBLIC_API_DOMAIN}
     depends_on:
       - api
 

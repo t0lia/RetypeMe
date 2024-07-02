@@ -16,6 +16,7 @@ Contract verification: [sepolia.basescan.org/address/0xb4eb30e7f583d788a1611f4b7
 ## How to start the project locally
 
 1. Install Docker and Docker Compose.
+
 2. Use Docker Compose to start the project:
 
    - Start by rebuilding all images
