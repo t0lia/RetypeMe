@@ -15,7 +15,7 @@ services:
       - redis
 
   ui:
-    image: retypeme/retypeme-frontend:{{ version }}
+    image: retypeme/retypeme-frontend-{{ env }}:{{ version }}
     restart: always
     ports:
       - "3001:3000"

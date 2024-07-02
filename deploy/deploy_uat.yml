@@ -12,6 +12,10 @@
       debug:
         var: version
 
+    - name: Debug env variable
+      debug:
+        var: env
+
     - name: ensure directory retypeme exists
       file:
         path: /home/wheel/retypeme

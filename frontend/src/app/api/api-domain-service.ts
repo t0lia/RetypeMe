@@ -1,20 +1,23 @@
+const domain = process.env.NEXT_PUBLIC_API_DOMAIN;
+
 export default class ApiDomainService {
-  private readonly uiDomain: string;
-  private readonly domains: Map<string, string>;
+
+  private readonly wsUrl;
+  private readonly restUrl;
 
   constructor() {
-    this.uiDomain = window.location.hostname;
-    this.domains = new Map([
-      ["retypeme.apozdniakov.com", "retypeme-api.apozdniakov.com"],
-      ["retypeme.vercel.app", "retypeme-api.apozdniakov.com"],
-      ["retypeme.xyz", "app.retypeme.xyz"],
-    ]);
+    console.log("API_DOMAIN: ", domain);
+
+    this.wsUrl = this.getUrl(true);
+    this.restUrl = this.getUrl(false);
+
+    console.log("WebSocket URL: ", this.wsUrl);
+    console.log("REST URL: ", this.restUrl);
   }
 
   private getUrl(isWebSocket: boolean): string {
-    let domain = this.domains.get(this.uiDomain);
     let api = ""
-    if (domain === undefined) {
+    if (domain === undefined || domain.includes("localhost")) {
       api = isWebSocket ? "ws://localhost:8080/api/ws" : "http://localhost:8080/api";
     } else {
       api = isWebSocket ? `wss://${domain}/api/ws` : `https://${domain}/api`;
@@ -23,10 +26,10 @@ export default class ApiDomainService {
   }
 
   getWebSocketUrl(): string {
-    return this.getUrl(true);
+    return this.wsUrl;
   }
 
   getRestUrl(): string {
-    return this.getUrl(false);
+    return this.restUrl;
   }
 }
