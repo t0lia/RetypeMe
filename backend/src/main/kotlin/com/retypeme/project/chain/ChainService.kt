@@ -18,7 +18,7 @@ class ChainService(private val configReaderService: ConfigReaderService) {
     }
 
     fun getChainsSmart(): List<ChainItemConfig> {
-        return configReaderService.readChainConfig().chains.filter { chains.contains(it.id) }
+        return configReaderService.readChainConfig().chains
     }
 
     fun getChainByName(name: String): ChainItemConfig {

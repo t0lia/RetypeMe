@@ -5,8 +5,7 @@ import { useConfigStore } from "@/app/store/configStore";
 export default function getUserGameBalance() {
   const { address, chain } = useAccount();
   const { contractConfig } = useConfigStore();
-  const contractAddress =
-    contractConfig.contractAddressesMap[chain?.name as string];
+  const contractAddress = contractConfig.chains.find((chain) => chain.name === chain?.name)?.contract;
 
   const {
     data: balance,

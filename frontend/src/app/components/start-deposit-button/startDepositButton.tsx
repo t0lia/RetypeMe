@@ -48,8 +48,7 @@ function StartDepositButton({
   const isEnough = isEnoughBalance();
   const { openSwitchNetworks } = useModal();
   const { writeContract, data: hash } = useWriteContract();
-  const contractAddress =
-    contractConfig.contractAddressesMap[chain?.name as string];
+  const contractAddress = contractConfig.chains.find((chain) => chain.name === chain?.name)?.contract;
   const queryClient = useQueryClient();
   const wsApiServiceRef = useRef<WsApiService | null>(null);
 
