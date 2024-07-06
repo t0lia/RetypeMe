@@ -37,7 +37,7 @@ export default function ClaimWinningsButton({
   const { writeContract, data: hash } = useWriteContract();
 
   const { chain } = useAccount();
-  const contractAddress = contractConfig.contractAddressesMap[chain?.name as string];
+  const contractAddress = contractConfig.chains.find((chain) => chain.name === chain?.name)?.contract;
 
   const winner = userStats.find((driver) => driver.place === 1);
 

@@ -11,7 +11,7 @@ class ConfigReaderService {
   chains:
 
   - id: 84532
-    name: base-sepolia
+    name: Base Sepolia
     rpc: "https://sepolia.base.org"
     contract: "0xb4eb30e7f583d788a1611f4b7022bdda4bd4af81"
     
@@ -21,4 +21,5 @@ class ConfigReaderService {
         val objectMapper = ObjectMapper(YAMLFactory())
         return objectMapper.readValue(config, ChainConfig::class.java)
     }
+
 }

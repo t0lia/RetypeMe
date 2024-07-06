@@ -32,8 +32,7 @@ export default function UserAndGameBalancePopover() {
     chainId: chainId,
   });
   const queryClient = useQueryClient();
-  const contractAddress =
-    contractConfig.contractAddressesMap[chain?.name as string];
+  const contractAddress = contractConfig.chains.find((chain) => chain.name === chain?.name)?.contract;
   const {
     writeContract,
     data: hash,

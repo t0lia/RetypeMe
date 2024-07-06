@@ -5,7 +5,7 @@ import {useConfigStore} from "@/app/store/configStore";
 export default function isEnoughBalance() {
   const {contractConfig} = useConfigStore();
   const { address, chain } = useAccount();
-  const contractAddress = contractConfig.contractAddressesMap[chain?.name as string];
+  const contractAddress = contractConfig.chains.find((chain) => chain.name === chain?.name)?.contract;
   const {
     data: isEnough,
     error,
