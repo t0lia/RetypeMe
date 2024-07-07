@@ -134,7 +134,7 @@ export default function Home() {
       <main className="h-screen flex flex-col relative">
         <div className="flex flex-col flex-1 justify-center items-center gap-20">
           <div className="flex gap-4">
-            {isSignedIn && (
+            {isSignedIn && isConnected && (
               <Link href="/single">
                 <Button>Start Single Mode</Button>
               </Link>
