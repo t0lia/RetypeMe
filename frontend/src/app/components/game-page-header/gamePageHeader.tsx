@@ -34,7 +34,7 @@ function GamePageHeader({
   const { isSignedIn } = useSIWE();
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
-  console.log("signedIn", isSignedIn, "connected", isConnected);
+
   return (
     <header className="flex h-16 justify-between items-center">
       <Logo />

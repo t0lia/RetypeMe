@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   useAccount,
   useBalance,
@@ -25,6 +25,8 @@ import Spinner from "../ui/spinner";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function UserAndGameBalancePopover() {
+  const [open, setOpen] = useState<boolean>(false);
+
   const { contractConfig } = useConfigStore();
   const { address, chainId } = useAccount();
   const {
@@ -109,10 +111,11 @@ export default function UserAndGameBalancePopover() {
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey });
     queryClient.invalidateQueries({ queryKey: userBalanceQueryKey });
+    if (isConfirmed) setOpen(false);
   }, [isConfirmed]);
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger>{userBalances}</PopoverTrigger>
       <PopoverContent>
         <Tabs defaultValue="deposit" className="flex flex-col">
