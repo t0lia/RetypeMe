@@ -26,8 +26,13 @@ import { useQueryClient } from "@tanstack/react-query";
 
 export default function UserAndGameBalancePopover() {
   const { contractConfig } = useConfigStore();
-  const { address, chainId, chain } = useAccount();
-  const { data, isError, isLoading } = useBalance({
+  const { address, chainId } = useAccount();
+  const {
+    data,
+    isError,
+    isLoading,
+    queryKey: userBalanceQueryKey,
+  } = useBalance({
     address: address,
     chainId: chainId,
   });
@@ -98,6 +103,7 @@ export default function UserAndGameBalancePopover() {
 
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey });
+    queryClient.invalidateQueries({ queryKey: userBalanceQueryKey });
   }, [isConfirmed]);
 
   return (
