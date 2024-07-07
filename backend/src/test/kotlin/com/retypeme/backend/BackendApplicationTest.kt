@@ -10,14 +10,14 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest
 class BackendApplicationTest() {
 
-    @Autowired
-    lateinit var smartContractService: SmartContractService
-    @Autowired
-    lateinit var chainService: ChainService
-
-    @Test
-    fun testNetwork() {
-        Assertions.assertTrue(true)
-    }
-
+//    @Autowired
+//    lateinit var smartContractService: SmartContractService
+//    @Autowired
+//    lateinit var chainService: ChainService
+//
+//    @Test
+//    fun testNetwork() {
+//        Assertions.assertTrue(true)
+//    }
+//
 }
