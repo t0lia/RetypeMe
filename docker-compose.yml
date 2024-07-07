@@ -11,9 +11,11 @@ services:
 #      args:
 #        REPOSITORY_TOKEN: ${REPOSITORY_TOKEN}
     environment:
-      SPRING_PROFILES_ACTIVE: "dev"
+      SPRING_PROFILES_ACTIVE: "dev,w3"
       JASYPT_ENCRYPTOR_PASSWORD: ${JASYPT_ENCRYPTOR_PASSWORD}
       SPRING_DATA_REDIS_PASSWORD: secret
+    volumes:
+      - ./.dev-conf:/config
     depends_on:
       - redis
 
@@ -41,5 +43,7 @@ services:
       - redis-data:/data
 
 volumes:
+  config:
+    driver: local
   redis-data:
     driver: local

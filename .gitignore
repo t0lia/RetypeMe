@@ -44,3 +44,6 @@ out/
 .env*.production
 .env.production
 *.env*
+
+# Dev configuration
+.dev-conf
