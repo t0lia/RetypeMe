@@ -37,17 +37,19 @@ export default function UserAndGameBalancePopover() {
     chainId: chainId,
   });
   const queryClient = useQueryClient();
+
   const contractAddress = contractConfig.chains.find(
     (chain) => chain.name === chain?.name
   )?.contract;
+
   const {
     writeContract,
     data: hash,
     isPending: isPendingTx,
   } = useWriteContract();
 
-  const withdrawInputRef = useRef(null);
-  const depositInputRef = useRef(null);
+  const withdrawInputRef = useRef<HTMLInputElement>(null);
+  const depositInputRef = useRef<HTMLInputElement>(null);
 
   const {
     isPending,
@@ -58,6 +60,7 @@ export default function UserAndGameBalancePopover() {
 
   let shortUserBalanceValue;
   let userBalanceValue;
+
   if (data) {
     userBalanceValue = formatUnits(data!.value, data!.decimals);
     shortUserBalanceValue = `${userBalanceValue.slice(0, 6)}`;
@@ -74,7 +77,8 @@ export default function UserAndGameBalancePopover() {
   );
 
   async function handleUserWithdraw(inputValue: string) {
-    if (withdrawInputRef.current?.value > 0) {
+    const value = parseFloat(inputValue);
+    if (value > 0) {
       writeContract({
         address: contractAddress as Address,
         abi: contractConfig.abi,
@@ -85,7 +89,8 @@ export default function UserAndGameBalancePopover() {
   }
 
   async function handleUserDeposit(depositInputValue: string) {
-    if (depositInputRef.current?.value > 0) {
+    const value = parseFloat(depositInputValue);
+    if (value > 0) {
       writeContract({
         address: contractAddress as Address,
         abi: contractConfig.abi,
@@ -141,7 +146,7 @@ export default function UserAndGameBalancePopover() {
             <Button
               className="mt-2 self-stretch"
               onClick={() => {
-                handleUserDeposit(depositInputRef.current?.value);
+                handleUserDeposit(depositInputRef.current?.value as string);
               }}
             >
               {(isConfirming || isPendingTx) && <Spinner />}
@@ -161,7 +166,8 @@ export default function UserAndGameBalancePopover() {
               <Button
                 onClick={() => {
                   if (withdrawInputRef.current) {
-                    withdrawInputRef.current.value = userGameBalanceValue;
+                    withdrawInputRef.current.value =
+                      userGameBalanceValue as string;
                   }
                 }}
               >
@@ -170,7 +176,7 @@ export default function UserAndGameBalancePopover() {
             </div>
             <Button
               onClick={() => {
-                handleUserWithdraw(withdrawInputRef.current?.value);
+                handleUserWithdraw(withdrawInputRef.current?.value as string);
               }}
               className="mt-2 self-stretch"
             >
