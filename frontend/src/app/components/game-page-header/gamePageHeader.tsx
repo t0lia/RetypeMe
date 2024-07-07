@@ -34,18 +34,19 @@ function GamePageHeader({
   const { isSignedIn } = useSIWE();
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
+  console.log("signedIn", isSignedIn, "connected", isConnected);
   return (
     <header className="flex h-16 justify-between items-center">
       <Logo />
       <div className="flex justify-end items-center p-4">
         <ModeToggle />
-        {dropDownFaucetMenu && <DropdownFaucetMenu />}
+        {dropDownFaucetMenu && isConnected && <DropdownFaucetMenu />}
         {!isConnected && <BlackCreateWalletButton />}
         <ConnectButton
           isButtonDisabled={isButtonDisabled}
           isGameEnded={isGameEnded}
         />
-        {isSignedIn && (
+        {isSignedIn && isConnected && (
           <DropdownMenu>
             <DropdownMenuTrigger>
               <Avatar className="ml-2">
