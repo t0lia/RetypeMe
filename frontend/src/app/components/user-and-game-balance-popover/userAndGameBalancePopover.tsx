@@ -32,7 +32,9 @@ export default function UserAndGameBalancePopover() {
     chainId: chainId,
   });
   const queryClient = useQueryClient();
-  const contractAddress = contractConfig.chains.find((chain) => chain.name === chain?.name)?.contract;
+  const contractAddress = contractConfig.chains.find(
+    (chain) => chain.name === chain?.name
+  )?.contract;
   const {
     writeContract,
     data: hash,
@@ -53,7 +55,7 @@ export default function UserAndGameBalancePopover() {
   let userBalanceValue;
   if (data) {
     userBalanceValue = formatUnits(data!.value, data!.decimals);
-    shortUserBalanceValue = `${userBalanceValue.slice(0, 5)}`;
+    shortUserBalanceValue = `${userBalanceValue.slice(0, 6)}`;
   }
 
   const userBalances = (
@@ -62,7 +64,7 @@ export default function UserAndGameBalancePopover() {
       {isError && "Error"}
       {data && `${shortUserBalanceValue}`} | {isPending && <Spinner />}
       {error && error}
-      {userGameBalanceValue && userGameBalanceValue}
+      {userGameBalanceValue && userGameBalanceValue.slice(0, 6)}
     </div>
   );
 
