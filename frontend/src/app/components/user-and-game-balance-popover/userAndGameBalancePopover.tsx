@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   useAccount,
   useBalance,
@@ -25,22 +25,33 @@ import Spinner from "../ui/spinner";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function UserAndGameBalancePopover() {
+  const [open, setOpen] = useState<boolean>(false);
+
   const { contractConfig } = useConfigStore();
-  const { address, chainId, chain } = useAccount();
-  const { data, isError, isLoading } = useBalance({
+  const { address, chainId } = useAccount();
+  const {
+    data,
+    isError,
+    isLoading,
+    queryKey: userBalanceQueryKey,
+  } = useBalance({
     address: address,
     chainId: chainId,
   });
   const queryClient = useQueryClient();
-  const contractAddress = contractConfig.chains.find((chain) => chain.name === chain?.name)?.contract;
+
+  const contractAddress = contractConfig.chains.find(
+    (chain) => chain.name === chain?.name
+  )?.contract;
+
   const {
     writeContract,
     data: hash,
     isPending: isPendingTx,
   } = useWriteContract();
 
-  const withdrawInputRef = useRef(null);
-  const depositInputRef = useRef(null);
+  const withdrawInputRef = useRef<HTMLInputElement>(null);
+  const depositInputRef = useRef<HTMLInputElement>(null);
 
   const {
     isPending,
@@ -51,9 +62,10 @@ export default function UserAndGameBalancePopover() {
 
   let shortUserBalanceValue;
   let userBalanceValue;
+
   if (data) {
     userBalanceValue = formatUnits(data!.value, data!.decimals);
-    shortUserBalanceValue = `${userBalanceValue.slice(0, 5)}`;
+    shortUserBalanceValue = `${userBalanceValue.slice(0, 6)}`;
   }
 
   const userBalances = (
@@ -62,12 +74,13 @@ export default function UserAndGameBalancePopover() {
       {isError && "Error"}
       {data && `${shortUserBalanceValue}`} | {isPending && <Spinner />}
       {error && error}
-      {userGameBalanceValue && userGameBalanceValue}
+      {userGameBalanceValue && userGameBalanceValue.slice(0, 6)}
     </div>
   );
 
   async function handleUserWithdraw(inputValue: string) {
-    if (withdrawInputRef.current?.value > 0) {
+    const value = parseFloat(inputValue);
+    if (value > 0) {
       writeContract({
         address: contractAddress as Address,
         abi: contractConfig.abi,
@@ -78,7 +91,8 @@ export default function UserAndGameBalancePopover() {
   }
 
   async function handleUserDeposit(depositInputValue: string) {
-    if (depositInputRef.current?.value > 0) {
+    const value = parseFloat(depositInputValue);
+    if (value > 0) {
       writeContract({
         address: contractAddress as Address,
         abi: contractConfig.abi,
@@ -96,10 +110,12 @@ export default function UserAndGameBalancePopover() {
 
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey });
+    queryClient.invalidateQueries({ queryKey: userBalanceQueryKey });
+    if (isConfirmed) setOpen(false);
   }, [isConfirmed]);
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger>{userBalances}</PopoverTrigger>
       <PopoverContent>
         <Tabs defaultValue="deposit" className="flex flex-col">
@@ -133,7 +149,7 @@ export default function UserAndGameBalancePopover() {
             <Button
               className="mt-2 self-stretch"
               onClick={() => {
-                handleUserDeposit(depositInputRef.current?.value);
+                handleUserDeposit(depositInputRef.current?.value as string);
               }}
             >
               {(isConfirming || isPendingTx) && <Spinner />}
@@ -153,7 +169,8 @@ export default function UserAndGameBalancePopover() {
               <Button
                 onClick={() => {
                   if (withdrawInputRef.current) {
-                    withdrawInputRef.current.value = userGameBalanceValue;
+                    withdrawInputRef.current.value =
+                      userGameBalanceValue as string;
                   }
                 }}
               >
@@ -162,7 +179,7 @@ export default function UserAndGameBalancePopover() {
             </div>
             <Button
               onClick={() => {
-                handleUserWithdraw(withdrawInputRef.current?.value);
+                handleUserWithdraw(withdrawInputRef.current?.value as string);
               }}
               className="mt-2 self-stretch"
             >
