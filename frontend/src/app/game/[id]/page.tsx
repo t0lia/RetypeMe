@@ -21,7 +21,6 @@ import { useModal, useSIWE } from "connectkit";
 import GamePageHeader from "@/app/components/game-page-header/gamePageHeader";
 import CopyButton from "@/app/components/copy-button/copyButton";
 import ProgressBar from "@/app/components/progress-bar/progressBar";
-import ClaimWinningsButton from "@/app/components/claim-winnings-button/claimWinningsButton";
 import StartDepositButton from "@/app/components/start-deposit-button/startDepositButton";
 
 import { useWriteContract } from "wagmi";
@@ -464,12 +463,6 @@ const GamePage = () => {
           onKeyDown={handleKeyDown}
           autoComplete="off"
         ></input>
-        <ClaimWinningsButton
-          userStats={userStats}
-          ingameUserId={ingameUserId}
-          ingameWalletId={ingameWalletId}
-          txSuccessful={txSuccessful}
-        />
         <CopyButton handleCopy={handleCopy} />
       </main>
     </>
