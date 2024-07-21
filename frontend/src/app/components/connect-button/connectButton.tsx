@@ -3,6 +3,7 @@ import { ConnectKitButton, useChains, useModal, useSIWE } from "connectkit";
 import { useAccount, useBalance } from "wagmi";
 import { Button } from "@/app/components/ui/button";
 import UserAndGameBalancePopover from "../user-and-game-balance-popover/userAndGameBalancePopover";
+import { useUserAccountStore } from "@/app/store/userAccountStore";
 
 interface ConnectButtonProps {
   isButtonDisabled?: boolean;
@@ -27,6 +28,17 @@ function ConnectButton({ isButtonDisabled, isGameEnded }: ConnectButtonProps) {
       console.log(error);
     }
   }
+
+  const { setAccount, logout, account } = useUserAccountStore();
+
+  useEffect(() => {
+    if (isConnected && address) {
+      setAccount(address);
+    } else {
+      logout();
+    }
+  }, [isConnected, address, setAccount, logout]);
+  console.log("Account:", account);
 
   useEffect(() => {
     if (!isSignedIn && isConnected && chainId) signInAfterConnect();

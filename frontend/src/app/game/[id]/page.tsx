@@ -31,7 +31,6 @@ import "./page.css";
 import getUserGameBalance from "@/app/contract-utils/get-user-game-balance";
 import { useConfigStore } from "@/app/store/configStore";
 import { useQueryClient } from "@tanstack/react-query";
-import { wagmiConfig } from "@/app/helpers/web3-provider";
 import {
   writeContracts,
   showCallsStatus,
@@ -40,30 +39,31 @@ import {
 
 const GamePage = () => {
   const { contractConfig } = useConfigStore();
-  const [textVisible, setTextVisible] = useState(false);
-  const [startBtnText, setStartBtnText] = useState("Start game");
-  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [textVisible, setTextVisible] = useState<boolean>(false);
+  const [startBtnText, setStartBtnText] = useState<string>("Start game");
+  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
   const [userStats, setUserStats] = useState<DriverMetrics[]>([]);
-  const [textIsBlurred, setTextIsBlurred] = useState(false);
+  const [textIsBlurred, setTextIsBlurred] = useState<boolean>(false);
   const [textInputStyles, setTextInputStyles] = useState<string[]>([]);
-  const [isGameEnded, setIsGameEnded] = useState(false);
+  const [isGameEnded, setIsGameEnded] = useState<boolean>(false);
   const [completedWords, setCompletedWords] = useState<string[]>([]);
-  const [gameText, setGameText] = useState("");
-  const [initialGameText, setInitialGameText] = useState("");
-  const [ingameUserId, setIngameUserId] = useState("");
+  const [gameText, setGameText] = useState<string>("");
+  const [initialGameText, setInitialGameText] = useState<string>("");
+  const [ingameUserId, setIngameUserId] = useState<string>("");
   const [ingameWalletId, setIngameWalletId] = useState<string>("");
-  const [txSuccessful, setTxSuccessful] = useState(false);
-  const [keyStrokeCount, setKeyStrokeCount] = useState(0);
+  const [txSuccessful, setTxSuccessful] = useState<boolean>(false);
+  const [keyStrokeCount, setKeyStrokeCount] = useState<number>(0);
   const [sessionStat, setSessionStat] = useState<RaceStatistic>({
     id: "",
     errors: [],
     users: [],
   });
-  const [batchStatusConfirmed, setBatchStatusConfirmed] = useState(false);
+  const [batchStatusConfirmed, setBatchStatusConfirmed] =
+    useState<boolean>(false);
 
   const { openSwitchNetworks, setOpen } = useModal();
   const { isSignedIn } = useSIWE();
-  const { address, chainId, chain } = useAccount();
+  const { address, chainId } = useAccount();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const wsApiServiceRef = useRef<WsApiService | null>(null);
@@ -76,8 +76,10 @@ const GamePage = () => {
       hash,
     });
   const queryClient = useQueryClient();
-  const contractAddress = contractConfig.chains.find((chain) => chain.name === chain?.name)?.contract;
-  const {wagmiConfig} = useConfigStore();
+  const contractAddress = contractConfig.chains.find(
+    (chain) => chain.name === chain?.name
+  )?.contract;
+  const { wagmiConfig } = useConfigStore();
 
   useAccountEffect({
     onConnect(data) {

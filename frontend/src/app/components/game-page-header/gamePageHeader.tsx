@@ -19,6 +19,7 @@ import { LogOut, User } from "lucide-react";
 import Link from "next/link";
 import { useAccount, useDisconnect } from "wagmi";
 import { BlackCreateWalletButton } from "../black-create-wallet-button/blackCreateWalletButton";
+import { useUserAccountStore } from "@/app/store/userAccountStore";
 
 interface IGamePageHeaderProps {
   isButtonDisabled?: boolean;
@@ -32,8 +33,9 @@ function GamePageHeader({
   dropDownFaucetMenu,
 }: IGamePageHeaderProps) {
   const { isSignedIn } = useSIWE();
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const { disconnect } = useDisconnect();
+  const { account: address } = useUserAccountStore();
 
   return (
     <header className="flex h-16 justify-between items-center">
